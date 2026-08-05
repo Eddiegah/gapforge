@@ -1,16 +1,14 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { llmCall, llmCallFast } from "@/lib/llm/client";
 import type { PaperMetadata, PaperSection } from "./fetchPaper";
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
 import { detectGaps } from "@/lib/gapAI/detectGaps";
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export type EvidenceRating = "strong" | "moderate" | "weak" | "speculative";
 
 export interface SimplifiedSection {
   heading: string;
   simplified: string;
-  technicalTerms: string[]; // terms to highlight for glossary
+  technicalTerms: string[];
 }
 
 export interface KeyClaim {
@@ -22,7 +20,6 @@ export interface KeyClaim {
 export interface GlossaryTerm {
   term: string;
   definition: string;
-  context?: string;
 }
 
 export interface SimplificationResult {
@@ -34,33 +31,19 @@ export interface SimplificationResult {
 }
 
 async function simplifySection(section: PaperSection): Promise<SimplifiedSection> {
-  const prompt = `Translate this academic paper section into clear, plain language for an intelligent non-specialist reader. Preserve accuracy — do not oversimplify or distort findings.
+  const { text } = await llmCallFast(
+    "You translate academic paper sections into clear plain language. Preserve accuracy. Return only JSON.",
+    `Translate this section into plain language for an intelligent non-specialist.
 
 Section: "${section.heading}"
 Content: ${section.content.slice(0, 3000)}
 
-Return JSON:
-{
-  "simplified": "plain-language version (2-5 paragraphs)",
-  "technicalTerms": ["array of technical terms that appear and need defining (max 10)"]
-}
-
-Return ONLY JSON.`;
-
-  const message = await anthropic.messages.create({
-    model: "claude-haiku-4-5",
-    max_tokens: 1024,
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const text = message.content
-    .filter((c) => c.type === "text")
-    .map((c) => (c as { type: "text"; text: string }).text)
-    .join("");
+Return JSON: { "simplified": "plain-language version (2-5 paragraphs)", "technicalTerms": ["array of technical terms needing definitions, max 10"] }
+Return ONLY JSON.`
+  );
 
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-
   return {
     heading: section.heading,
     simplified: parsed.simplified ?? section.content,
@@ -70,70 +53,46 @@ Return ONLY JSON.`;
 
 async function buildGlossary(terms: string[], paperTitle: string): Promise<GlossaryTerm[]> {
   if (terms.length === 0) return [];
+  const unique = [...new Set(terms)].slice(0, 30);
 
-  const prompt = `Define these technical terms from the paper "${paperTitle}" in plain language. Each definition should be 1-2 sentences, precise, and clear to a non-specialist.
+  const { text } = await llmCallFast(
+    "You define technical terms in plain language. Return only JSON.",
+    `Define these terms from "${paperTitle}" in 1-2 plain sentences each.
 
-Terms: ${JSON.stringify([...new Set(terms)].slice(0, 30))}
+Terms: ${JSON.stringify(unique)}
 
 Return JSON array: [{ "term": string, "definition": string }]
-Return ONLY JSON.`;
-
-  const message = await anthropic.messages.create({
-    model: "claude-haiku-4-5",
-    max_tokens: 1024,
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const text = message.content
-    .filter((c) => c.type === "text")
-    .map((c) => (c as { type: "text"; text: string }).text)
-    .join("");
+Return ONLY JSON.`
+  );
 
   const jsonMatch = text.match(/\[[\s\S]*\]/);
   return jsonMatch ? JSON.parse(jsonMatch[0]) : [];
 }
 
 async function extractKeyClaims(sections: SimplifiedSection[], title: string): Promise<KeyClaim[]> {
-  const content = sections
-    .map((s) => `${s.heading}: ${s.simplified}`)
-    .join("\n\n")
-    .slice(0, 4000);
+  const content = sections.map((s) => `${s.heading}: ${s.simplified}`).join("\n\n").slice(0, 4000);
 
-  const prompt = `From this simplified paper "${title}", identify the 3-5 most important claims made by the authors.
+  const { text } = await llmCallFast(
+    "You extract and evidence-rate key claims from research papers. Return only JSON.",
+    `From "${title}", identify the 3-5 most important claims.
 
-Paper content:
 ${content}
 
-For each claim, rate the evidence behind it honestly:
-- "strong": directly supported by original data in this study with clear statistical significance
-- "moderate": supported by data but with notable limitations or caveats
-- "weak": based on indirect evidence, small samples, or significant confounds
-- "speculative": the authors themselves frame it as hypothesis or future direction
+Rate each claim's evidence:
+- "strong": directly supported by data with clear statistical significance
+- "moderate": supported by data but with notable limitations
+- "weak": indirect evidence, small samples, or significant confounds
+- "speculative": the authors frame it as hypothesis or future direction
 
-Return JSON array: [{
-  "claim": string (1-2 sentences),
-  "evidenceRating": "strong" | "moderate" | "weak" | "speculative",
-  "rationale": string (1 sentence explaining the rating)
-}]
-Return ONLY JSON.`;
-
-  const message = await anthropic.messages.create({
-    model: "claude-haiku-4-5",
-    max_tokens: 1024,
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const text = message.content
-    .filter((c) => c.type === "text")
-    .map((c) => (c as { type: "text"; text: string }).text)
-    .join("");
+Return JSON array: [{ "claim": string, "evidenceRating": "strong"|"moderate"|"weak"|"speculative", "rationale": string }]
+Return ONLY JSON.`
+  );
 
   const jsonMatch = text.match(/\[[\s\S]*\]/);
   return jsonMatch ? JSON.parse(jsonMatch[0]) : [];
 }
 
-async function detectPaperGaps(paper: PaperMetadata, sections: SimplifiedSection[]): Promise<DetectedGap[]> {
-  // Treat the paper itself as a "source result" for single-paper gap detection
+async function detectPaperGaps(paper: PaperMetadata): Promise<DetectedGap[]> {
   const paperAsSource = [{
     id: paper.doi ? `doi-${paper.doi}` : `paper-${Date.now()}`,
     title: paper.title,
@@ -147,38 +106,21 @@ async function detectPaperGaps(paper: PaperMetadata, sections: SimplifiedSection
     venue: null,
   }];
 
-  const gapResult = await detectGaps(
-    `gaps within: ${paper.title}`,
-    paperAsSource,
-    [paper.source]
-  );
-
-  return gapResult.gaps.slice(0, 3);
+  const result = await detectGaps(`gaps within: ${paper.title}`, paperAsSource, [paper.source]);
+  return result.gaps.slice(0, 3);
 }
 
 export async function simplifyPaper(paper: PaperMetadata): Promise<SimplificationResult> {
   const start = Date.now();
 
-  // Process sections in parallel (rate-limited to avoid overwhelming the API)
-  const simplifiedSections = await Promise.all(
-    paper.sections.map((s) => simplifySection(s))
-  );
-
-  // Collect all technical terms
+  const simplifiedSections = await Promise.all(paper.sections.map((s) => simplifySection(s)));
   const allTerms = simplifiedSections.flatMap((s) => s.technicalTerms);
 
-  // Run glossary, key claims, and gap detection in parallel
   const [glossary, keyClaims, gaps] = await Promise.all([
     buildGlossary(allTerms, paper.title),
     extractKeyClaims(simplifiedSections, paper.title),
-    detectPaperGaps(paper, simplifiedSections),
+    detectPaperGaps(paper),
   ]);
 
-  return {
-    sections: simplifiedSections,
-    glossary,
-    keyClaims,
-    gaps,
-    processingTimeMs: Date.now() - start,
-  };
+  return { sections: simplifiedSections, glossary, keyClaims, gaps, processingTimeMs: Date.now() - start };
 }
