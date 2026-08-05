@@ -1,8 +1,6 @@
 {
   "crons": [
-    {
-      "path": "/api/cron/gap-drops",
-      "schedule": "0 9 * * 5"
-    }
+    { "path": "/api/cron/gap-drops", "schedule": "0 9 * * 5" },
+    { "path": "/api/cron/gap-alerts", "schedule": "0 8 * * 1" }
   ]
 }

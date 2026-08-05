@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, X, ArrowRight, Loader, AlertCircle, Bookmark,
@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
+import { PaywallModal } from "@/components/paywall-modal";
 import { cn } from "@/lib/utils";
 import { formatRelativeDate } from "@/lib/utils";
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
@@ -87,7 +88,68 @@ export default function GapAIPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [livePapers, setLivePapers] = useState<LivePaper[]>([]);
   const [phaseLabel, setPhaseLabel] = useState("");
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [daysUntilReset, setDaysUntilReset] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const fetchHistory = useCallback(async () => {
+    try {
+      const res = await fetch("/api/gap-ai/history");
+      const data = await res.json();
+      const items: HistoryItem[] = (data.history ?? []).map((row: {
+        id: string; query: string; gaps_found: number; created_at: string;
+      }) => ({
+        id: row.id,
+        query: row.query,
+        gapsFound: row.gaps_found,
+        createdAt: row.created_at,
+        status: "done" as const,
+      }));
+      setHistory(items);
+    } catch { /* non-critical */ }
+  }, []);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  const loadHistoryItem = useCallback(async (id: string, q: string) => {
+    setActiveQuery(q);
+    setPhase("analyzing");
+    setError(null);
+    setResult(null);
+    setLivePapers([]);
+    try {
+      const res = await fetch(`/api/gap-ai/history/${id}`);
+      if (!res.ok) throw new Error("Failed to load");
+      const data = await res.json();
+      const papers: LivePaper[] = (data.gaps as DetectedGap[]).flatMap((g) =>
+        g.citations.map((c) => ({
+          id: c.paperId,
+          title: c.title,
+          authors: c.authors,
+          year: c.year,
+          source: c.source,
+          abstract: c.relevantQuote ?? null,
+          relevance: Math.floor(70 + Math.random() * 28),
+        }))
+      );
+      const unique = [...new Map(papers.map((p) => [p.id, p])).values()];
+      setLivePapers(unique);
+      setResult({
+        searchId: data.searchId,
+        gaps: data.gaps,
+        sourcesQueried: data.sourcesQueried ?? [],
+        sourcesSkipped: data.sourcesSkipped ?? [],
+        papersAnalyzed: data.papersAnalyzed ?? 0,
+        processingTimeMs: 0,
+      });
+      setPhase("done");
+    } catch {
+      setError("Failed to load search result.");
+      setPhase("error");
+    }
+  }, []);
 
   const runSearch = useCallback(async (q?: string) => {
     const searchQuery = (q ?? query).trim();
@@ -104,11 +166,9 @@ export default function GapAIPage() {
     const histId = `h-${Date.now()}`;
     setHistory(prev => [{ id: histId, query: searchQuery, gapsFound: 0, createdAt: new Date().toISOString(), status: "running" }, ...prev]);
 
-    // Simulate paper streaming while real request runs
     const streamTimer = setTimeout(() => {
       setPhase("analyzing");
       setPhaseLabel("Running Gap AI analysis");
-      // Mock a few papers appearing (real papers come in result)
       setLivePapers([
         { id: "p1", title: "Loading papers...", authors: [], year: null, source: "openalex", abstract: null },
       ]);
@@ -120,20 +180,37 @@ export default function GapAIPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: searchQuery }),
       });
-      
+
       let data;
       try {
         data = await res.json();
       } catch {
         throw new Error("The search took too long. Please try a more specific query.");
       }
-      
-      clearTimeout(streamTimer);
-      if (!res.ok) throw new Error(data.error ?? "Search failed");
 
-      // Populate live papers from result citations
+      clearTimeout(streamTimer);
+
+      if (!res.ok) {
+        const errMsg: string = data.error ?? "Search failed";
+        // Check for paywall (403 with upgrade/free searches message)
+        if (
+          res.status === 403 &&
+          (errMsg.toLowerCase().includes("upgrade") || errMsg.toLowerCase().includes("free searches"))
+        ) {
+          const now = new Date();
+          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+          const days = Math.ceil((endOfMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          setDaysUntilReset(days);
+          setShowPaywall(true);
+          setHistory(prev => prev.filter(h => h.id !== histId));
+          setPhase("idle");
+          return;
+        }
+        throw new Error(errMsg);
+      }
+
       const papers: LivePaper[] = data.gaps.flatMap((g: DetectedGap) =>
-        g.citations.map(c => ({
+        g.citations.map((c) => ({
           id: c.paperId,
           title: c.title,
           authors: c.authors,
@@ -143,14 +220,14 @@ export default function GapAIPage() {
           relevance: Math.floor(70 + Math.random() * 28),
         }))
       );
-      const unique = [...new Map(papers.map(p => [p.id, p])).values()];
+      const unique = [...new Map(papers.map((p) => [p.id, p])).values()];
       setLivePapers(unique);
       setResult(data);
       setPhase("done");
-      setHistory(prev => prev.map(h =>
-        h.id === histId ? { ...h, gapsFound: data.gaps.length, status: "done" as const } : h
-      ));
-      // Trigger credits refresh in sidebar
+
+      // Re-fetch history from server so the new entry shows with real ID
+      await fetchHistory();
+
       window.dispatchEvent(new Event("focus"));
     } catch (err) {
       clearTimeout(streamTimer);
@@ -158,7 +235,7 @@ export default function GapAIPage() {
       setPhase("error");
       setHistory(prev => prev.filter(h => h.id !== histId));
     }
-  }, [query, phase]);
+  }, [query, phase, fetchHistory]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); runSearch(); }
@@ -197,6 +274,12 @@ export default function GapAIPage() {
     <div className="flex h-screen bg-[rgb(var(--bg))] overflow-hidden">
       <AppNav />
 
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        daysUntilReset={daysUntilReset}
+      />
+
       {/* Main content — 3 panels */}
       <div className="flex flex-1 md:ml-60 overflow-hidden">
 
@@ -216,10 +299,18 @@ export default function GapAIPage() {
               <p className="text-xs text-[rgb(var(--muted))] px-4 py-6 text-center">No searches yet</p>
             ) : (
               history.map(item => (
-                <div key={item.id} className={cn(
-                  "px-4 py-3 cursor-pointer border-b border-[rgb(var(--border))]/40 hover:bg-[rgb(var(--bg))]/60 transition-colors",
-                  item.status === "running" && "bg-[rgb(var(--accent))]/5"
-                )}>
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    if (item.status !== "running") {
+                      loadHistoryItem(item.id, item.query);
+                    }
+                  }}
+                  className={cn(
+                    "px-4 py-3 border-b border-[rgb(var(--border))]/40 hover:bg-[rgb(var(--bg))]/60 transition-colors",
+                    item.status === "running" ? "bg-[rgb(var(--accent))]/5 cursor-default" : "cursor-pointer"
+                  )}
+                >
                   {item.status === "running" && (
                     <div className="flex items-center gap-1.5 text-xs text-[rgb(var(--accent))] font-medium mb-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--accent))] animate-pulse" />
@@ -241,14 +332,12 @@ export default function GapAIPage() {
         {/* Panel 2: Main query + results */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
           {phase === "idle" ? (
-            /* Idle: full-page search UI */
             <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 overflow-y-auto">
               <h1 className="text-3xl font-bold text-[rgb(var(--fg))] text-center mb-2">Discover Research Gaps</h1>
               <p className="text-[rgb(var(--muted))] text-center mb-8 max-w-md">
                 Describe any field or niche. We scan <strong className="text-[rgb(var(--fg))]">thousands of live papers</strong> then surface the most meaningful gaps, ranked with full citations.
               </p>
 
-              {/* Search box */}
               <div className="w-full max-w-2xl">
                 <div className="relative card rounded-2xl overflow-hidden shadow-lg shadow-[rgb(var(--accent))]/5">
                   <textarea
@@ -272,7 +361,6 @@ export default function GapAIPage() {
                 </div>
                 <p className="text-xs text-[rgb(var(--muted))] mt-2 text-center">Press Enter &middot; Shift+Enter for new line</p>
 
-                {/* Suggested queries */}
                 <div className="mt-6 flex flex-wrap gap-2 justify-center">
                   {SUGGESTED.map(s => (
                     <button key={s} onClick={() => { setQuery(s); runSearch(s); }}
@@ -283,13 +371,12 @@ export default function GapAIPage() {
                 </div>
               </div>
 
-              {/* Source ticker at bottom */}
               <div className="mt-12 w-full max-w-2xl">
                 <div className="flex items-center gap-2 text-xs text-[rgb(var(--muted))] mb-3">
                   <div className="w-3 h-3 rounded-full border border-[rgb(var(--accent))]/50 flex items-center justify-center">
                     <div className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--accent))]" />
                   </div>
-                  NOW SCANNING SOURCES ACROSS SCIENCE, LAW, ECONOMICS & MORE
+                  NOW SCANNING SOURCES ACROSS SCIENCE, LAW, ECONOMICS &amp; MORE
                 </div>
                 <div className="overflow-hidden">
                   <div className="flex gap-2 animate-marquee whitespace-nowrap">
@@ -301,10 +388,7 @@ export default function GapAIPage() {
               </div>
             </div>
           ) : (
-
-            /* Active / Done: query header + progress + results */
             <div className="flex flex-col h-full overflow-hidden">
-              {/* Query header bar */}
               <div className="flex items-center gap-3 px-5 py-3 border-b border-[rgb(var(--border))] bg-[rgb(var(--card))]/50 flex-shrink-0">
                 <div className={cn("w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0",
                   isActive ? "bg-[rgb(var(--accent))]/20" : phase === "done" ? "bg-emerald-500/20" : "bg-red-500/20"
@@ -329,7 +413,6 @@ export default function GapAIPage() {
                 </div>
               </div>
 
-              {/* Progress steps */}
               <div className="px-5 py-4 border-b border-[rgb(var(--border))] flex-shrink-0">
                 {[
                   { key: "querying", label: "Generating targeted search queries", done: phase !== "querying" },
@@ -365,7 +448,6 @@ export default function GapAIPage() {
                   );
                 })}
 
-                {/* Loading animation when querying */}
                 {isActive && (
                   <div className="flex items-center gap-1.5 mt-3">
                     {[0,1,2].map(i => (
@@ -374,12 +456,11 @@ export default function GapAIPage() {
                         transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }} />
                     ))}
                     <span className="text-xs text-[rgb(var(--muted))] ml-1">
-                      {phase === "querying" ? "Preparing queries..." : `Gap AI is synthesizing research gaps from selected papers...`}
+                      {phase === "querying" ? "Preparing queries..." : "Gap AI is synthesizing research gaps from selected papers..."}
                     </span>
                   </div>
                 )}
 
-                {/* Error */}
                 {phase === "error" && error && (
                   <div className="flex items-center gap-2 mt-2 text-sm text-red-400">
                     <AlertCircle size={14} />
@@ -389,7 +470,6 @@ export default function GapAIPage() {
                 )}
               </div>
 
-              {/* Gap results */}
               <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
                 {phase === "done" && result && (
                   <>
@@ -430,7 +510,6 @@ export default function GapAIPage() {
             </div>
           </div>
 
-          {/* Source breakdown */}
           {(isActive || phase === "done") && sourcesQueried.length > 0 && (
             <div className="px-4 py-2 border-b border-[rgb(var(--border))]">
               <p className="text-xs text-[rgb(var(--muted))] mb-1">{papersCount} papers &middot; {isActive ? "Analyzing for gaps..." : "Scan complete"}</p>

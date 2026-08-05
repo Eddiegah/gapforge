@@ -130,6 +130,7 @@ export function AppNav() {
   const { data: session } = useSession();
   const [creditsUsed, setCreditsUsed] = useState(0);
   const [creditsLimit, setCreditsLimit] = useState(20);
+  const [userPlan, setUserPlan] = useState("free");
 
   const fetchCredits = () => {
     fetch("/api/credits")
@@ -151,6 +152,13 @@ export function AppNav() {
       window.removeEventListener("focus", fetchCredits);
       clearInterval(interval);
     };
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/user/plan")
+      .then(r => r.json())
+      .then(d => setUserPlan(d.plan ?? "free"))
+      .catch(() => {});
   }, []);
 
   const user = session?.user;
@@ -247,7 +255,14 @@ export function AppNav() {
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-[rgb(var(--fg))] truncate">{user?.name ?? "User"}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-medium text-[rgb(var(--fg))] truncate">{user?.name ?? "User"}</p>
+                {["pro", "team", "institutional"].includes(userPlan) && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-gradient-to-r from-violet-600 to-violet-400 text-white flex-shrink-0">
+                    PRO
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-[rgb(var(--muted))] truncate">{user?.email ?? ""}</p>
             </div>
           </div>

@@ -210,3 +210,19 @@ CREATE TABLE IF NOT EXISTS user_credits (
   reset_at     TIMESTAMPTZ NOT NULL DEFAULT (date_trunc('month', NOW()) + interval '1 month'),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- ─── Gap Alerts ─────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS gap_alerts (
+  id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id      TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  saved_gap_id TEXT REFERENCES saved_gaps(id) ON DELETE CASCADE,
+  gap_title    TEXT NOT NULL,
+  gap_query    TEXT NOT NULL,
+  active       BOOLEAN NOT NULL DEFAULT true,
+  last_checked TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gap_alerts_user ON gap_alerts(user_id);
+CREATE INDEX IF NOT EXISTS idx_gap_alerts_active ON gap_alerts(active);

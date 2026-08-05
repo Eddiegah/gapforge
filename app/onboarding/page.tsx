@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Check, Loader } from "lucide-react";
+import { ChevronRight, ChevronLeft, Check, Loader, Zap } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { cn } from "@/lib/utils";
 
@@ -86,6 +86,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [generatingDrop, setGeneratingDrop] = useState(false);
 
   const [researchAreas, setResearchAreas] = useState<string[]>([]);
   const [methodologies, setMethodologies] = useState<string[]>([]);
@@ -123,11 +124,38 @@ export default function OnboardingPage() {
           goals,
         }),
       });
+
+      // Trigger first drop generation (non-blocking UI)
+      setSaving(false);
+      setGeneratingDrop(true);
+      try {
+        await fetch("/api/gap-drops", { method: "POST" });
+      } catch { /* non-blocking */ }
+
       router.push("/gap-drops");
     } finally {
       setSaving(false);
     }
   };
+
+  if (generatingDrop) return (
+    <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--bg))]">
+      <div className="text-center space-y-4">
+        <div className="w-16 h-16 rounded-2xl bg-violet-500/20 flex items-center justify-center mx-auto">
+          <Zap size={32} className="text-violet-400 animate-pulse" />
+        </div>
+        <h2 className="text-xl font-bold text-[rgb(var(--fg))]">Setting up your first Gap Drop</h2>
+        <p className="text-[rgb(var(--muted))] text-sm">Scanning your research niche for the latest gaps...</p>
+        <div className="w-48 h-1 bg-[rgb(var(--border))] rounded-full overflow-hidden mx-auto">
+          <motion.div
+            className="h-full bg-violet-500 rounded-full"
+            animate={{ width: ["0%", "100%"] }}
+            transition={{ duration: 3 }}
+          />
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">

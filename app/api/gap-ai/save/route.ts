@@ -21,7 +21,21 @@ export async function POST(req: NextRequest) {
     RETURNING id
   `;
 
-  return NextResponse.json({ savedId: row?.id });
+  const savedId = row?.id as string | undefined;
+
+  // Create alert for this saved gap (non-blocking)
+  if (savedId) {
+    try {
+      const query: string = gap.title ?? "research gap";
+      await sql`
+        INSERT INTO gap_alerts (user_id, saved_gap_id, gap_title, gap_query)
+        VALUES (${session.user.id}, ${savedId}, ${gap.title ?? "Untitled gap"}, ${query})
+        ON CONFLICT DO NOTHING
+      `;
+    } catch { /* non-blocking */ }
+  }
+
+  return NextResponse.json({ savedId });
 }
 
 export async function GET(req: NextRequest) {
