@@ -15,17 +15,33 @@ export interface LLMResponse {
 async function callGroq(system: string, prompt: string, maxTokens = 4096): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error("GROQ_API_KEY not set");
-  const groq = new Groq({ apiKey });
-  const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: prompt },
-    ],
-    max_tokens: maxTokens,
-    temperature: 0.3,
+  
+  // Use fetch directly to avoid SDK issues
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.1-8b-instant", // faster, lower quota usage
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: maxTokens,
+      temperature: 0.3,
+    }),
+    signal: AbortSignal.timeout(30000),
   });
-  const text = completion.choices[0]?.message?.content ?? "";
+  
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Groq API error ${res.status}: ${err}`);
+  }
+  
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content ?? "";
   if (!text) throw new Error("Groq returned empty response");
   return text;
 }
@@ -38,25 +54,20 @@ async function callGemini(system: string, prompt: string, maxTokens = 4096): Pro
   const genAI = new GoogleGenerativeAI(apiKey);
 
   // Try multiple models in case one hits quota
-  const models = ["gemini-1.5-flash", "gemini-1.5-flash-8b"];
+  const models = ["gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.0-pro"];
   let lastError: unknown;
 
   for (const modelName of models) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: system,
-      });
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: maxTokens, temperature: 0.3 },
-      });
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const fullPrompt = `${system}\n\n${prompt}`;
+      const result = await model.generateContent(fullPrompt);
       const text = result.response.text();
       if (text) return text;
     } catch (err) {
       lastError = err;
       const msg = err instanceof Error ? err.message : String(err);
-      if (msg.includes("quota") || msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED")) {
+      if (msg.includes("quota") || msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED") || msg.includes("exceeded")) {
         console.warn(`[LLM] ${modelName} quota hit, trying next`);
         continue;
       }
