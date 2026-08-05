@@ -36,7 +36,7 @@ export const ALL_SOURCES: AcademicSource[] = [
 
 // ─── Health cache (in-process, resets on serverless cold start) ───────────────
 
-const HEALTH_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const HEALTH_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes — cache longer to avoid re-checking
 const healthCache = new Map<string, SourceHealthResult>();
 
 export async function checkSourceHealth(source: AcademicSource): Promise<SourceHealthResult> {
@@ -54,7 +54,7 @@ export async function getHealthySources(): Promise<{
   results: SourceHealthResult[];
 }> {
   // Use only the most reliable sources to keep response time fast
-  const FAST_SOURCES = ["semantic-scholar", "arxiv", "pubmed", "openalex", "crossref"];
+  const FAST_SOURCES = ["semantic-scholar", "openalex"];
   const sourcesToCheck = ALL_SOURCES.filter(s => FAST_SOURCES.includes(s.id));
   
   const results = await Promise.all(sourcesToCheck.map((s) => checkSourceHealth(s)));

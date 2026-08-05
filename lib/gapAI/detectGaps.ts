@@ -137,7 +137,7 @@ ${paperIndex}
 
 VALID PAPER IDs: ${JSON.stringify(paperIds)}
 
-Identify 4-6 genuine candidate research gaps in the literature on "${query}". Each gap must:
+Identify 3-4 genuine candidate research gaps in the literature on "${query}". Each gap must:
 1. Be supported by specific papers from the PAPER LIST above — reference them by their exact ID string
 2. Fit one of these six categories: contradiction, missing-mechanistic-link, unexplored-method-transfer, population-blind-spot, untouched-dataset-opportunity, translational-bottleneck
 3. Be a genuine opening in the literature, not a vague platitude

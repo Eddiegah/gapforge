@@ -6,7 +6,7 @@ import { sql } from "@/lib/db/client";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-export const maxDuration = 60; // Vercel Pro allows up to 60s
+export const maxDuration = 60;
 
 function getRatelimit() {
   return new Ratelimit({
@@ -18,15 +18,18 @@ function getRatelimit() {
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
-
-  // Rate limit by user id or IP
   const identifier = session?.user?.id ?? req.headers.get("x-forwarded-for") ?? "anonymous";
-  const { success, remaining } = await getRatelimit().limit(identifier);
-  if (!success) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded. You can run up to 10 searches per hour." },
-      { status: 429, headers: { "X-RateLimit-Remaining": String(remaining) } }
-    );
+
+  try {
+    const { success, remaining } = await getRatelimit().limit(identifier);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded. You can run up to 10 searches per hour." },
+        { status: 429, headers: { "X-RateLimit-Remaining": String(remaining) } }
+      );
+    }
+  } catch {
+    // Redis unavailable — allow the request through
   }
 
   const body = await req.json();
@@ -48,34 +51,44 @@ export async function POST(req: NextRequest) {
       }, { status: 404 });
     }
 
-    // Step 2: Detect gaps using Claude
+    // Step 2: Detect gaps using LLM
     const gapResult = await detectGaps(
       query,
       orchestratorResult.papers,
       orchestratorResult.sourcesQueried
     );
 
-    // Step 3: Persist search (if user is signed in)
-    let searchId: string | null = null;
+    // Step 3: Persist search (non-blocking)
     if (session?.user?.id) {
-      const [row] = await sql`
-        INSERT INTO gap_searches (user_id, query, sources_queried, sources_skipped, papers_analyzed, gaps_found, result_json)
-        VALUES (
-          ${session.user.id},
-          ${query},
-          ${orchestratorResult.sourcesQueried},
-          ${orchestratorResult.sourcesSkipped},
-          ${orchestratorResult.papers.length},
-          ${gapResult.gaps.length},
-          ${JSON.stringify({ gaps: gapResult.gaps, papers: orchestratorResult.papers })}
-        )
-        RETURNING id
-      `;
-      searchId = (row?.id as string) ?? null;
+      try {
+        const [row] = await sql`
+          INSERT INTO gap_searches (user_id, query, sources_queried, sources_skipped, papers_analyzed, gaps_found, result_json)
+          VALUES (
+            ${session.user.id}, ${query},
+            ${orchestratorResult.sourcesQueried},
+            ${orchestratorResult.sourcesSkipped},
+            ${orchestratorResult.papers.length},
+            ${gapResult.gaps.length},
+            ${JSON.stringify({ gaps: gapResult.gaps, papers: orchestratorResult.papers })}
+          )
+          RETURNING id
+        `;
+        return NextResponse.json({
+          searchId: (row?.id as string) ?? null,
+          query,
+          gaps: gapResult.gaps,
+          sourcesQueried: orchestratorResult.sourcesQueried,
+          sourcesSkipped: orchestratorResult.sourcesSkipped,
+          papersAnalyzed: orchestratorResult.papers.length,
+          processingTimeMs: gapResult.processingTimeMs + orchestratorResult.queryTimeMs,
+        });
+      } catch {
+        // DB write failed — still return results
+      }
     }
 
     return NextResponse.json({
-      searchId,
+      searchId: null,
       query,
       gaps: gapResult.gaps,
       sourcesQueried: orchestratorResult.sourcesQueried,
@@ -83,6 +96,7 @@ export async function POST(req: NextRequest) {
       papersAnalyzed: orchestratorResult.papers.length,
       processingTimeMs: gapResult.processingTimeMs + orchestratorResult.queryTimeMs,
     });
+
   } catch (err) {
     console.error("[Gap AI Search] Error:", err);
     const message = err instanceof Error ? err.message : "Search failed";
