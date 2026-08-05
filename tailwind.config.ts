@@ -98,7 +98,7 @@ const config: Config = {
         "fade-in": "fadeIn 0.5s ease-in-out",
         "slide-up": "slideUp 0.4s ease-out",
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        marquee: "marquee 30s linear infinite",
+        "marquee": "marquee 30s linear infinite",
         "marquee-reverse": "marqueeReverse 30s linear infinite",
         "orb-float": "orbFloat 8s ease-in-out infinite",
         "orb-float-delayed": "orbFloat 10s ease-in-out 2s infinite",
