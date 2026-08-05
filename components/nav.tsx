@@ -3,91 +3,78 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Search, Zap, BookOpen, Users, Library, Settings, Menu, X, Moon, Sun } from "lucide-react";
+import {
+  Search, Zap, BookOpen, Users, Library, Settings,
+  Menu, X, Home, LayoutGrid, LogOut, ChevronDown
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/theme-provider";
 import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 
-const NAV_ITEMS = [
-  { href: "/gap-ai", label: "Gap AI", icon: Search },
-  { href: "/gap-drops", label: "Gap Drops", icon: Zap },
-  { href: "/gap-simplify", label: "GapSimplify", icon: BookOpen },
-  { href: "/workspaces", label: "Workspaces", icon: Users },
-  { href: "/library", label: "Library", icon: Library },
-];
-
-export function Nav() {
-  const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+/* ============================================================
+   PUBLIC NAV — shown on landing page / login / pricing
+   ============================================================ */
+export function PublicNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const links = [
+    { label: "How it works", href: "/#how-it-works" },
+    { label: "Features", href: "/#features" },
+    { label: "Pricing", href: "/#pricing" },
+    { label: "FAQ", href: "/#faq" },
+  ];
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-[rgb(var(--background))]/90 backdrop-blur-md border-b border-[rgb(var(--border))]">
-        <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[rgb(var(--bg))]/90 backdrop-blur-md border-b border-[rgb(var(--border))]">
+        <div className="max-w-6xl mx-auto h-full px-4 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
-            <span className="text-coral font-bold tracking-tight">GapForge</span>
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
+              <Zap size={14} className="text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
+              GapForge
+            </span>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop links */}
           <nav className="hidden md:flex items-center gap-1">
-            {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-              const active = pathname.startsWith(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(
-                    "relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
-                    active
-                      ? "text-coral"
-                      : "text-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
-                  )}
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="nav-pill"
-                      className="absolute inset-0 bg-coral/10 rounded-lg"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-                    />
-                  )}
-                  <Icon size={14} />
-                  <span className="relative">{label}</span>
-                </Link>
-              );
-            })}
+            {links.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                className="px-3 py-1.5 rounded-lg text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
+              >
+                {label}
+              </a>
+            ))}
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))] hover:bg-[rgb(var(--card))] transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+          <div className="hidden md:flex items-center gap-2">
             <Link
-              href="/settings"
-              className="hidden md:flex p-2 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))] hover:bg-[rgb(var(--card))] transition-colors"
-              aria-label="Settings"
+              href="/login"
+              className="px-4 py-2 rounded-lg text-sm text-[rgb(var(--fg))] border border-[rgb(var(--border))] hover:bg-[rgb(var(--card))] transition-colors font-medium"
             >
-              <Settings size={16} />
+              Sign in
             </Link>
-            <Link href="/gap-ai" className="hidden md:block btn-primary text-xs">
-              Start searching
-            </Link>
-            <button
-              className="md:hidden p-2 rounded-lg text-[rgb(var(--muted))]"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle menu"
+            <Link
+              href="/login"
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
             >
-              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
+              Get started free
+            </Link>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </header>
 
@@ -97,28 +84,201 @@ export function Nav() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className="fixed inset-x-0 top-14 z-40 bg-[rgb(var(--background))] border-b border-[rgb(var(--border))] p-4 md:hidden"
+          className="fixed inset-x-0 top-16 z-40 bg-[rgb(var(--bg))] border-b border-[rgb(var(--border))] p-4 md:hidden"
         >
-          <nav className="flex flex-col gap-1">
-            {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
-              <Link
+          <nav className="flex flex-col gap-1 mb-4">
+            {links.map(({ label, href }) => (
+              <a
                 key={href}
                 href={href}
                 onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                  pathname.startsWith(href)
-                    ? "bg-coral/10 text-coral"
-                    : "text-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))] hover:bg-[rgb(var(--card))]"
-                )}
+                className="flex items-center px-3 py-2.5 rounded-lg text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
               >
-                <Icon size={16} />
                 {label}
-              </Link>
+              </a>
             ))}
           </nav>
+          <div className="flex flex-col gap-2 pt-3 border-t border-[rgb(var(--border))]">
+            <Link href="/login" className="btn-secondary w-full text-center">
+              Sign in
+            </Link>
+            <Link href="/login" className="btn-primary w-full text-center">
+              Get started free
+            </Link>
+          </div>
         </motion.div>
       )}
     </>
   );
 }
+
+/* ============================================================
+   APP NAV — left sidebar for authenticated users
+   ============================================================ */
+const APP_NAV_ITEMS = [
+  { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/gap-ai", label: "Gap AI", icon: Search },
+  { href: "/gap-drops", label: "Gap Drops", icon: Zap },
+  { href: "/gap-simplify", label: "GapSimplify", icon: BookOpen },
+  { href: "/library", label: "Saved Gaps", icon: Library },
+  { href: "/workspaces", label: "Workspaces", icon: Users },
+  { href: "/settings", label: "Settings", icon: Settings },
+];
+
+export function AppNav() {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
+
+  const user = session?.user;
+  const firstName = user?.name?.split(" ")[0] ?? "User";
+  const initials = user?.name
+    ? user.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
+    : "U";
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="px-4 py-5 border-b border-[rgb(var(--border))]">
+        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
+            <Zap size={14} className="text-white" />
+          </div>
+          <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
+            GapForge
+          </span>
+        </Link>
+      </div>
+
+      {/* Nav items */}
+      <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
+        {APP_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
+                active
+                  ? "bg-violet-600/15 text-violet-400"
+                  : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))]"
+              )}
+            >
+              {active && (
+                <motion.span
+                  layoutId="app-nav-pill"
+                  className="absolute inset-0 bg-violet-600/15 rounded-lg"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                />
+              )}
+              <Icon size={16} className="flex-shrink-0 relative" />
+              <span className="relative">{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Bottom section */}
+      <div className="px-2 pb-4 border-t border-[rgb(var(--border))] pt-3 space-y-2">
+        {/* Gap AI Credits */}
+        <div className="px-3 py-2.5 rounded-lg bg-[rgb(var(--card))] border border-[rgb(var(--border))]">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-medium text-[rgb(var(--fg))]">Gap AI Credits</span>
+            <span className="text-xs font-bold text-violet-400">20/20</span>
+          </div>
+          <div className="h-1.5 bg-[rgb(var(--border))] rounded-full overflow-hidden">
+            <div className="h-full w-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full" />
+          </div>
+        </div>
+
+        {/* User info */}
+        <div className="px-3 py-2.5 rounded-lg hover:bg-[rgb(var(--card))] transition-colors">
+          <div className="flex items-center gap-3">
+            {user?.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={user.image} alt={firstName} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-bold text-white">{initials}</span>
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-[rgb(var(--fg))] truncate">{user?.name ?? "User"}</p>
+              <p className="text-xs text-[rgb(var(--muted))] truncate">{user?.email ?? ""}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Sign out */}
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[rgb(var(--muted))] hover:text-danger hover:bg-danger/5 transition-colors"
+        >
+          <LogOut size={15} />
+          Sign out
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop fixed sidebar */}
+      <aside className="hidden md:flex fixed top-0 left-0 bottom-0 w-60 flex-col bg-[rgb(var(--sidebar))] border-r border-[rgb(var(--border))] z-30">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile top bar */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[rgb(var(--bg))]/90 backdrop-blur-md border-b border-[rgb(var(--border))] flex items-center justify-between px-4">
+        <Link href="/dashboard" className="flex items-center gap-2 font-bold">
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
+            <Zap size={12} className="text-white" />
+          </div>
+          <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent text-lg">
+            GapForge
+          </span>
+        </Link>
+        <button
+          className="p-2 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </header>
+
+      {/* Mobile overlay sidebar */}
+      {mobileOpen && (
+        <>
+          <div
+            className="md:hidden fixed inset-0 z-30 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
+          <motion.aside
+            initial={{ x: -260 }}
+            animate={{ x: 0 }}
+            exit={{ x: -260 }}
+            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+            className="md:hidden fixed top-0 left-0 bottom-0 w-60 z-40 bg-[rgb(var(--sidebar))] border-r border-[rgb(var(--border))]"
+          >
+            <SidebarContent />
+          </motion.aside>
+        </>
+      )}
+    </>
+  );
+}
+
+/* ============================================================
+   LEGACY — keeps old `Nav` export so existing pages compile
+   until they're updated to use AppNav
+   ============================================================ */
+export function Nav() {
+  const { data: session } = useSession();
+  if (session) return <AppNav />;
+  return <PublicNav />;
+}
+
+export default Nav;

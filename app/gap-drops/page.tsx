@@ -6,7 +6,7 @@ import {
   Zap, Calendar, TrendingUp, DollarSign, ArrowRightLeft,
   Rocket, ChevronDown, ChevronUp, Loader, RefreshCw
 } from "lucide-react";
-import { Nav } from "@/components/nav";
+import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
 import { SourceStatus } from "@/components/source-status";
 import { formatRelativeDate } from "@/lib/utils";
@@ -141,9 +141,10 @@ export default function GapDropsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="max-w-4xl mx-auto px-4 pt-24 pb-20">
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <div className="md:ml-60 pt-14 md:pt-0">
+      <div className="max-w-4xl mx-auto px-4 pt-6 pb-20">
         {/* Header */}
         <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
           <div>
@@ -322,6 +323,7 @@ export default function GapDropsPage() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

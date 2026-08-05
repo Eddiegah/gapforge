@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Loader, ArrowLeft, Play, Download, FileText } from "lucide-react";
-import { Nav } from "@/components/nav";
+import { AppNav } from "@/components/nav";
 
 interface CompiledSection {
   title: string;
@@ -74,16 +74,16 @@ export default function ReviewDetailPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="flex justify-center pt-32"><Loader size={24} className="text-coral animate-spin" /></div>
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <div className="md:ml-60 pt-14 md:pt-0 flex justify-center pt-16"><Loader size={24} className="text-violet-400 animate-spin" /></div>
     </div>
   );
 
   if (!review) return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="max-w-3xl mx-auto px-4 pt-32 text-center">
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <div className="md:ml-60 pt-14 md:pt-0 max-w-3xl mx-auto px-4 pt-16 text-center">
         <p className="text-[rgb(var(--muted))]">Review not found.</p>
       </div>
     </div>
@@ -92,9 +92,10 @@ export default function ReviewDetailPage() {
   const compiled = review.compiled_json;
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="max-w-3xl mx-auto px-4 pt-24 pb-20">
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <div className="md:ml-60 pt-14 md:pt-0">
+      <div className="max-w-3xl mx-auto px-4 pt-6 pb-20">
         <a href="/library" className="flex items-center gap-1 text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))] mb-6 transition-colors">
           <ArrowLeft size={14} /> Library
         </a>
@@ -151,6 +152,7 @@ export default function ReviewDetailPage() {
             ))}
           </motion.div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Bookmark, BookOpen, FileText, Plus, Loader, Download } from "lucide-react";
-import { Nav } from "@/components/nav";
+import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
 import { cn } from "@/lib/utils";
 import { formatRelativeDate } from "@/lib/utils";
@@ -63,9 +63,10 @@ export default function LibraryPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="max-w-4xl mx-auto px-4 pt-24 pb-20">
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <div className="md:ml-60 pt-14 md:pt-0">
+      <div className="max-w-4xl mx-auto px-4 pt-6 pb-20">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-[rgb(var(--foreground))]">Library</h1>
           {tab === "reviews" && (
@@ -187,6 +188,7 @@ export default function LibraryPage() {
             )}
           </motion.div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Check, Loader } from "lucide-react";
-import { Nav } from "@/components/nav";
+import { AppNav } from "@/components/nav";
 import { cn } from "@/lib/utils";
 
 const RESEARCH_AREAS = [
@@ -130,9 +130,10 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="max-w-2xl mx-auto px-4 pt-24 pb-20">
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <div className="md:ml-60 pt-14 md:pt-0">
+      <div className="max-w-2xl mx-auto px-4 pt-6 pb-20">
         {/* Progress */}
         <div className="mb-8">
           <div className="flex justify-between text-xs text-[rgb(var(--muted))] mb-2">
@@ -290,6 +291,7 @@ export default function OnboardingPage() {
             </button>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

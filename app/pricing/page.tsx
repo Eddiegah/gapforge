@@ -1,4 +1,4 @@
-import { Nav } from "@/components/nav";
+import { PublicNav } from "@/components/nav";
 import { Check } from "lucide-react";
 
 const PLANS = [
@@ -74,8 +74,8 @@ const PLANS = [
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <PublicNav />
       <div className="max-w-5xl mx-auto px-4 pt-24 pb-20">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-[rgb(var(--foreground))] mb-3">Simple, honest pricing</h1>

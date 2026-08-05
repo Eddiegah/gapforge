@@ -4,21 +4,35 @@
 
 @layer base {
   :root {
-    --background: 245 245 245;
-    --foreground: 26 26 26;
+    --bg: 248 247 255;
+    --fg: 26 26 62;
     --card: 255 255 255;
-    --border: 209 209 209;
-    --muted: 109 109 109;
-    --accent: 255 87 87;
+    --border: 232 230 240;
+    --muted: 107 107 138;
+    --accent: 124 58 237;
+    --accent-soft: 167 139 250;
+    --highlight: 245 158 11;
+    --sidebar: 240 238 255;
+
+    /* Legacy aliases */
+    --background: 248 247 255;
+    --foreground: 26 26 62;
   }
 
   .dark {
-    --background: 26 26 26;
-    --foreground: 245 245 245;
-    --card: 45 45 45;
-    --border: 79 79 79;
-    --muted: 136 136 136;
-    --accent: 255 87 87;
+    --bg: 10 10 26;
+    --fg: 240 238 255;
+    --card: 19 19 46;
+    --border: 30 30 74;
+    --muted: 139 139 179;
+    --accent: 124 58 237;
+    --accent-soft: 167 139 250;
+    --highlight: 245 158 11;
+    --sidebar: 15 15 45;
+
+    /* Legacy aliases */
+    --background: 10 10 26;
+    --foreground: 240 238 255;
   }
 
   * {
@@ -26,22 +40,25 @@
   }
 
   body {
-    @apply bg-[rgb(var(--background))] text-[rgb(var(--foreground))] antialiased;
+    @apply bg-[rgb(var(--bg))] text-[rgb(var(--fg))] antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   ::selection {
-    @apply bg-coral/20 text-[rgb(var(--foreground))];
+    background: rgb(124 58 237 / 0.25);
+    color: rgb(var(--fg));
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Focus styles */
   :focus-visible {
-    @apply outline-none ring-2 ring-coral ring-offset-2 ring-offset-[rgb(var(--background))];
+    outline: none;
+    ring: 2px;
+    ring-color: rgb(124 58 237);
+    ring-offset: 2px;
+    ring-offset-color: rgb(var(--bg));
   }
 }
 
@@ -51,23 +68,23 @@
   }
 
   .btn-primary {
-    @apply bg-coral text-white px-4 py-2 rounded-lg font-medium text-sm
-           hover:bg-coral-600 active:bg-coral-700 transition-colors duration-150
+    @apply bg-violet-600 text-white px-4 py-2 rounded-lg font-medium text-sm
+           hover:bg-violet-700 active:bg-violet-800 transition-colors duration-150
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-[rgb(var(--border))] text-[rgb(var(--foreground))]
-           px-4 py-2 rounded-lg font-medium text-sm hover:bg-charcoal-100
-           dark:hover:bg-charcoal-800 transition-colors duration-150
+    @apply bg-transparent border border-[rgb(var(--border))] text-[rgb(var(--fg))]
+           px-4 py-2 rounded-lg font-medium text-sm
+           hover:bg-[rgb(var(--card))] transition-colors duration-150
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .input {
     @apply w-full bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-lg
-           px-4 py-2.5 text-sm text-[rgb(var(--foreground))]
+           px-4 py-2.5 text-sm text-[rgb(var(--fg))]
            placeholder:text-[rgb(var(--muted))]
-           focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent
+           focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent
            transition-shadow duration-150;
   }
 
@@ -76,6 +93,56 @@
   }
 
   .section-heading {
-    @apply text-xl font-semibold text-[rgb(var(--foreground))];
+    @apply text-xl font-semibold text-[rgb(var(--fg))];
   }
+
+  /* Violet gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent;
+  }
+}
+
+/* ============================================
+   MARQUEE / TICKER ANIMATION
+   Two identical copies side by side so loop
+   is seamless without JS
+   ============================================ */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted));
 }

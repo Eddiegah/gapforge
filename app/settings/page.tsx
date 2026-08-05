@@ -2,10 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Key, Copy, Trash2, Plus, Loader, Moon, Sun, Monitor } from "lucide-react";
-import { Nav } from "@/components/nav";
-import { useTheme } from "@/components/theme-provider";
+import {
+  Key, Copy, Trash2, Plus, Loader, User, Shield,
+  Bell, Tags, Lock, ExternalLink
+} from "lucide-react";
+import { AppNav } from "@/components/nav";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+
+type Tab = "account" | "newsletter" | "topics" | "privacy" | "security";
 
 interface ApiKey {
   id: string;
@@ -15,8 +22,19 @@ interface ApiKey {
   created_at: string;
 }
 
+const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
+  { id: "account", label: "Account", icon: User },
+  { id: "newsletter", label: "Newsletter", icon: Bell },
+  { id: "topics", label: "Topics", icon: Tags },
+  { id: "privacy", label: "Privacy", icon: Shield },
+  { id: "security", label: "Security", icon: Lock },
+];
+
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme();
+  const { data: session } = useSession();
+  const [tab, setTab] = useState<Tab>("account");
+
+  // API Keys state (security tab)
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [loadingKeys, setLoadingKeys] = useState(true);
   const [newKeyName, setNewKeyName] = useState("");
@@ -24,12 +42,17 @@ export default function SettingsPage() {
   const [newKeyValue, setNewKeyValue] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Newsletter toggle
+  const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+
   useEffect(() => {
-    fetch("/api/settings/api-keys")
-      .then((r) => r.json())
-      .then((d) => setApiKeys(d.keys ?? []))
-      .finally(() => setLoadingKeys(false));
-  }, []);
+    if (tab === "security") {
+      fetch("/api/settings/api-keys")
+        .then((r) => r.json())
+        .then((d) => setApiKeys(d.keys ?? []))
+        .finally(() => setLoadingKeys(false));
+    }
+  }, [tab]);
 
   const createKey = async () => {
     if (!newKeyName.trim()) return;
@@ -65,132 +88,281 @@ export default function SettingsPage() {
     }
   };
 
-  const THEMES = [
-    { value: "dark", label: "Dark", icon: Moon },
-    { value: "light", label: "Light", icon: Sun },
-    { value: "system", label: "System", icon: Monitor },
-  ];
+  const user = session?.user;
+  const provider = user?.image?.includes("github") ? "GitHub" : user?.image?.includes("google") ? "Google" : "OAuth";
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--background))]">
-      <Nav />
-      <div className="max-w-2xl mx-auto px-4 pt-24 pb-20 space-y-8">
-        <h1 className="text-2xl font-bold text-[rgb(var(--foreground))]">Settings</h1>
+    <div className="min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <main className="md:ml-60 pt-14 md:pt-0">
+        <div className="max-w-2xl mx-auto px-4 py-10 pb-20">
+          <h1 className="text-2xl font-bold text-[rgb(var(--fg))] mb-8">Settings</h1>
 
-        {/* Appearance */}
-        <div className="card p-6">
-          <h2 className="font-semibold text-[rgb(var(--foreground))] mb-4">Appearance</h2>
-          <div className="flex gap-2">
-            {THEMES.map(({ value, label, icon: Icon }) => (
+          {/* Tab bar */}
+          <div className="flex gap-1 p-1 card rounded-xl mb-8 overflow-x-auto">
+            {TABS.map(({ id, label, icon: Icon }) => (
               <button
-                key={value}
-                onClick={() => setTheme(value)}
+                key={id}
+                onClick={() => setTab(id)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
-                  theme === value
-                    ? "border-coral bg-coral/10 text-coral"
-                    : "border-[rgb(var(--border))] text-[rgb(var(--muted))] hover:border-coral/40"
+                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-shrink-0",
+                  tab === id
+                    ? "bg-violet-600 text-white shadow-sm"
+                    : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))]"
                 )}
               >
-                <Icon size={14} /> {label}
+                <Icon size={14} />
+                {label}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* API Keys — institutional plan */}
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-[rgb(var(--foreground))]">API Keys</h2>
-            <span className="text-xs text-[rgb(var(--muted))]">Institutional plan</span>
-          </div>
+          {/* ── ACCOUNT TAB ── */}
+          {tab === "account" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-5 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Profile
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-medium text-[rgb(var(--muted))] mb-1.5 block">Name</label>
+                    <div className="input bg-[rgb(var(--bg))]/50 cursor-default text-[rgb(var(--fg))]">
+                      {user?.name ?? "—"}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-[rgb(var(--muted))] mb-1.5 block">Email</label>
+                    <div className="input bg-[rgb(var(--bg))]/50 cursor-default text-[rgb(var(--fg))]">
+                      {user?.email ?? "—"}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-xs font-medium text-[rgb(var(--muted))] block mb-1">Sign-in provider</label>
+                      <span className="badge bg-violet-600/15 border border-violet-600/30 text-violet-400 px-3 py-1">
+                        {provider}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {newKeyValue && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
-            >
-              <p className="text-xs text-green-400 font-medium mb-2">
-                Copy this key now — it will not be shown again.
-              </p>
-              <div className="flex gap-2">
-                <code className="flex-1 bg-[rgb(var(--background))] px-3 py-2 rounded text-xs font-mono text-[rgb(var(--foreground))] truncate">
-                  {newKeyValue}
-                </code>
-                <button onClick={copy} className="btn-secondary text-xs flex items-center gap-1 flex-shrink-0">
-                  <Copy size={12} /> {copied ? "Copied" : "Copy"}
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-4 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Session
+                </h2>
+                <p className="text-sm text-[rgb(var(--muted))] mb-4">
+                  You&apos;re currently signed in. Sign out to end your session on this device.
+                </p>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="btn-secondary text-sm border-danger/40 text-danger hover:bg-danger/5"
+                >
+                  Sign out
                 </button>
               </div>
             </motion.div>
           )}
 
-          <div className="flex gap-2 mb-4">
-            <input
-              type="text"
-              value={newKeyName}
-              onChange={(e) => setNewKeyName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && createKey()}
-              placeholder="Key name (e.g. My Institution)"
-              className="input flex-1 text-sm"
-              aria-label="API key name"
-            />
-            <button onClick={createKey} disabled={!newKeyName.trim() || creating} className="btn-primary text-sm flex items-center gap-1">
-              {creating ? <Loader size={13} className="animate-spin" /> : <Plus size={13} />}
-              Create
-            </button>
-          </div>
-
-          {loadingKeys ? (
-            <Loader size={16} className="text-coral animate-spin" />
-          ) : apiKeys.length === 0 ? (
-            <p className="text-sm text-[rgb(var(--muted))]">No API keys yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {apiKeys.map((k) => (
-                <div key={k.id} className="flex items-center justify-between p-3 bg-[rgb(var(--background))] rounded-lg border border-[rgb(var(--border))]">
+          {/* ── NEWSLETTER TAB ── */}
+          {tab === "newsletter" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-4 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Email Preferences
+                </h2>
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <Key size={12} className="text-[rgb(var(--muted))]" />
-                      <span className="text-sm font-medium text-[rgb(var(--foreground))]">{k.name}</span>
-                      <code className="text-xs text-[rgb(var(--muted))] font-mono">{k.key_prefix}...</code>
-                    </div>
-                    <p className="text-xs text-[rgb(var(--muted))] mt-0.5 ml-4">
-                      {k.last_used ? `Last used ${new Date(k.last_used).toLocaleDateString()}` : "Never used"}
+                    <p className="text-sm font-medium text-[rgb(var(--fg))]">Weekly Gap Drop digest</p>
+                    <p className="text-xs text-[rgb(var(--muted))] mt-0.5">
+                      Receive your personalized research intelligence every Friday at 12pm EST.
                     </p>
                   </div>
                   <button
-                    onClick={() => revokeKey(k.id)}
-                    className="p-1.5 rounded text-[rgb(var(--muted))] hover:text-red-400 transition-colors"
-                    aria-label="Revoke key"
+                    onClick={() => setNewsletterEnabled(!newsletterEnabled)}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                      newsletterEnabled ? "bg-violet-600" : "bg-[rgb(var(--border))]"
+                    )}
+                    role="switch"
+                    aria-checked={newsletterEnabled}
                   >
-                    <Trash2 size={13} />
+                    <span
+                      className={cn(
+                        "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                        newsletterEnabled ? "translate-x-6" : "translate-x-1"
+                      )}
+                    />
                   </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── TOPICS TAB ── */}
+          {tab === "topics" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-2 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Research Profile
+                </h2>
+                <p className="text-sm text-[rgb(var(--muted))] mb-5">
+                  Your research profile shapes your personalized Gap Drops and search results. Update it anytime to refocus your intelligence feed.
+                </p>
+                <Link
+                  href="/onboarding"
+                  className="btn-primary flex items-center gap-2 w-fit text-sm"
+                >
+                  <ExternalLink size={14} />
+                  Update research profile
+                </Link>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── PRIVACY TAB ── */}
+          {tab === "privacy" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-4 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Data & Privacy
+                </h2>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between py-3 border-b border-[rgb(var(--border))]">
+                    <div>
+                      <p className="text-sm font-medium text-[rgb(var(--fg))]">Export your data</p>
+                      <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Download all your saved gaps, searches, and profile data.</p>
+                    </div>
+                    <button
+                      onClick={() => alert("Contact support to request a data export: gahedmund146@gmail.com")}
+                      className="btn-secondary text-sm"
+                    >
+                      Export
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between py-3">
+                    <div>
+                      <p className="text-sm font-medium text-danger">Delete account</p>
+                      <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Permanently delete your account and all associated data.</p>
+                    </div>
+                    <button
+                      onClick={() => alert("To delete your account, contact support: gahedmund146@gmail.com")}
+                      className="btn-secondary text-sm border-danger/40 text-danger hover:bg-danger/5"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xs text-[rgb(var(--muted))] mt-4">
+                  For data requests or deletion, contact <a href="mailto:gahedmund146@gmail.com" className="text-violet-400 hover:underline">gahedmund146@gmail.com</a>
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── SECURITY TAB ── */}
+          {tab === "security" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="card p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-[rgb(var(--fg))]">API Keys</h2>
+                  <span className="badge bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs">Institutional plan</span>
+                </div>
+
+                {newKeyValue && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-4 p-4 bg-success/10 border border-success/20 rounded-lg"
+                  >
+                    <p className="text-xs text-success font-medium mb-2">
+                      Copy this key now — it will not be shown again.
+                    </p>
+                    <div className="flex gap-2">
+                      <code className="flex-1 bg-[rgb(var(--bg))] px-3 py-2 rounded text-xs font-mono text-[rgb(var(--fg))] truncate">
+                        {newKeyValue}
+                      </code>
+                      <button onClick={copy} className="btn-secondary text-xs flex items-center gap-1 flex-shrink-0">
+                        <Copy size={12} /> {copied ? "Copied" : "Copy"}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                <div className="flex gap-2 mb-4">
+                  <input
+                    type="text"
+                    value={newKeyName}
+                    onChange={(e) => setNewKeyName(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && createKey()}
+                    placeholder="Key name (e.g. My Institution)"
+                    className="input flex-1 text-sm"
+                    aria-label="API key name"
+                  />
+                  <button
+                    onClick={createKey}
+                    disabled={!newKeyName.trim() || creating}
+                    className="btn-primary text-sm flex items-center gap-1"
+                  >
+                    {creating ? <Loader size={13} className="animate-spin" /> : <Plus size={13} />}
+                    Create
+                  </button>
+                </div>
+
+                {loadingKeys ? (
+                  <Loader size={16} className="text-violet-400 animate-spin" />
+                ) : apiKeys.length === 0 ? (
+                  <p className="text-sm text-[rgb(var(--muted))]">No API keys yet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {apiKeys.map((k) => (
+                      <div
+                        key={k.id}
+                        className="flex items-center justify-between p-3 bg-[rgb(var(--bg))]/50 rounded-lg border border-[rgb(var(--border))]"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Key size={12} className="text-[rgb(var(--muted))]" />
+                            <span className="text-sm font-medium text-[rgb(var(--fg))]">{k.name}</span>
+                            <code className="text-xs text-[rgb(var(--muted))] font-mono">{k.key_prefix}...</code>
+                          </div>
+                          <p className="text-xs text-[rgb(var(--muted))] mt-0.5 ml-4">
+                            {k.last_used ? `Last used ${new Date(k.last_used).toLocaleDateString()}` : "Never used"}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => revokeKey(k.id)}
+                          className="p-1.5 rounded text-[rgb(var(--muted))] hover:text-danger transition-colors"
+                          aria-label="Revoke key"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Reference managers */}
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-1">Reference Manager</h2>
+                <p className="text-sm text-[rgb(var(--muted))] mb-4">
+                  Connect Zotero to export gaps and citations directly to your library.
+                </p>
+                <a
+                  href="https://www.zotero.org/settings/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary text-sm flex items-center gap-1.5 w-fit"
+                >
+                  <ExternalLink size={13} /> Get Zotero API key
+                </a>
+              </div>
+            </motion.div>
           )}
         </div>
-
-        {/* Reference managers */}
-        <div className="card p-6">
-          <h2 className="font-semibold text-[rgb(var(--foreground))] mb-1">Reference Manager</h2>
-          <p className="text-sm text-[rgb(var(--muted))] mb-4">
-            Connect Zotero to export gaps and citations directly to your library.
-          </p>
-          <a
-            href="https://www.zotero.org/settings/keys"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary text-sm"
-          >
-            Get Zotero API key
-          </a>
-          <p className="text-xs text-[rgb(var(--muted))] mt-3">
-            In Library, use the export button and paste your Zotero key + user ID to push references directly.
-          </p>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }
