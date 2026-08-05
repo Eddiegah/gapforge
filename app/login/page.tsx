@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   const handleOAuth = async (provider: "github" | "google") => {
     setLoading(true);
-    await signIn(provider, { callbackUrl: "/dashboard" });
+    await signIn(provider, { callbackUrl: "/gap-ai" });
   };
 
   const handleEmail = async (e: React.FormEvent) => {

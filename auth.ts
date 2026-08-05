@@ -46,8 +46,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         return true;
       } catch (error) {
-        console.error("SignIn callback error:", error);
-        return false;
+        // Log but don't block sign-in — user can still use the app
+        // DB schema may not be set up yet or there was a transient error
+        console.error("SignIn DB sync error (non-blocking):", error);
+        return true;
       }
     },
 
@@ -72,5 +74,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
 });
