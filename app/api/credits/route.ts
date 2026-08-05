@@ -2,11 +2,32 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { sql } from "@/lib/db/client";
 
+async function ensureUserExists(userId: string, email: string, name: string | null, image: string | null) {
+  try {
+    await sql`
+      INSERT INTO users (id, email, name, image)
+      VALUES (${userId}, ${email}, ${name ?? null}, ${image ?? null})
+      ON CONFLICT (id) DO UPDATE SET
+        name = COALESCE(EXCLUDED.name, users.name),
+        image = COALESCE(EXCLUDED.image, users.image),
+        updated_at = NOW()
+    `;
+  } catch { /* ignore */ }
+}
+
 export async function GET() {
   const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ creditsUsed: 0, creditsLimit: 20 });
 
   try {
+    // Make sure the user row exists
+    await ensureUserExists(
+      session.user.id,
+      session.user.email ?? "",
+      session.user.name ?? null,
+      session.user.image ?? null
+    );
+
     // Reset if past reset_at
     await sql`
       UPDATE user_credits 
@@ -21,10 +42,11 @@ export async function GET() {
     `;
 
     return NextResponse.json({
-      creditsUsed: row?.credits_used ?? 0,
-      creditsLimit: row?.credits_limit ?? 20,
+      creditsUsed: Number(row?.credits_used ?? 0),
+      creditsLimit: Number(row?.credits_limit ?? 20),
     });
-  } catch {
+  } catch (err) {
+    console.error("[Credits] Error:", err);
     return NextResponse.json({ creditsUsed: 0, creditsLimit: 20 });
   }
 }

@@ -54,7 +54,7 @@ export async function getHealthySources(): Promise<{
   results: SourceHealthResult[];
 }> {
   // Use only the most reliable sources to keep response time fast
-  const FAST_SOURCES = ["semantic-scholar", "arxiv", "pubmed", "openalex", "crossref", "biorxiv"];
+  const FAST_SOURCES = ["semantic-scholar", "arxiv", "pubmed", "openalex", "crossref", "biorxiv", "doaj"];
   const sourcesToCheck = ALL_SOURCES.filter(s => FAST_SOURCES.includes(s.id));
   
   const results = await Promise.all(sourcesToCheck.map((s) => checkSourceHealth(s)));

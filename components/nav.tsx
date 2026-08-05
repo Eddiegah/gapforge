@@ -131,7 +131,7 @@ export function AppNav() {
   const [creditsUsed, setCreditsUsed] = useState(0);
   const [creditsLimit, setCreditsLimit] = useState(20);
 
-  useEffect(() => {
+  const fetchCredits = () => {
     fetch("/api/credits")
       .then(r => r.json())
       .then(data => {
@@ -139,6 +139,18 @@ export function AppNav() {
         if (typeof data.creditsLimit === "number") setCreditsLimit(data.creditsLimit);
       })
       .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchCredits();
+    // Refresh on window focus (catches post-search updates)
+    window.addEventListener("focus", fetchCredits);
+    // Poll every 30s while page is open
+    const interval = setInterval(fetchCredits, 30000);
+    return () => {
+      window.removeEventListener("focus", fetchCredits);
+      clearInterval(interval);
+    };
   }, []);
 
   const user = session?.user;

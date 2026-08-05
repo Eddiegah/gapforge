@@ -83,9 +83,19 @@ export async function POST(req: NextRequest) {
       orchestratorResult.sourcesQueried
     );
 
-    // Step 3: Persist search (non-blocking)
+    // Step 3: Persist search and deduct credit
     if (session?.user?.id) {
       try {
+        // Ensure user exists in DB
+        await sql`
+          INSERT INTO users (id, email, name, image)
+          VALUES (${session.user.id}, ${session.user.email ?? ""}, ${session.user.name ?? null}, ${session.user.image ?? null})
+          ON CONFLICT (id) DO UPDATE SET
+            name = COALESCE(EXCLUDED.name, users.name),
+            image = COALESCE(EXCLUDED.image, users.image),
+            updated_at = NOW()
+        `;
+
         const [row] = await sql`
           INSERT INTO gap_searches (user_id, query, sources_queried, sources_skipped, papers_analyzed, gaps_found, result_json)
           VALUES (
@@ -100,15 +110,13 @@ export async function POST(req: NextRequest) {
         `;
 
         // Deduct credit
-        try {
-          await sql`
-            INSERT INTO user_credits (user_id, credits_used)
-            VALUES (${session.user.id}, 1)
-            ON CONFLICT (user_id) DO UPDATE
-            SET credits_used = user_credits.credits_used + 1,
-                updated_at = NOW()
-          `;
-        } catch { /* non-blocking */ }
+        await sql`
+          INSERT INTO user_credits (user_id, credits_used)
+          VALUES (${session.user.id}, 1)
+          ON CONFLICT (user_id) DO UPDATE
+          SET credits_used = user_credits.credits_used + 1,
+              updated_at = NOW()
+        `;
 
         return NextResponse.json({
           searchId: (row?.id as string) ?? null,
@@ -119,8 +127,9 @@ export async function POST(req: NextRequest) {
           papersAnalyzed: orchestratorResult.papers.length,
           processingTimeMs: gapResult.processingTimeMs + orchestratorResult.queryTimeMs,
         });
-      } catch {
-        // DB write failed — still return results
+      } catch (dbErr) {
+        console.error("[Search] DB error:", dbErr);
+        // Still return results even if DB fails
       }
     }
 

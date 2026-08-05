@@ -150,6 +150,8 @@ export default function GapAIPage() {
       setHistory(prev => prev.map(h =>
         h.id === histId ? { ...h, gapsFound: data.gaps.length, status: "done" as const } : h
       ));
+      // Trigger credits refresh in sidebar
+      window.dispatchEvent(new Event("focus"));
     } catch (err) {
       clearTimeout(streamTimer);
       setError(err instanceof Error ? err.message : "Search failed");

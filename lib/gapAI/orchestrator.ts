@@ -9,8 +9,8 @@ export interface OrchestratorResult {
   queryTimeMs: number;
 }
 
-const PAPERS_PER_SOURCE = 4; // fast enough for Hobby tier
-const MAX_PAPERS_TOTAL = 20;
+const PAPERS_PER_SOURCE = 6; // balance between quality and speed
+const MAX_PAPERS_TOTAL = 40;
 
 export async function orchestrateQuery(
   query: string,
