@@ -78,7 +78,7 @@ export async function llmCall(system: string, prompt: string, maxTokens = 4096):
   const hasClaude = !!process.env.ANTHROPIC_API_KEY;
 
   if (!hasGroq && !hasGemini && !hasClaude) {
-    throw new Error("No LLM API key set. Add GROQ_API_KEY (free at console.groq.com) to your environment.");
+    throw new Error("No LLM API key set. Add GROQ_API_KEY (free at console.groq.com) to your Vercel environment variables.");
   }
 
   // Try Groq first — fastest and free
@@ -87,7 +87,7 @@ export async function llmCall(system: string, prompt: string, maxTokens = 4096):
       const text = await callGroq(system, prompt, maxTokens);
       return { text, provider: "groq" };
     } catch (err) {
-      console.warn("[LLM] Groq failed, trying Gemini:", err instanceof Error ? err.message : err);
+      console.warn("[LLM] Groq failed:", err instanceof Error ? err.message : err);
     }
   }
 
@@ -97,13 +97,17 @@ export async function llmCall(system: string, prompt: string, maxTokens = 4096):
       const text = await callGemini(system, prompt, maxTokens);
       return { text, provider: "gemini" };
     } catch (err) {
-      console.warn("[LLM] Gemini failed, trying Claude:", err instanceof Error ? err.message : err);
+      console.warn("[LLM] Gemini failed:", err instanceof Error ? err.message : err);
     }
   }
 
   // Claude last resort
-  const text = await callClaude(system, prompt, maxTokens);
-  return { text, provider: "claude" };
+  if (hasClaude) {
+    const text = await callClaude(system, prompt, maxTokens);
+    return { text, provider: "claude" };
+  }
+
+  throw new Error("All LLM providers failed. Please check your GROQ_API_KEY in Vercel environment variables.");
 }
 
 export async function llmCallFast(system: string, prompt: string): Promise<LLMResponse> {
