@@ -399,8 +399,8 @@ export default function GapAIPage() {
                         </span>
                       </div>
                     )}
-                    {result.gaps.map(gap => (
-                      <GapCard key={gap.id} gap={gap} onSave={handleSave} onShare={handleShare} saved={savedIds.has(gap.id)} />
+                    {result.gaps.map((gap, idx) => (
+                      <GapCard key={gap.id} gap={gap} index={idx + 1} onSave={handleSave} onShare={handleShare} saved={savedIds.has(gap.id)} />
                     ))}
                     {result.gaps.length === 0 && (
                       <div className="text-center py-12 text-[rgb(var(--muted))] text-sm">

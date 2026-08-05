@@ -200,3 +200,13 @@ CREATE INDEX IF NOT EXISTS idx_simplified_papers_user ON simplified_papers(user_
 CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id);
 CREATE INDEX IF NOT EXISTS idx_workspace_items_workspace ON workspace_items(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_literature_reviews_user ON literature_reviews(user_id);
+
+-- ─── Credits ────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS user_credits (
+  user_id      TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  credits_used INTEGER NOT NULL DEFAULT 0,
+  credits_limit INTEGER NOT NULL DEFAULT 20,
+  reset_at     TIMESTAMPTZ NOT NULL DEFAULT (date_trunc('month', NOW()) + interval '1 month'),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

@@ -36,6 +36,14 @@ export interface DetectedGap {
   category: GapCategory;
   relevanceScore: number;
   relevanceRationale: string;
+  // Rich fields
+  confidence: number;         // 0-100
+  novelty: number;            // 0-100
+  feasibility: number;        // 0-100
+  whatsMissing: string;       // 2-3 sentences: specific evidence from papers
+  whyItMatters: string;       // 2-3 sentences: real-world impact
+  whyUnresolved: string;      // 1-2 sentences: why hasn't it been solved
+  suggestedDirection: string; // 1-2 sentences: specific research suggestion
   citations: GapCitation[];
   researchSuggestion: string;
 }
@@ -147,7 +155,14 @@ For each gap, provide a JSON object with:
 - description: string (2-4 sentences, plain language, specific)
 - category: one of the six category strings above
 - directnessHint: number 1-10 (how directly the evidence points to this gap)
-- researchSuggestion: string (1-2 sentences on how to address this gap)
+- confidence: number 0-100 (how confident you are this is a real gap, based on strength of evidence)
+- novelty: number 0-100 (how novel/unexplored this gap is — 100 means totally unexplored)
+- feasibility: number 0-100 (how feasible it is to address this gap with current methods/resources)
+- whatsMissing: string (2-3 sentences starting with "Specific text from Paper [N] shows X but Y is missing..." — cite specific papers by number or title)
+- whyItMatters: string (2-3 sentences on real-world impact and why this gap matters)
+- whyUnresolved: string (1-2 sentences explaining why no one has solved this yet — funding, methods, complexity, etc.)
+- suggestedDirection: string (1-2 sentences: a bold, specific, actionable research direction to address this gap)
+- researchSuggestion: string (1-2 sentences on how to address this gap — may overlap with suggestedDirection)
 - citations: array of { paperId: string (must be from VALID PAPER IDs), relevantQuote: string (brief quote from that paper's abstract, max 30 words) }
 
 Return ONLY a JSON array of gap objects. No other text. If you cannot find genuine gaps supported by the provided papers, return an empty array [].`;
@@ -162,6 +177,13 @@ Return ONLY a JSON array of gap objects. No other text. If you cannot find genui
     description?: string;
     category?: string;
     directnessHint?: number;
+    confidence?: number;
+    novelty?: number;
+    feasibility?: number;
+    whatsMissing?: string;
+    whyItMatters?: string;
+    whyUnresolved?: string;
+    suggestedDirection?: string;
     researchSuggestion?: string;
     citations?: { paperId: string; relevantQuote?: string }[];
   }
@@ -183,6 +205,13 @@ Return ONLY a JSON array of gap objects. No other text. If you cannot find genui
         category,
         relevanceScore: score,
         relevanceRationale: rationale,
+        confidence: Math.min(100, Math.max(0, g.confidence ?? 70)),
+        novelty: Math.min(100, Math.max(0, g.novelty ?? 60)),
+        feasibility: Math.min(100, Math.max(0, g.feasibility ?? 65)),
+        whatsMissing: g.whatsMissing ?? "",
+        whyItMatters: g.whyItMatters ?? "",
+        whyUnresolved: g.whyUnresolved ?? "",
+        suggestedDirection: g.suggestedDirection ?? "",
         citations: verified,
         researchSuggestion: g.researchSuggestion ?? "",
       };

@@ -41,6 +41,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Query must be under 500 characters." }, { status: 400 });
   }
 
+  // Check credits limit for authenticated users
+  if (session?.user?.id) {
+    try {
+      // Auto-reset if past reset_at
+      await sql`
+        UPDATE user_credits 
+        SET credits_used = 0, reset_at = date_trunc('month', NOW()) + interval '1 month', updated_at = NOW()
+        WHERE user_id = ${session.user.id} AND reset_at < NOW()
+      `;
+      const [creditRow] = await sql`
+        SELECT credits_used, credits_limit FROM user_credits WHERE user_id = ${session.user.id}
+      `;
+      if (creditRow) {
+        const used = creditRow.credits_used as number;
+        const limit = creditRow.credits_limit as number;
+        if (used >= limit) {
+          return NextResponse.json(
+            { error: "You've used all 20 free searches this month. Upgrade to Pro for unlimited searches." },
+            { status: 403 }
+          );
+        }
+      }
+    } catch { /* non-blocking — allow request if credits check fails */ }
+  }
+
   try {
     // Step 1: Fetch papers from sources
     const orchestratorResult = await orchestrateQuery(query);
@@ -73,6 +98,18 @@ export async function POST(req: NextRequest) {
           )
           RETURNING id
         `;
+
+        // Deduct credit
+        try {
+          await sql`
+            INSERT INTO user_credits (user_id, credits_used)
+            VALUES (${session.user.id}, 1)
+            ON CONFLICT (user_id) DO UPDATE
+            SET credits_used = user_credits.credits_used + 1,
+                updated_at = NOW()
+          `;
+        } catch { /* non-blocking */ }
+
         return NextResponse.json({
           searchId: (row?.id as string) ?? null,
           query,

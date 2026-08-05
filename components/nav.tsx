@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, Users, Library, Settings,
-  Menu, X, Home, LayoutGrid, LogOut, ChevronDown
+  Menu, X, Home, LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { LogoIcon } from "@/components/logo";
 
@@ -128,6 +128,18 @@ export function AppNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
+  const [creditsUsed, setCreditsUsed] = useState(0);
+  const [creditsLimit, setCreditsLimit] = useState(20);
+
+  useEffect(() => {
+    fetch("/api/credits")
+      .then(r => r.json())
+      .then(data => {
+        if (typeof data.creditsUsed === "number") setCreditsUsed(data.creditsUsed);
+        if (typeof data.creditsLimit === "number") setCreditsLimit(data.creditsLimit);
+      })
+      .catch(() => {});
+  }, []);
 
   const user = session?.user;
   const firstName = user?.name?.split(" ")[0] ?? "User";
@@ -183,11 +195,32 @@ export function AppNav() {
         <div className="px-3 py-2.5 rounded-lg bg-[rgb(var(--card))] border border-[rgb(var(--border))]">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs font-medium text-[rgb(var(--fg))]">Gap AI Credits</span>
-            <span className="text-xs font-bold text-violet-400">20/20</span>
+            <span className={cn(
+              "text-xs font-bold",
+              creditsUsed >= creditsLimit ? "text-red-400" : "text-violet-400"
+            )}>
+              {creditsLimit - creditsUsed}/{creditsLimit}
+            </span>
           </div>
           <div className="h-1.5 bg-[rgb(var(--border))] rounded-full overflow-hidden">
-            <div className="h-full w-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full" />
+            <div
+              className={cn(
+                "h-full rounded-full transition-all",
+                creditsUsed >= creditsLimit
+                  ? "bg-gradient-to-r from-red-600 to-red-400"
+                  : "bg-gradient-to-r from-violet-600 to-violet-400"
+              )}
+              style={{ width: `${Math.min(100, (creditsUsed / creditsLimit) * 100)}%` }}
+            />
           </div>
+          {creditsUsed >= creditsLimit && (
+            <Link
+              href="/pricing"
+              className="mt-1.5 block text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
+            >
+              Upgrade to Pro →
+            </Link>
+          )}
         </div>
 
         {/* User info */}

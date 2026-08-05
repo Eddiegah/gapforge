@@ -6,6 +6,8 @@ interface LogoIconProps {
 }
 
 export function LogoIcon({ size = 32, className }: LogoIconProps) {
+  // Use a stable ID suffix to avoid conflicts when multiple instances render
+  const gradId = "gf-bg-grad";
   return (
     <svg
       width={size}
@@ -17,27 +19,44 @@ export function LogoIcon({ size = 32, className }: LogoIconProps) {
       aria-label="GapForge logo"
     >
       <defs>
-        <linearGradient id="gf-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#a78bfa" />
-          <stop offset="100%" stopColor="#7c3aed" />
+        <linearGradient id={gradId} x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="100%" stopColor="#6d28d9" />
         </linearGradient>
       </defs>
-      {/* Outer rounded square */}
-      <rect width="32" height="32" rx="8" fill="url(#gf-grad)" />
-      {/* G shape — stylized gap/opening */}
-      {/* Left vertical bar */}
-      <rect x="7" y="8" width="4" height="16" rx="2" fill="white" />
-      {/* Top horizontal bar */}
-      <rect x="7" y="8" width="12" height="4" rx="2" fill="white" />
-      {/* Bottom horizontal bar */}
-      <rect x="7" y="20" width="12" height="4" rx="2" fill="white" />
-      {/* Middle gap bar — the "gap" in GapForge */}
-      <rect x="15" y="15" width="7" height="3" rx="1.5" fill="white" />
-      {/* Lightning bolt / forge spark */}
+
+      {/* Background: rounded rect with violet gradient */}
+      <rect width="32" height="32" rx="8" fill={`url(#${gradId})`} />
+
+      {/* Stylized "G" with a deliberate gap on the right side */}
+      {/* Top-left arc / serif of G — top bar */}
       <path
-        d="M22 9L19 15.5H22L19 23"
+        d="M20 9H13C10.24 9 8 11.24 8 14V18C8 20.76 10.24 23 13 23H18"
         stroke="white"
-        strokeWidth="2"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Middle crossbar of G (the "gap" — it stops before closing the right side) */}
+      <path
+        d="M16 16H20"
+        stroke="white"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      {/* Right vertical stub — deliberately SHORT so there's a visible gap above */}
+      <path
+        d="M20 19V23"
+        stroke="white"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+
+      {/* Spark / forge lightning — 3-pointed, top-right corner */}
+      <path
+        d="M24 7L22 11.5L24.5 11L22 16"
+        stroke="white"
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
         opacity="0.85"
