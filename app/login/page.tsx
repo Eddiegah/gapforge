@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Zap, Eye, EyeOff, Github, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Github, Mail, Lock } from "lucide-react";
+import { LogoIcon } from "@/components/logo";
 import Link from "next/link";
 
 type Mode = "signin" | "signup";
@@ -61,8 +62,8 @@ export default function LoginPage() {
         <div className="card p-8 shadow-2xl shadow-black/30 backdrop-blur-sm bg-[rgb(var(--card))]/95">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 mb-4 shadow-lg shadow-violet-900/40">
-              <Zap size={26} className="text-white" />
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4">
+              <LogoIcon size={56} />
             </div>
             <h1 className="text-2xl font-bold text-[rgb(var(--fg))] mb-1">GapForge</h1>
             <p className="text-sm text-[rgb(var(--muted))]">

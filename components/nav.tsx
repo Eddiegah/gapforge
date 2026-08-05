@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { LogoIcon } from "@/components/logo";
 
 /* ============================================================
    PUBLIC NAV — shown on landing page / login / pricing
@@ -30,9 +31,7 @@ export function PublicNav() {
         <div className="max-w-6xl mx-auto h-full px-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
-              <Zap size={14} className="text-white" />
-            </div>
+            <LogoIcon size={28} />
             <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
               GapForge
             </span>
@@ -141,9 +140,7 @@ export function AppNav() {
       {/* Logo */}
       <div className="px-4 py-5 border-b border-[rgb(var(--border))]">
         <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
-            <Zap size={14} className="text-white" />
-          </div>
+          <LogoIcon size={28} />
           <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
             GapForge
           </span>
@@ -233,9 +230,7 @@ export function AppNav() {
       {/* Mobile top bar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[rgb(var(--bg))]/90 backdrop-blur-md border-b border-[rgb(var(--border))] flex items-center justify-between px-4">
         <Link href="/dashboard" className="flex items-center gap-2 font-bold">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
-            <Zap size={12} className="text-white" />
-          </div>
+          <LogoIcon size={24} />
           <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent text-lg">
             GapForge
           </span>
