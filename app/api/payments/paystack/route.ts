@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { sql } from "@/lib/db/client";
 import { createHmac } from "crypto";
 
@@ -13,7 +13,7 @@ const PLANS: Record<string, { name: string; plan: string; monthlyUSD: number }> 
 
 /** Initialize a Paystack payment */
 export async function POST(req: NextRequest) {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
 
   const { planId } = await req.json();

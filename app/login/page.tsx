@@ -22,7 +22,10 @@ export default function LoginPage() {
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Email/password auth not wired — providers only
+    if (!email.trim()) return;
+    setLoading(true);
+    // For now, redirect to Google sign-in with the email as hint
+    await signIn("google", { callbackUrl: "/gap-ai", login_hint: email });
   };
 
   const isSignup = mode === "signup";

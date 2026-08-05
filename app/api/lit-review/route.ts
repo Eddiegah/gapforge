@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { sql } from "@/lib/db/client";
 import { compileLiteratureReview } from "@/lib/litReview/compiler";
 import { exportToBibTeX, exportToRIS } from "@/lib/integrations/referenceManagers";
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
 
 export async function GET() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
   const reviews = await sql`
@@ -20,7 +20,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
   const [user] = await sql`SELECT plan FROM users WHERE id = ${session.user.id}`;

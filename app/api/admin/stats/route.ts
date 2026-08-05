@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { sql } from "@/lib/db/client";
 
 const ADMIN_EMAIL = "gahedmund146@gmail.com";
 
 export async function GET() {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session?.user?.email || session.user.email !== ADMIN_EMAIL) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

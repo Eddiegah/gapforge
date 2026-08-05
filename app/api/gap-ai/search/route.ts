@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { orchestrateQuery } from "@/lib/gapAI/orchestrator";
 import { detectGaps } from "@/lib/gapAI/detectGaps";
 import { sql } from "@/lib/db/client";
@@ -15,7 +15,7 @@ function getRatelimit() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
+  const session = await getSession();
 
   // Rate limit by user id or IP
   const identifier = session?.user?.id ?? req.headers.get("x-forwarded-for") ?? "anonymous";

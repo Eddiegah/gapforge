@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { fetchPaper } from "@/lib/gapSimplify/fetchPaper";
 import { simplifyPaper } from "@/lib/gapSimplify/simplify";
 import { sql } from "@/lib/db/client";
@@ -15,7 +15,7 @@ function getRatelimit() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
+  const session = await getSession();
   const identifier = session?.user?.id ?? req.headers.get("x-forwarded-for") ?? "anonymous";
   const { success } = await getRatelimit().limit(`simplify:${identifier}`);
   if (!success) {
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Sign in to view simplified papers." }, { status: 401 });
   }
