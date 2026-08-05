@@ -50,10 +50,10 @@ export interface GapDetectionResult {
 
 function buildPaperIndex(papers: SourcePaper[]): string {
   return papers
-    .slice(0, 40)
+    .slice(0, 25)
     .map((p, i) => {
       const abstract = p.abstract
-        ? p.abstract.slice(0, 300) + (p.abstract.length > 300 ? "..." : "")
+        ? p.abstract.slice(0, 200) + (p.abstract.length > 200 ? "..." : "")
         : "(no abstract)";
       return `[${i + 1}] ID:${p.id} | "${p.title}" | ${p.authors.slice(0, 3).join(", ")}${p.authors.length > 3 ? " et al." : ""} | ${p.year ?? "n.d."} | Citations: ${p.citationCount ?? "unknown"} | DOI: ${p.doi ?? "none"}\nAbstract: ${abstract}`;
     })

@@ -9,8 +9,8 @@ export interface OrchestratorResult {
   queryTimeMs: number;
 }
 
-const PAPERS_PER_SOURCE = 8;
-const MAX_PAPERS_TOTAL = 60;
+const PAPERS_PER_SOURCE = 5; // reduced from 8 to stay within timeout
+const MAX_PAPERS_TOTAL = 40; // reduced from 60
 
 export async function orchestrateQuery(
   query: string,

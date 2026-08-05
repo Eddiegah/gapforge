@@ -120,7 +120,14 @@ export default function GapAIPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: searchQuery }),
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("The search took too long. Please try a more specific query.");
+      }
+      
       clearTimeout(streamTimer);
       if (!res.ok) throw new Error(data.error ?? "Search failed");
 

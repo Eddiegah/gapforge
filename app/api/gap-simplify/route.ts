@@ -6,6 +6,8 @@ import { sql } from "@/lib/db/client";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
+export const maxDuration = 60;
+
 function getRatelimit() {
   return new Ratelimit({
     redis: Redis.fromEnv(),

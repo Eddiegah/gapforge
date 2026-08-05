@@ -53,7 +53,11 @@ export async function getHealthySources(): Promise<{
   healthy: AcademicSource[];
   results: SourceHealthResult[];
 }> {
-  const results = await Promise.all(ALL_SOURCES.map((s) => checkSourceHealth(s)));
+  // Use only the most reliable sources to keep response time fast
+  const FAST_SOURCES = ["semantic-scholar", "arxiv", "pubmed", "openalex", "crossref"];
+  const sourcesToCheck = ALL_SOURCES.filter(s => FAST_SOURCES.includes(s.id));
+  
+  const results = await Promise.all(sourcesToCheck.map((s) => checkSourceHealth(s)));
   const healthy: AcademicSource[] = [];
 
   for (const result of results) {
