@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 245 245 245;
+    --foreground: 26 26 26;
+    --card: 255 255 255;
+    --border: 209 209 209;
+    --muted: 109 109 109;
+    --accent: 255 87 87;
+  }
+
+  .dark {
+    --background: 26 26 26;
+    --foreground: 245 245 245;
+    --card: 45 45 45;
+    --border: 79 79 79;
+    --muted: 136 136 136;
+    --accent: 255 87 87;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  body {
+    @apply bg-[rgb(var(--background))] text-[rgb(var(--foreground))] antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-coral/20 text-[rgb(var(--foreground))];
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-coral ring-offset-2 ring-offset-[rgb(var(--background))];
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl;
+  }
+
+  .btn-primary {
+    @apply bg-coral text-white px-4 py-2 rounded-lg font-medium text-sm
+           hover:bg-coral-600 active:bg-coral-700 transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-[rgb(var(--border))] text-[rgb(var(--foreground))]
+           px-4 py-2 rounded-lg font-medium text-sm hover:bg-charcoal-100
+           dark:hover:bg-charcoal-800 transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input {
+    @apply w-full bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-lg
+           px-4 py-2.5 text-sm text-[rgb(var(--foreground))]
+           placeholder:text-[rgb(var(--muted))]
+           focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent
+           transition-shadow duration-150;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .section-heading {
+    @apply text-xl font-semibold text-[rgb(var(--foreground))];
+  }
+}
