@@ -93,14 +93,14 @@ export default function PricingPage() {
     setLoadingPlan(planId);
     setError(null);
     try {
-      const res = await fetch("/api/payments/flutterwave", {
+      const res = await fetch("/api/payments/paystack", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Payment failed");
-      if (data.paymentLink) window.location.href = data.paymentLink;
+      if (data.authorizationUrl) window.location.href = data.authorizationUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment initialization failed. Please try again.");
     } finally {
@@ -173,7 +173,7 @@ export default function PricingPage() {
         </div>
 
         <p className="text-center text-xs text-[rgb(var(--muted))] mt-8">
-          Payments via Flutterwave — supports Visa, Mastercard, MTN MoMo, Vodafone Cash, and bank transfer.
+          Payments processed securely via Paystack — supports Visa, Mastercard, and bank transfer.
           <br />Built in Ghana for researchers worldwide.
         </p>
       </div>
