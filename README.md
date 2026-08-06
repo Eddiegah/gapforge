@@ -1,226 +1,296 @@
-# GapForge — Research Intelligence Platform
+<div align="center">
 
-GapForge combines three tools for researchers: **Gap AI** (on-demand gap detection), **Gap Drops** (weekly personalized digests), and **GapSimplify** (plain-language paper translation), plus premium features for teams and institutions.
+<img src="public/icon.svg" width="80" height="80" alt="GapForge Logo" />
+
+# GapForge
+
+### Research Intelligence Platform
+
+**Find the research gaps nobody is exploring yet.**
+
+[![Next.js](https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-gapforge--self.vercel.app-7c3aed?style=for-the-badge)](https://gapforge-self.vercel.app)
+
+</div>
 
 ---
 
-## Setup
+## What is GapForge?
 
-### Prerequisites
+GapForge is a research intelligence platform that scans thousands of live academic papers and surfaces **genuine, evidence-backed research gaps** — with citations you can verify. No hallucinated references. No inflated accuracy claims. Just real gaps, honest scores, and tools to turn discoveries into action.
 
-- Node.js 20+ (tested on v24)
-- npm 10+
-- Windows — all commands below use PowerShell
+Built for researchers, academics, PhD students, and research-driven professionals who want to stay ahead of the literature without spending hours on manual search.
 
-### Environment variables
+---
 
-Copy `.env.example` to `.env.local` and fill in all values:
+## Core Features
 
-```powershell
-Copy-Item .env.example .env.local
-```
+### Gap AI
+Search any research topic. GapForge queries Semantic Scholar, arXiv, PubMed, OpenAlex, Crossref, bioRxiv, DOAJ and more in parallel — then uses AI to identify genuine candidate gaps, each with:
+- **Confidence / Novelty / Feasibility** scores
+- **What's Missing** — specific evidence from real papers
+- **Why It Matters** — real-world impact
+- **Suggested Direction** — actionable research recommendation
+- **Gap aging** — how long the gap has been open
+- **Difficulty rating** — Easy / Moderate / Hard / Moonshot
 
-Required variables:
+### Gap Drops
+A personalized weekly research intelligence digest, generated every Friday from your research profile. Includes:
+- 3 verified research gaps scoped to your niche
+- Startup and commercialization opportunities
+- Emerging trends from this week's literature
+- Funding opportunities
+- Cross-disciplinary transfer ideas
 
-| Variable | Purpose |
+### GapSimplify
+Paste a DOI, arXiv ID, or upload a PDF. Get:
+- Plain-language section translations (for 4 audience types)
+- Key claims rated by evidence strength (Strong / Moderate / Weak / Speculative)
+- Interactive glossary with hover definitions
+- Gaps surfaced within that specific paper
+
+### Gap Actions (on every gap card)
+| Button | What it does |
 |---|---|
-| `AUTH_SECRET` | NextAuth secret — generate with `openssl rand -base64 32` |
-| `AUTH_URL` | Your deployed URL (e.g. `https://gapforge.vercel.app`) |
-| `AUTH_TRUST_HOST` | Set to `true` for Vercel deployments |
-| `GITHUB_CLIENT_ID/SECRET` | GitHub OAuth app credentials |
-| `GOOGLE_CLIENT_ID/SECRET` | Google OAuth app credentials (must be **Published**, not just Testing) |
-| `DATABASE_URL` | Neon Postgres connection string |
-| `UPSTASH_REDIS_REST_URL/TOKEN` | Upstash Redis for rate limiting |
-| `ANTHROPIC_API_KEY` | Claude API key (primary LLM) |
-| `RESEND_API_KEY` | Email sending via Resend |
-| `PAYSTACK_SECRET_KEY` | Paystack payments (Ghana/West Africa) |
-| `CRON_SECRET` | Secret for authorizing Vercel Cron requests |
-| `NEXT_PUBLIC_APP_URL` | Public app URL |
+| Draft Proposal | Full 9-section research proposal with methodology, timeline, references |
+| Simplify | Plain-language explanation for any audience |
+| Ask AI | Chat with an AI research assistant about the gap |
+| Hypotheses | 4 testable H1 statements with method and testability rating |
+| Validate | Checks if the gap has been filled by recent papers |
+| Grant | NIH / NSF / EU Horizon / General grant proposal draft |
+| Why Now? | Timing score + reasons why this is the right moment |
+| Funding | Real grant programs that fund this type of research |
+| Export | Obsidian .md, Notion .md, BibTeX, RIS, APA, MLA, Chicago |
+| Track | Add to My Issues Kanban board |
 
-Optional (enable more sources):
+### Systematic Review Generator
+Enter a topic. Get a PRISMA-style structured review with consensus areas, contradictions, research gaps, and recommendations — instantly.
 
-| Variable | Purpose |
+### My Issues
+A Kanban board for tracking gaps through your research workflow: Investigating → In Progress → Completed → Published.
+
+### Research Question Bank
+A public, searchable database of all community-identified gaps. Browse by category, search by keyword, upvote the best ones.
+
+### Leaderboard
+Weekly rankings of top gap hunters, most-upvoted discoveries, and hottest research niches.
+
+### Daily Challenge
+A new research topic every day. Find a gap, share it, compete on the leaderboard.
+
+---
+
+## Premium Features
+
+| Feature | Free | Starter ($10) | Pro ($20) | Team ($40) |
+|---|:---:|:---:|:---:|:---:|
+| Gap AI searches/month | 10 | 50 | 500 | Unlimited |
+| Gap Drops (personalized) | — | ✓ | ✓ | ✓ |
+| PDF upload in GapSimplify | — | ✓ | ✓ | ✓ |
+| Literature review compiler | — | — | ✓ | ✓ |
+| AI Research Assistant | — | — | ✓ | ✓ |
+| Team workspaces | — | — | — | ✓ |
+| Institutional API access | — | — | — | ✓ |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
 |---|---|
-| `CORE_API_KEY` | Free key from [core.ac.uk/services/api](https://core.ac.uk/services/api) |
-| `NASA_ADS_TOKEN` | Free token from [ui.adsabs.harvard.edu](https://ui.adsabs.harvard.edu/user/settings/token) |
+| Framework | Next.js 16 (App Router), TypeScript |
+| Styling | Tailwind CSS v3, Framer Motion |
+| Auth | NextAuth v4 — GitHub + Google OAuth |
+| Database | Neon Postgres (serverless) |
+| Cache / Rate limiting | Upstash Redis |
+| LLM | Google Gemini 1.5 Flash (primary), Groq llama (fallback) |
+| Email | Resend |
+| Payments | Flutterwave (cards + MTN MoMo) |
+| Cron Jobs | Vercel Cron |
+| Deployment | Vercel |
 
-### Database setup
+## Academic Sources
 
-Run the schema against your Neon Postgres instance:
+GapForge queries up to **9 academic sources** with real-time health checks:
 
-```powershell
-# Using psql (install from PostgreSQL)
-psql $env:DATABASE_URL -f lib/db/schema.sql
-```
+| Source | Coverage | Reliability |
+|---|---|---|
+| Semantic Scholar | 200M+ papers | High |
+| arXiv | Physics, CS, Math, Bio | High |
+| PubMed / MEDLINE | 36M+ biomedical citations | High |
+| OpenAlex | 250M+ works | High |
+| Crossref | 150M+ scholarly records | High |
+| CORE | 200M+ open access papers | High |
+| bioRxiv / medRxiv | Biology & health preprints | High |
+| DOAJ | Peer-reviewed open access | High |
+| NASA ADS | Astronomy & astrophysics | Medium |
 
-Or paste `lib/db/schema.sql` contents directly into the Neon SQL editor.
-
-### Local development
-
-```powershell
-npm run dev
-```
-
-### Build
-
-```powershell
-npm run build
-```
+Every source is health-checked before each query. If a source is down, it's skipped silently and the user sees exactly which sources were queried — never a static inflated count.
 
 ---
 
 ## Source Reliability Architecture
 
-GapForge does not claim a fixed source count. Every query goes through a health-check layer before any papers are fetched:
+GapForge is built around an honest source reliability model:
 
-### How it works
-
-1. **Source registry** (`lib/sources/registry.ts`) holds all academic source modules. Each implements two methods: `healthCheck()` and `search()`.
-
-2. **Before every query**, all sources are health-checked. Results are cached for 5 minutes (TTL configurable). A source that fails its health check is excluded from that query, logged server-side, and reported in the "Sources checked" indicator shown to the user.
-
-3. **The UI shows the actual sources queried** — not a static "43+ sources" claim. Users see which sources responded and which were skipped.
-
-4. **Citations are verified** after Claude returns gaps. Every cited paper must exist in the actual results set before being included. Papers not found in the result set are dropped — never fabricated.
-
-### Source tiers
-
-| Tier | Sources | Notes |
-|---|---|---|
-| High reliability | Semantic Scholar, arXiv, PubMed, OpenAlex, Crossref, CORE, bioRxiv/medRxiv, DOAJ | Free APIs, well-documented, consistently available |
-| Medium reliability | NASA ADS | Requires free API token (`NASA_ADS_TOKEN`) |
-
-### Honest accuracy framing
-
-Gap detection surfaces **candidate gaps for the researcher's own judgment**. Relevance scores (1-10) are computed from a transparent formula:
-
-- Citation impact of supporting papers (log scale, 0-4 points)
-- Recency of supporting papers (0-3 points)
-- Evidence breadth — number of supporting papers (0-2 points)
-- Directness hint from Claude (0-1 points)
-
-This is not a benchmark claim. It is an explainable signal to help researchers prioritize which gaps to investigate further.
+1. **Source registry** — each source is a self-contained module with `healthCheck()` and `search()` methods
+2. **Pre-query health checks** — cached for 30 minutes, checked before every search
+3. **Citation verification** — every cited paper must exist in the actual query results before being included in a gap — zero hallucinated citations
+4. **Transparent scoring** — relevance scores are computed from citation count, recency, and evidence breadth — not raw LLM guesses
+5. **Honest framing** — gaps are "candidate gaps for the researcher's own judgment", not algorithmic certainties
 
 ---
 
-## Features
+## Quick Start
 
-### Gap AI
-On-demand gap detection across all currently-healthy sources. Six gap categories: contradictions, missing mechanistic links, unexplored method transfers, population blind spots, untouched dataset opportunities, translational bottlenecks.
+### Prerequisites
+- Node.js 20+
+- npm 10+
 
-### Gap Drops
-Weekly personalized research digest, generated every Friday at 09:00 UTC via Vercel Cron. Includes: 3 research gaps, startup opportunities, emerging trends, funding opportunities, cross-disciplinary transfers. All content is derived from real source queries scoped to the user's research profile — not templated filler.
+### Setup
 
-### GapSimplify
-Enter a DOI, arXiv ID, or Semantic Scholar URL. Get: plain-language section translations with hover/click glossary, key claims rated by evidence strength (strong/moderate/weak/speculative), surfaced gaps within that paper.
+```bash
+git clone https://github.com/Eddiegah/gapforge.git
+cd gapforge
+npm install
+cp .env.example .env.local
+# Fill in your environment variables
+npm run dev
+```
 
-### Premium features
+### Environment Variables
 
-| Feature | Plan |
-|---|---|
-| Gap Drops (personalized) | Pro, Team, Institutional |
-| Literature review compiler | Pro, Team, Institutional |
-| Zotero / Mendeley export | Pro, Team, Institutional |
-| BibTeX / RIS export | Pro, Team, Institutional |
-| Team workspaces | Team, Institutional |
-| Institutional API (`/api/v1/`) | Institutional |
+See `.env.example` for the full list. Key variables:
+
+```env
+AUTH_SECRET=          # Generate: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+NEXTAUTH_SECRET=      # Same value as AUTH_SECRET
+DATABASE_URL=         # Neon Postgres connection string
+GEMINI_API_KEY=       # Free at aistudio.google.com/app/apikey
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+RESEND_API_KEY=       # Free at resend.com
+```
+
+### Database Setup
+
+```bash
+# Run the schema against your Neon Postgres instance
+psql $DATABASE_URL -f lib/db/schema.sql
+```
 
 ---
 
-## Deployment (Vercel)
+## Deployment
+
+GapForge deploys entirely to Vercel — no separate backend required.
 
 1. Push to GitHub
-2. Connect repo to Vercel
-3. Add all environment variables in Vercel project settings
-4. Set `AUTH_URL` to your Vercel deployment URL
-5. Set `AUTH_TRUST_HOST=true`
-6. Vercel Cron is configured in `vercel.json` — runs `/api/cron/gap-drops` every Friday at 09:00 UTC
+2. Import at [vercel.com/new](https://vercel.com/new)
+3. Add environment variables
+4. Deploy
 
-### Google OAuth note
-Google OAuth must be **Published** (not just in Testing mode) for non-developer users to sign in. Set this in the Google Cloud Console under OAuth consent screen.
-
----
-
-## Institutional API
-
-`POST /api/v1/gaps` — Gap detection  
-`POST /api/v1/simplify` — Paper simplification
-
-Authentication: `Authorization: Bearer YOUR_API_KEY`
-
-Rate limits: 100 requests/hour (gaps), 50/hour (simplify)
-
-Requires institutional, team, or pro plan.
+Vercel Cron is configured in `vercel.json`:
+- Friday 9am UTC — Gap Drops generation
+- Monday 8am UTC — Gap Alerts check
+- Monday 7am UTC — Weekly email digest
 
 ---
 
-## What to check after deployment
+## API Access (Institutional)
 
-1. **Source health** — hit `/api/sources/health` and check how many sources are actually healthy. This honest count matters more than the aspirational maximum.
+Programmatic access via REST API for institutional customers.
 
-2. **Citation verification** — run a Gap AI query on a topic you know well and manually verify at least one cited paper says what the gap description claims.
+```bash
+# Gap detection
+curl -X POST https://gapforge-self.vercel.app/api/v1/gaps \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "CRISPR off-target effects", "maxGaps": 5}'
 
-3. **Gap Drop personalization** — trigger a drop via `POST /api/gap-drops` and confirm the content reflects your research profile keywords, not generic output.
+# Paper simplification
+curl -X POST https://gapforge-self.vercel.app/api/v1/simplify \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input": "10.1038/s41586-023-06936-3"}'
+```
 
-4. **Reference export** — save a gap, go to Library, add it to a lit review, compile it, and export as BibTeX. Verify the export is correct.
-
-5. **Cron scheduling** — after deploying, check Vercel's Cron dashboard to confirm the Friday schedule is registered and running.
+Full docs at [gapforge-self.vercel.app/docs](https://gapforge-self.vercel.app/docs)
 
 ---
 
-## Project structure
+## Project Structure
 
 ```
 gapforge/
 ├── app/
-│   ├── page.tsx                    # Landing page
-│   ├── login/                      # Auth page
-│   ├── onboarding/                 # Research profile setup
-│   ├── gap-ai/                     # Gap AI search UI
-│   ├── gap-drops/                  # Weekly drops UI
-│   ├── gap-simplify/               # Paper simplification UI
-│   ├── workspaces/                 # Team workspace UI
-│   ├── library/                    # Saved items + lit reviews
-│   ├── pricing/                    # Pricing page
-│   └── api/
-│       ├── auth/[...nextauth]/     # NextAuth v5 handlers
-│       ├── gap-ai/                 # Search + save endpoints
-│       ├── gap-drops/              # Drop retrieval + manual trigger
-│       ├── gap-simplify/           # Paper simplification endpoint
-│       ├── onboarding/             # Research profile CRUD
-│       ├── workspaces/             # Workspace CRUD
-│       ├── lit-review/             # Literature review compiler
-│       ├── payments/paystack/      # Paystack payment + webhook
-│       ├── sources/health/         # Source health check endpoint
-│       ├── cron/gap-drops/         # Vercel Cron job handler
-│       └── v1/                     # Institutional API
+│   ├── gap-ai/              # Gap AI search interface (3-panel layout)
+│   ├── gap-drops/           # Weekly intelligence digest
+│   ├── gap-simplify/        # Paper simplification + PDF upload
+│   ├── systematic-review/   # PRISMA-style review generator
+│   ├── issues/              # My Issues Kanban tracker
+│   ├── compare/             # Side-by-side gap comparison
+│   ├── leaderboard/         # Community rankings
+│   ├── daily-challenge/     # Daily research challenge
+│   ├── question-bank/       # Public gap database
+│   ├── trending/            # Most upvoted gaps
+│   ├── niche-map/           # Coming soon — visual research map
+│   ├── docs/                # API documentation
+│   └── api/                 # All backend logic
 ├── lib/
-│   ├── db/                         # Neon Postgres client + schema
-│   ├── sources/                    # Source registry + individual modules
-│   ├── gapAI/                      # Orchestrator + gap detection
-│   ├── gapDrops/                   # Weekly drop generation
-│   ├── gapSimplify/                # Paper fetch + simplification
-│   ├── litReview/                  # Literature review compiler
-│   ├── integrations/               # Zotero, Mendeley, BibTeX, RIS
-│   ├── email/                      # Resend email notifications
-│   └── utils.ts                    # Shared utilities
-├── components/                     # Shared React components
-├── vercel.json                     # Cron schedule
-├── .env.example                    # Environment variable template
-└── README.md
+│   ├── sources/             # 9 academic source modules + registry
+│   ├── gapAI/               # Orchestrator + gap detection
+│   ├── gapDrops/            # Weekly drop generation
+│   ├── gapSimplify/         # Paper fetch + simplification
+│   ├── litReview/           # Literature review compiler
+│   ├── llm/                 # Gemini/Groq LLM client with fallback
+│   ├── citations/           # Citation export (APA, MLA, BibTeX, RIS, Obsidian)
+│   └── db/                  # Neon Postgres client + schema
+└── components/
+    ├── gap-card.tsx          # Rich gap card with all action buttons
+    ├── markdown-content.tsx  # Markdown renderer (no asterisks)
+    ├── pro-gate.tsx          # Feature gating with upgrade prompt
+    └── onboarding-tour.tsx   # First-time user walkthrough
 ```
 
 ---
 
-## Tech stack
+## Contributing
 
-- **Framework**: Next.js 16 (App Router), TypeScript
-- **Auth**: NextAuth v5 — GitHub + Google OAuth
-- **Database**: Neon Postgres (serverless)
-- **Cache / Rate limiting**: Upstash Redis
-- **LLM**: Anthropic Claude (primary)
-- **Email**: Resend
-- **Payments**: Paystack (USD, Ghana/West Africa)
-- **Animation**: Framer Motion
-- **Icons**: Lucide React
-- **Deploy**: Vercel (single platform — no separate backend)
+Contributions are welcome. Please:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/your-feature`
+3. Commit with a clear message
+4. Open a pull request
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## Contact
+
+Built in Ghana by [Edmund Eric Gah](mailto:gahedmund146@gmail.com)
+
+- Live app: [gapforge-self.vercel.app](https://gapforge-self.vercel.app)
+- GitHub: [github.com/Eddiegah/gapforge](https://github.com/Eddiegah/gapforge)
+- Email: gahedmund146@gmail.com
+
+---
+
+<div align="center">
+
+**GapForge** — Research Intelligence Platform
+
+*Find the gaps nobody is exploring yet.*
+
+</div>
