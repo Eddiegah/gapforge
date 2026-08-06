@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Github, Mail, Lock } from "lucide-react";
 import { LogoIcon } from "@/components/logo";
@@ -10,7 +10,7 @@ import Link from "next/link";
 
 type Mode = "signin" | "signup";
 
-export default function LoginPage() {
+function LoginForm() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,13 +18,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/gap-ai";
 
   // Redirect if already logged in
   useEffect(() => {
     if (status === "authenticated" && session) {
-      router.replace("/gap-ai");
+      router.replace(callbackUrl);
     }
-  }, [session, status, router]);
+  }, [session, status, router, callbackUrl]);
 
   // Show nothing while checking session
   if (status === "loading") {
@@ -40,7 +42,10 @@ export default function LoginPage() {
 
   const handleOAuth = async (provider: "github" | "google") => {
     setLoading(true);
-    await signIn(provider, { callbackUrl: "https://gapforge-self.vercel.app/gap-ai" });
+    const resolvedCallback = callbackUrl.startsWith("/")
+      ? "https://gapforge-self.vercel.app" + callbackUrl
+      : callbackUrl;
+    await signIn(provider, { callbackUrl: resolvedCallback });
   };
 
   const handleEmail = async (e: React.FormEvent) => {
@@ -48,7 +53,7 @@ export default function LoginPage() {
     if (!email.trim()) return;
     setLoading(true);
     // For now, redirect to Google sign-in with the email as hint
-    await signIn("google", { callbackUrl: "/gap-ai", login_hint: email });
+    await signIn("google", { callbackUrl: callbackUrl, login_hint: email });
   };
 
   const isSignup = mode === "signup";
@@ -212,5 +217,17 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--bg))]">
+        <div className="w-8 h-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

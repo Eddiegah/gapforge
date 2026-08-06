@@ -92,12 +92,10 @@ export default function PricingPage() {
   const { data: session } = useSession();
 
   const handleUpgrade = async (planId: string) => {
-    // Must be signed in
     if (!session) {
       window.location.href = `/login?callbackUrl=${encodeURIComponent("/pricing")}`;
       return;
     }
-
     setLoadingPlan(planId);
     setError(null);
     try {

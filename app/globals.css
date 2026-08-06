@@ -62,6 +62,22 @@
   }
 }
 
+/* ── Button micro-animations ─────────────────────────────── */
+.btn-primary,
+.btn-secondary {
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+}
+.btn-primary:active,
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  box-shadow: 0 1px 3px rgba(124, 58, 237, 0.25);
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
 @layer components {
   .card {
     @apply bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl;
@@ -79,7 +95,6 @@
            hover:bg-[rgb(var(--card))] transition-colors duration-150
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
-
   .input {
     @apply w-full bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-lg
            px-4 py-2.5 text-sm text-[rgb(var(--fg))]

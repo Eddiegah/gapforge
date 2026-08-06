@@ -196,6 +196,28 @@ export function AppNav() {
         </Link>
       </div>
 
+      {/* Cmd+K quick navigate */}
+      <div className="px-3 pt-3">
+        <button onClick={() => { document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true })); }}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:border-violet-500/30 transition-colors">
+          <Search size={12} />
+          <span className="flex-1 text-left">Quick navigate...</span>
+          <span className="text-[10px] font-mono opacity-60">⌘K</span>
+        </button>
+      </div>
+
+      {/* Quick navigate / Command palette trigger */}
+      <div className="px-2 pt-3 pb-1">
+        <button onClick={() => {
+          const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true });
+          document.dispatchEvent(event);
+        }} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:border-violet-500/30 transition-colors w-full">
+          <Search size={12} />
+          <span className="flex-1 text-left">Quick navigate...</span>
+          <kbd className="text-xs">⌘K</kbd>
+        </button>
+      </div>
+
       {/* Nav items */}
       <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
         {APP_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -255,12 +277,18 @@ export function AppNav() {
           {creditsUsed >= creditsLimit && (
             <Link
               href="/pricing"
-              className="mt-1.5 block text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
+              className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold transition-colors"
             >
-              Upgrade to Pro →
+              <Zap size={12} /> Upgrade plan
             </Link>
           )}
         </div>
+
+        {userPlan === "free" && creditsUsed < creditsLimit && (
+          <Link href="/pricing" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-violet-400 hover:bg-violet-500/10 transition-colors border border-violet-500/20">
+            <Zap size={12} /> Upgrade for unlimited
+          </Link>
+        )}
 
         {/* User info */}
         <div className="px-3 py-2.5 rounded-lg hover:bg-[rgb(var(--card))] transition-colors">

@@ -15,6 +15,7 @@ import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
 import { exportCitations, type CitationFormat } from "@/lib/citations/export";
 import { exportToObsidian } from "@/lib/citations/obsidian-export";
 import { MarkdownContent } from "@/components/markdown-content";
+import { useToast } from "@/components/toast";
 
 const CATEGORY_CONFIG: Record<GapCategory, { label: string; color: string; icon: React.ElementType }> = {
   contradiction: { label: "Contradiction", color: "text-red-400 bg-red-400/10 border-red-400/20", icon: AlertCircle },
@@ -74,20 +75,8 @@ interface GapCardProps {
   savedId?: string;
 }
 
-function CopyToast({ visible }: { visible: boolean }) {
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-4 py-2.5 rounded-xl bg-[rgb(var(--card))] border border-[rgb(var(--border))] shadow-xl text-sm text-[rgb(var(--fg))] flex items-center gap-2">
-          <Check size={14} className="text-green-400" /> Link copied
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
 export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }: GapCardProps) {
+  const { toast } = useToast();
   const [hoveredPaper, setHoveredPaper] = useState<string | null>(null);
   const [showCiteMenu, setShowCiteMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -165,7 +154,6 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [loadingSimplify, setLoadingSimplify] = useState(false);
   const [selectedAudience, setSelectedAudience] = useState("general");
   const [copied, setCopied] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
   const [tracked, setTracked] = useState(false);
 
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
@@ -183,6 +171,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
+  const { toast: showToast } = useToast();
   const config = CATEGORY_CONFIG[gap.category];
   const Icon = config.icon;
 
@@ -219,12 +208,13 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const copyLink = () => {
     const url = savedId ? `${window.location.origin}/gap/${savedId}` : window.location.href;
     navigator.clipboard.writeText(url).catch(() => {});
-    setLinkCopied(true); setShowShareMenu(false);
-    setTimeout(() => setLinkCopied(false), 2000);
+    showToast("Link copied!");
+    setShowShareMenu(false);
   };
 
   const copyText = () => {
     navigator.clipboard.writeText(`Research gap: ${gap.title}\n\n${gap.description}\n\nFound via GapForge`).catch(() => {});
+    showToast("Copied to clipboard!");
     setShowShareMenu(false);
   };
 
@@ -235,7 +225,6 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   return (
     <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
       className="card hover:border-violet-500/30 transition-colors duration-200">
-      <CopyToast visible={linkCopied} />
       <div className="p-5 space-y-4">
         {/* Top row */}
         <div className="flex items-start gap-3">
@@ -252,7 +241,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {onSave && (
-              <button onClick={() => onSave(gap)} className={cn("p-1.5 rounded-lg transition-colors", saved ? "text-violet-400" : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))]")} aria-label={saved ? "Saved" : "Save gap"}>
+              <button onClick={() => { onSave(gap); if (!saved) showToast("Gap saved!"); }} className={cn("p-1.5 rounded-lg transition-colors", saved ? "text-violet-400" : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))]")} aria-label={saved ? "Saved" : "Save gap"}>
                 <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
               </button>
             )}
@@ -376,7 +365,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             <Clock size={12} /> Why now?
           </button>
           <button
-            onClick={() => { if (tracked) return; fetch("/api/issues", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }) }).then(() => setTracked(true)).catch(() => {}); }}
+            onClick={() => { if (tracked) return; fetch("/api/issues", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }) }).then(() => { setTracked(true); showToast("Added to My Issues!"); }).catch(() => {}); }}
             disabled={tracked}
             className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors",
               tracked ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 opacity-70 cursor-default" : "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20")}>
