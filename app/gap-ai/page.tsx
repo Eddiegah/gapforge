@@ -351,11 +351,21 @@ export default function GapAIPage() {
                     </div>
                   )}
                   <p className="text-sm text-[rgb(var(--fg))] font-medium leading-snug line-clamp-2">{item.query}</p>
-                  <p className="text-xs text-[rgb(var(--muted))] mt-1 flex items-center gap-1">
-                    <Clock size={10} />
-                    {formatRelativeDate(item.createdAt)}
-                    {item.gapsFound > 0 && <span className="ml-1">&middot; {item.gapsFound} gaps</span>}
-                  </p>
+                  <div className="flex items-center justify-between mt-1 gap-2">
+                    <p className="text-xs text-[rgb(var(--muted))] flex items-center gap-1">
+                      <Clock size={10} />
+                      {formatRelativeDate(item.createdAt)}
+                      {item.gapsFound > 0 && <span className="ml-1">&middot; {item.gapsFound} gaps</span>}
+                    </p>
+                    {item.status === "done" && (
+                      <button
+                        onClick={e => { e.stopPropagation(); setQuery(item.query); runSearch(item.query); }}
+                        className="text-xs text-[rgb(var(--accent))] hover:text-[rgb(var(--accent-soft))] font-medium transition-colors flex-shrink-0"
+                      >
+                        Re-run
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))
             )}

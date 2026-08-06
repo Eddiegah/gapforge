@@ -533,6 +533,7 @@ export default function HomePage() {
                   ["Research Question Bank", "/question-bank"],
                   ["Gap of the Day", "/gap-of-the-day"],
                   ["Niche Map", "/niche-map"],
+                  ["Leaderboard", "/leaderboard"],
                 ].map(([label, href]) => (
                   <li key={href}>
                     <Link href={href} className="text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">

@@ -249,6 +249,22 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
 
         <h3 className="text-lg font-bold text-[rgb(var(--fg))] leading-snug">{gap.title}</h3>
 
+        {/* Gap age — how long this gap has been open */}
+        {gap.citations.length > 0 && (() => {
+          const years = gap.citations.map(c => c.year).filter((y): y is number => y !== null);
+          if (years.length === 0) return null;
+          const oldest = Math.min(...years);
+          const newest = Math.max(...years);
+          const currentYear = new Date().getFullYear();
+          const ageYears = currentYear - oldest;
+          const ageColor = ageYears >= 10 ? "text-red-400" : ageYears >= 5 ? "text-amber-400" : "text-teal-400";
+          return (
+            <p className={`text-xs font-medium ${ageColor}`}>
+              Gap open ~{ageYears} year{ageYears !== 1 ? "s" : ""} (citations span {oldest}–{newest})
+            </p>
+          );
+        })()}
+
         <div className="space-y-2 py-1">
           <MetricBar label="Confidence" value={gap.confidence ?? 70} />
           <MetricBar label="Novelty" value={gap.novelty ?? 70} />
