@@ -19,14 +19,26 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ drop: drop ?? null });
   }
 
-  // List all drops
-  const drops = await sql`
+  // List all drops — normalize snake_case DB fields to camelCase
+  const rows = await sql`
     SELECT id, week_label, gaps, startup_opps, trends, funding_opps, cross_discipline, sources_queried, generated_at
     FROM gap_drops
     WHERE user_id = ${session.user.id}
     ORDER BY generated_at DESC
     LIMIT 52
   `;
+
+  const drops = rows.map(r => ({
+    id: r.id,
+    weekLabel: r.week_label,
+    gaps: r.gaps ?? [],
+    startupOpps: r.startup_opps ?? [],
+    trends: r.trends ?? [],
+    fundingOpps: r.funding_opps ?? [],
+    crossDiscipline: r.cross_discipline ?? [],
+    sourcesQueried: r.sources_queried ?? [],
+    generatedAt: r.generated_at,
+  }));
 
   return NextResponse.json({ drops });
 }
