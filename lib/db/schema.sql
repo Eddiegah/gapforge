@@ -206,7 +206,7 @@ CREATE INDEX IF NOT EXISTS idx_literature_reviews_user ON literature_reviews(use
 CREATE TABLE IF NOT EXISTS user_credits (
   user_id      TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   credits_used INTEGER NOT NULL DEFAULT 0,
-  credits_limit INTEGER NOT NULL DEFAULT 20,
+  credits_limit INTEGER NOT NULL DEFAULT 10,
   reset_at     TIMESTAMPTZ NOT NULL DEFAULT (date_trunc('month', NOW()) + interval '1 month'),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

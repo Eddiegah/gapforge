@@ -68,7 +68,7 @@ export function PaywallModal({ open, onClose, daysUntilReset }: PaywallModalProp
                   <Zap size={28} className="text-violet-400" />
                 </div>
                 <h2 className="text-xl font-bold text-[rgb(var(--fg))] mb-1">
-                  You&apos;ve used all 20 free searches this month
+                  You&apos;ve used all 10 free searches this month
                 </h2>
                 <p className="text-sm text-[rgb(var(--muted))]">
                   {daysUntilReset === 1

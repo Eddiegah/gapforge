@@ -7,6 +7,7 @@ import {
   Users, Database, ArrowRightLeft, Beaker,
   FileText, Sparkles, Download, ChevronDown,
   X, Loader, Copy, Check, Globe, Layers, MessageSquare, Send,
+  FlaskConical, ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
@@ -90,6 +91,30 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [showProposal, setShowProposal] = useState(false);
   const [showSimplify, setShowSimplify] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [showHypotheses, setShowHypotheses] = useState(false);
+  const [showValidate, setShowValidate] = useState(false);
+  const [hypotheses, setHypotheses] = useState<Record<string, unknown>[] | null>(null);
+  const [loadingHypotheses, setLoadingHypotheses] = useState(false);
+  const [validation, setValidation] = useState<{ assessment: Record<string, unknown> | null; recentPapers: { title: string; year: number | null; url: string }[] } | null>(null);
+  const [loadingValidate, setLoadingValidate] = useState(false);
+
+  const generateHypotheses = async () => {
+    setLoadingHypotheses(true);
+    try {
+      const res = await fetch("/api/gap-ai/hypotheses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gap }) });
+      const data = await res.json();
+      setHypotheses(data.hypotheses ?? []);
+    } catch { /* non-critical */ } finally { setLoadingHypotheses(false); }
+  };
+
+  const runValidation = async () => {
+    setLoadingValidate(true);
+    try {
+      const res = await fetch("/api/gap-ai/validate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gap }) });
+      const data = await res.json();
+      setValidation(data);
+    } catch { /* non-critical */ } finally { setLoadingValidate(false); }
+  };
   const shareMenuRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -240,6 +265,18 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
           <button onClick={() => setShowChat(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-colors">
             <MessageSquare size={12} /> Ask AI
+          </button>
+
+          {/* Hypotheses */}
+          <button onClick={() => setShowHypotheses(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/20 transition-colors">
+            <FlaskConical size={12} /> Hypotheses
+          </button>
+
+          {/* Validate */}
+          <button onClick={() => setShowValidate(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors">
+            <ShieldCheck size={12} /> Validate
           </button>
           <button
             onClick={() => { if (tracked) return; fetch("/api/issues", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }) }).then(() => setTracked(true)).catch(() => {}); }}
@@ -406,6 +443,125 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                     <Send size={14} />
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hypotheses Modal */}
+      <AnimatePresence>
+        {showHypotheses && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowHypotheses(false); }}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
+                <div className="flex items-center gap-2"><FlaskConical size={16} className="text-indigo-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Testable Hypotheses</h2></div>
+                <div className="flex items-center gap-2">
+                  {!hypotheses && <button onClick={generateHypotheses} className="btn-primary text-xs px-4 py-1.5">Generate</button>}
+                  <button onClick={() => setShowHypotheses(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                {loadingHypotheses ? (
+                  <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-indigo-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Generating hypotheses...</p></div>
+                ) : !hypotheses ? (
+                  <div className="text-center py-12">
+                    <FlaskConical size={32} className="text-indigo-400/50 mx-auto mb-4" />
+                    <p className="text-sm text-[rgb(var(--muted))] mb-4">Generate 4 testable hypotheses grounded in the supporting literature.</p>
+                    <button onClick={generateHypotheses} className="btn-primary">Generate hypotheses</button>
+                  </div>
+                ) : hypotheses.length === 0 ? (
+                  <div className="text-center py-12 text-[rgb(var(--muted))] text-sm">Could not generate hypotheses. <button onClick={generateHypotheses} className="text-indigo-400 underline">Try again</button></div>
+                ) : (
+                  <div className="space-y-4">
+                    {hypotheses.map((h, i) => {
+                      const hyp = h as { hypothesis: string; independentVariable: string; dependentVariable: string; testMethod: string; testability: string; rationale: string };
+                      const testColor = hyp.testability === "Easy" ? "text-green-400" : hyp.testability === "Moderate" ? "text-amber-400" : "text-red-400";
+                      return (
+                        <div key={i} className="p-4 rounded-xl border border-[rgb(var(--border))] space-y-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-bold text-indigo-400">H{i+1}</span>
+                            <span className={cn("text-xs font-medium", testColor)}>{hyp.testability}</span>
+                          </div>
+                          <p className="text-sm font-semibold text-[rgb(var(--fg))] leading-snug">{hyp.hypothesis}</p>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div><span className="text-[rgb(var(--muted))]">Independent: </span><span className="text-[rgb(var(--fg))]">{hyp.independentVariable}</span></div>
+                            <div><span className="text-[rgb(var(--muted))]">Dependent: </span><span className="text-[rgb(var(--fg))]">{hyp.dependentVariable}</span></div>
+                          </div>
+                          <p className="text-xs text-[rgb(var(--muted))]"><span className="font-medium text-[rgb(var(--fg))]">Method: </span>{hyp.testMethod}</p>
+                          <p className="text-xs text-[rgb(var(--muted))]/70 italic">{hyp.rationale}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Validate Modal */}
+      <AnimatePresence>
+        {showValidate && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowValidate(false); }}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
+                <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-rose-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Gap Validation Check</h2></div>
+                <div className="flex items-center gap-2">
+                  {!validation && <button onClick={runValidation} className="btn-primary text-xs px-4 py-1.5">Run check</button>}
+                  <button onClick={() => setShowValidate(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                {loadingValidate ? (
+                  <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-rose-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Scanning recent literature...</p></div>
+                ) : !validation ? (
+                  <div className="text-center py-12">
+                    <ShieldCheck size={32} className="text-rose-400/50 mx-auto mb-4" />
+                    <p className="text-sm text-[rgb(var(--muted))] mb-4">Check if this gap has been filled by papers published in the last 1-2 years.</p>
+                    <button onClick={runValidation} className="btn-primary">Run validation check</button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {validation.assessment && (() => {
+                      const a = validation.assessment as { status: string; confidence: string; explanation: string; recommendation: string; recentPapersRelevant: number };
+                      const statusColor = a.status === "still_open" ? "text-green-400 bg-green-400/10 border-green-400/20" : a.status === "partially_addressed" ? "text-amber-400 bg-amber-400/10 border-amber-400/20" : "text-red-400 bg-red-400/10 border-red-400/20";
+                      const statusLabel = a.status === "still_open" ? "Gap still open" : a.status === "partially_addressed" ? "Partially addressed" : "Likely filled";
+                      return (
+                        <div className="space-y-3">
+                          <div className={cn("flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-semibold", statusColor)}><ShieldCheck size={14} />{statusLabel} — {a.confidence} confidence</div>
+                          <p className="text-sm text-[rgb(var(--muted))] leading-relaxed">{a.explanation}</p>
+                          <div className="p-3 bg-violet-500/5 border border-violet-500/20 rounded-xl">
+                            <p className="text-xs font-semibold text-violet-400 mb-1">Recommendation</p>
+                            <p className="text-sm text-[rgb(var(--fg))]">{a.recommendation}</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    {validation.recentPapers.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-wider mb-2">Recent papers scanned</p>
+                        <div className="space-y-1.5">
+                          {validation.recentPapers.slice(0, 5).map((p, i) => (
+                            <a key={i} href={p.url} target="_blank" rel="noopener noreferrer"
+                              className="flex items-center gap-2 p-2 rounded-lg border border-[rgb(var(--border))] hover:border-violet-500/30 hover:bg-violet-500/5 transition-all text-xs group">
+                              <span className="text-[rgb(var(--muted))] flex-shrink-0">{i+1}.</span>
+                              <span className="text-[rgb(var(--fg))] line-clamp-1 flex-1 group-hover:text-violet-300 transition-colors">{p.title}</span>
+                              <span className="text-[rgb(var(--muted))]/60 flex-shrink-0">{p.year}</span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>

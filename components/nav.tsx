@@ -145,7 +145,7 @@ export function AppNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
   const [creditsUsed, setCreditsUsed] = useState(0);
-  const [creditsLimit, setCreditsLimit] = useState(20);
+  const [creditsLimit, setCreditsLimit] = useState(10);
   const [userPlan, setUserPlan] = useState("free");
 
   const fetchCredits = () => {

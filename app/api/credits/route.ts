@@ -50,6 +50,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error("[Credits] Error:", err);
-    return NextResponse.json({ creditsUsed: 0, creditsLimit: 20 });
+    return NextResponse.json({ creditsUsed: 0, creditsLimit: 10 });
   }
 }
