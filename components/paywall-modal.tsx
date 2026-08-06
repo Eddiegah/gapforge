@@ -111,7 +111,7 @@ export function PaywallModal({ open, onClose, daysUntilReset }: PaywallModalProp
                     <span className="text-xs font-semibold text-violet-400 uppercase tracking-wide">
                       Pro
                     </span>
-                    <p className="text-2xl font-bold text-[rgb(var(--fg))] mt-1">$19</p>
+                    <p className="text-2xl font-bold text-[rgb(var(--fg))] mt-1">$20</p>
                     <p className="text-xs text-[rgb(var(--muted))]">per month</p>
                   </div>
                   <ul className="space-y-1.5">
@@ -130,7 +130,7 @@ export function PaywallModal({ open, onClose, daysUntilReset }: PaywallModalProp
                     <span className="text-xs font-semibold text-amber-400 uppercase tracking-wide">
                       Team
                     </span>
-                    <p className="text-2xl font-bold text-[rgb(var(--fg))] mt-1">$49</p>
+                    <p className="text-2xl font-bold text-[rgb(var(--fg))] mt-1">$40</p>
                     <p className="text-xs text-[rgb(var(--muted))]">per month</p>
                   </div>
                   <ul className="space-y-1.5">
