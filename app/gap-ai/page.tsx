@@ -78,6 +78,40 @@ function SkeletonCard() {
   );
 }
 
+const DIFFICULTY_OPTIONS = ["all", "easy", "moderate", "hard", "moonshot"] as const;
+type DifficultyFilter = typeof DIFFICULTY_OPTIONS[number];
+
+const DIFF_COLORS: Record<string, string> = {
+  all: "text-[rgb(var(--fg))] border-[rgb(var(--border))]",
+  easy: "text-green-400 border-green-400/30",
+  moderate: "text-amber-400 border-amber-400/30",
+  hard: "text-red-400 border-red-400/30",
+  moonshot: "text-purple-400 border-purple-400/30",
+};
+
+function DifficultyFilter({ gaps, renderGap }: { gaps: import("@/lib/gapAI/detectGaps").DetectedGap[]; renderGap: (gap: import("@/lib/gapAI/detectGaps").DetectedGap, idx: number) => React.ReactNode }) {
+  const [filter, setFilter] = useState<DifficultyFilter>("all");
+  const filtered = filter === "all" ? gaps : gaps.filter(g => (g.difficulty ?? "moderate") === filter);
+  return (
+    <div>
+      <div className="flex items-center gap-1.5 flex-wrap mb-3">
+        <span className="text-xs text-[rgb(var(--muted))]">Filter:</span>
+        {DIFFICULTY_OPTIONS.map(d => (
+          <button key={d} onClick={() => setFilter(d)}
+            className={cn("px-2.5 py-1 rounded-full text-xs border capitalize transition-all",
+              filter === d ? DIFF_COLORS[d] + " bg-current/10" : "border-[rgb(var(--border))] text-[rgb(var(--muted))] hover:border-[rgb(var(--fg))]/30")}>
+            {d === "all" ? `All (${gaps.length})` : `${d} (${gaps.filter(g => (g.difficulty ?? "moderate") === d).length})`}
+          </button>
+        ))}
+      </div>
+      <div className="space-y-3">
+        {filtered.map((gap, idx) => renderGap(gap, gaps.indexOf(gap)))}
+        {filtered.length === 0 && <p className="text-sm text-[rgb(var(--muted))] text-center py-6">No {filter} gaps found.</p>}
+      </div>
+    </div>
+  );
+}
+
 export default function GapAIPage() {
   const [query, setQuery] = useState("");
   const [phase, setPhase] = useState<SearchPhase>("idle");
@@ -564,33 +598,36 @@ export default function GapAIPage() {
                 {phase === "done" && result && (
                   <>
                     {result.gaps.length > 0 && (
-                      <div className="flex items-center gap-2 mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                        <CheckCircle2 size={15} className="text-emerald-500 flex-shrink-0" />
-                        <span className="text-sm text-emerald-400 font-medium flex-1">
-                          {result.gaps.length} gap{result.gaps.length !== 1 ? "s" : ""} found from {result.papersAnalyzed} papers
-                        </span>
-                        <button
-                          onClick={async () => {
-                            const res = await fetch("/api/gap-ai/export", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ gaps: result.gaps, query: activeQuery }),
-                            });
-                            const blob = await res.blob();
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url; a.download = "gapforge-report.html"; a.click();
-                            URL.revokeObjectURL(url);
-                          }}
-                          className="flex items-center gap-1.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-lg px-3 py-1.5 transition-colors flex-shrink-0"
-                        >
-                          <Download size={12} /> Export report
-                        </button>
-                      </div>
+                      <>
+                        <div className="flex items-center gap-2 mb-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                          <CheckCircle2 size={15} className="text-emerald-500 flex-shrink-0" />
+                          <span className="text-sm text-emerald-400 font-medium flex-1">
+                            {result.gaps.length} gap{result.gaps.length !== 1 ? "s" : ""} found from {result.papersAnalyzed} papers
+                          </span>
+                          <button
+                            onClick={async () => {
+                              const res = await fetch("/api/gap-ai/export", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ gaps: result.gaps, query: activeQuery }),
+                              });
+                              const blob = await res.blob();
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url; a.download = "gapforge-report.html"; a.click();
+                              URL.revokeObjectURL(url);
+                            }}
+                            className="flex items-center gap-1.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-lg px-3 py-1.5 transition-colors flex-shrink-0"
+                          >
+                            <Download size={12} /> Export
+                          </button>
+                        </div>
+                        {/* Difficulty filter */}
+                        <DifficultyFilter gaps={result.gaps} renderGap={(gap, idx) => (
+                          <GapCard key={gap.id} gap={gap} index={idx + 1} onSave={handleSave} onShare={handleShare} saved={savedIds.has(gap.id)} />
+                        )} />
+                      </>
                     )}
-                    {result.gaps.map((gap, idx) => (
-                      <GapCard key={gap.id} gap={gap} index={idx + 1} onSave={handleSave} onShare={handleShare} saved={savedIds.has(gap.id)} />
-                    ))}
                     {result.gaps.length === 0 && (
                       <div className="text-center py-12 text-[rgb(var(--muted))] text-sm">
                         No clear gaps found. Try a more specific topic.

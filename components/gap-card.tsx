@@ -7,7 +7,7 @@ import {
   Users, Database, ArrowRightLeft, Beaker,
   FileText, Sparkles, Download, ChevronDown,
   X, Loader, Copy, Check, Globe, Layers, MessageSquare, Send,
-  FlaskConical, ShieldCheck, ScrollText,
+  FlaskConical, ShieldCheck, ScrollText, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
@@ -97,6 +97,9 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [grantFormat, setGrantFormat] = useState("general");
   const [grant, setGrant] = useState<string | null>(null);
   const [loadingGrant, setLoadingGrant] = useState(false);
+  const [showWhyNow, setShowWhyNow] = useState(false);
+  const [whyNow, setWhyNow] = useState<{ whyNowScore: number; whyNowLabel: string; reasons: string[]; risks: string } | null>(null);
+  const [loadingWhyNow, setLoadingWhyNow] = useState(false);
   const [hypotheses, setHypotheses] = useState<Record<string, unknown>[] | null>(null);
   const [loadingHypotheses, setLoadingHypotheses] = useState(false);
   const [validation, setValidation] = useState<{ assessment: Record<string, unknown> | null; recentPapers: { title: string; year: number | null; url: string }[] } | null>(null);
@@ -127,6 +130,15 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
       const data = await res.json();
       if (data.grant) setGrant(data.grant);
     } catch { /* non-critical */ } finally { setLoadingGrant(false); }
+  };
+
+  const fetchWhyNow = async () => {
+    setLoadingWhyNow(true);
+    try {
+      const res = await fetch("/api/gap-ai/why-now", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gap }) });
+      const data = await res.json();
+      if (data.whyNow) setWhyNow(data.whyNow);
+    } catch { /* non-critical */ } finally { setLoadingWhyNow(false); }
   };
   const shareMenuRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -312,6 +324,12 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
           <button onClick={() => { setShowGrant(true); if (!grant) generateGrant(grantFormat); }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 border border-yellow-500/20 transition-colors">
             <ScrollText size={12} /> Grant
+          </button>
+
+          {/* Why Now */}
+          <button onClick={() => { setShowWhyNow(true); if (!whyNow) fetchWhyNow(); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors">
+            <Clock size={12} /> Why now?
           </button>
           <button
             onClick={() => { if (tracked) return; fetch("/api/issues", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }) }).then(() => setTracked(true)).catch(() => {}); }}
@@ -629,6 +647,67 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                 {loadingGrant ? <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-yellow-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Writing grant proposal...</p></div>
                   : grant ? <pre className="whitespace-pre-wrap text-sm text-[rgb(var(--fg))] font-sans leading-relaxed">{grant}</pre>
                   : <div className="text-center py-12"><ScrollText size={32} className="text-yellow-400/50 mx-auto mb-4" /><p className="text-sm text-[rgb(var(--muted))] mb-4">Generate a grant proposal for this research gap.</p><button onClick={() => generateGrant(grantFormat)} className="btn-primary">Generate grant</button></div>}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Why Now Modal */}
+      <AnimatePresence>
+        {showWhyNow && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowWhyNow(false); }}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
+                <div className="flex items-center gap-2"><Clock size={16} className="text-cyan-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Why Now?</h2></div>
+                <div className="flex items-center gap-2">
+                  {!whyNow && <button onClick={fetchWhyNow} className="btn-primary text-xs px-4 py-1.5">Analyze</button>}
+                  <button onClick={() => setShowWhyNow(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                {loadingWhyNow ? (
+                  <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-cyan-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Analyzing timing...</p></div>
+                ) : !whyNow ? (
+                  <div className="text-center py-12">
+                    <Clock size={32} className="text-cyan-400/50 mx-auto mb-4" />
+                    <p className="text-sm text-[rgb(var(--muted))] mb-4">Assess why this is the right time to address this gap.</p>
+                    <button onClick={fetchWhyNow} className="btn-primary">Analyze timing</button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
+                      <div className="text-center flex-shrink-0">
+                        <p className="text-3xl font-bold text-cyan-400">{whyNow.whyNowScore}</p>
+                        <p className="text-xs text-[rgb(var(--muted))]">/10</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-cyan-300">{whyNow.whyNowLabel}</p>
+                        <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Timing score for this research gap</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-wider mb-2">Why now</p>
+                      <div className="space-y-2">
+                        {(whyNow.reasons ?? []).map((r, i) => (
+                          <div key={i} className="flex items-start gap-2 text-sm text-[rgb(var(--muted))]">
+                            <span className="text-cyan-400 font-bold flex-shrink-0">{i+1}.</span>
+                            <span>{r}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {whyNow.risks && (
+                      <div className="p-3 bg-red-500/5 border border-red-500/20 rounded-xl">
+                        <p className="text-xs font-semibold text-red-400 mb-1">Risk of inaction</p>
+                        <p className="text-sm text-[rgb(var(--muted))]">{whyNow.risks}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>

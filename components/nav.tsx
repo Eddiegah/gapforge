@@ -121,6 +121,7 @@ const APP_NAV_ITEMS = [
   { href: "/gap-ai", label: "Gap AI", icon: Search },
   { href: "/gap-drops", label: "Gap Drops", icon: Zap },
   { href: "/gap-simplify", label: "GapSimplify", icon: BookOpen },
+  { href: "/systematic-review", label: "Systematic Review", icon: Library },
   { href: "/library", label: "Saved Gaps", icon: Library },
   { href: "/compare", label: "Compare Gaps", icon: BarChart2 },
   { href: "/workspaces", label: "Workspaces", icon: Users },
