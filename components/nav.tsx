@@ -185,7 +185,7 @@ export function AppNav() {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="px-4 py-5 border-b border-[rgb(var(--border))]">
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
+        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
           <LogoIcon size={28} />
           <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
             GapForge
@@ -305,7 +305,7 @@ export function AppNav() {
 
       {/* Mobile top bar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[rgb(var(--bg))]/90 backdrop-blur-md border-b border-[rgb(var(--border))] flex items-center justify-between px-4">
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold">
+        <Link href="/" className="flex items-center gap-2 font-bold">
           <LogoIcon size={24} />
           <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent text-lg">
             GapForge
