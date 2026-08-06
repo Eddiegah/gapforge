@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Zap, Loader } from "lucide-react";
+import { Check, Zap, Loader, AlertCircle } from "lucide-react";
 import { PublicNav } from "@/components/nav";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const PLANS = [
   {
@@ -88,8 +89,15 @@ const PLANS = [
 export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const handleUpgrade = async (planId: string) => {
+    // Must be signed in
+    if (!session) {
+      window.location.href = `/login?callbackUrl=${encodeURIComponent("/pricing")}`;
+      return;
+    }
+
     setLoadingPlan(planId);
     setError(null);
     try {
@@ -100,7 +108,11 @@ export default function PricingPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Payment failed");
-      if (data.authorizationUrl) window.location.href = data.authorizationUrl;
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl;
+      } else {
+        throw new Error("No payment URL returned. Check your Paystack keys.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment initialization failed. Please try again.");
     } finally {
@@ -121,9 +133,16 @@ export default function PricingPage() {
         </div>
 
         {error && (
-          <div className="max-w-md mx-auto mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400 text-center">
+          <div className="max-w-md mx-auto mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400 text-center flex items-center gap-2 justify-center">
+            <AlertCircle size={14} className="flex-shrink-0" />
             {error}
           </div>
+        )}
+
+        {!session && (
+          <p className="text-center text-xs text-[rgb(var(--muted))] mb-6">
+            You need to <a href="/login" className="text-violet-400 hover:underline">sign in</a> before upgrading.
+          </p>
         )}
 
         <div className="grid md:grid-cols-4 gap-5">
