@@ -512,6 +512,7 @@ export default function HomePage() {
                   ["Gap AI", "/gap-ai"],
                   ["Gap Drops", "/gap-drops"],
                   ["GapSimplify", "/gap-simplify"],
+                  ["Trending Gaps", "/trending"],
                 ].map(([label, href]) => (
                   <li key={href}>
                     <Link href={href} className="text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">

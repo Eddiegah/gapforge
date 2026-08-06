@@ -87,6 +87,7 @@ export default function GapSimplifyPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SimplifyResult | null>(null);
   const [expandedSection, setExpandedSection] = useState<number | null>(0);
+  const [dragOver, setDragOver] = useState(false);
 
   const handleSubmit = async () => {
     if (!input.trim() || loading) return;
@@ -111,6 +112,26 @@ export default function GapSimplifyPage() {
     }
   };
 
+  const handlePDF = async (file: File) => {
+    if (file.type !== "application/pdf") { setError("Only PDF files are supported."); return; }
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/gap-simplify/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to process PDF");
+      setResult(data);
+      setExpandedSection(0);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "PDF processing failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
@@ -118,10 +139,29 @@ export default function GapSimplifyPage() {
       <div className="max-w-4xl mx-auto px-4 pt-6 pb-20">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[rgb(var(--foreground))]">GapSimplify</h1>
+          <h1 className="text-2xl font-bold text-[rgb(var(--fg))]">GapSimplify</h1>
           <p className="text-sm text-[rgb(var(--muted))] mt-1">
-            Paste a DOI, arXiv ID or link, or Semantic Scholar URL. Get plain-language section translations, key claims rated by evidence strength, an interactive glossary, and surfaced gaps.
+            Paste a DOI, arXiv ID, or URL — or upload a PDF directly.
           </p>
+        </div>
+
+        {/* PDF Drop Zone */}
+        <div
+          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) handlePDF(f); }}
+          className={`border-2 border-dashed rounded-xl p-6 mb-4 text-center transition-all cursor-pointer ${dragOver ? "border-violet-500 bg-violet-500/5" : "border-[rgb(var(--border))] hover:border-violet-500/40"}`}
+          onClick={() => { const i = document.createElement("input"); i.type = "file"; i.accept = ".pdf"; i.onchange = (e) => { const f = (e.target as HTMLInputElement).files?.[0]; if (f) handlePDF(f); }; i.click(); }}
+        >
+          <BookOpen size={20} className="text-[rgb(var(--muted))] mx-auto mb-2" />
+          <p className="text-sm text-[rgb(var(--muted))]">Drop a PDF here or click to upload</p>
+          <p className="text-xs text-[rgb(var(--muted))]/60 mt-1">Max 10MB</p>
+        </div>
+
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex-1 h-px bg-[rgb(var(--border))]" />
+          <span className="text-xs text-[rgb(var(--muted))]">or enter a link</span>
+          <div className="flex-1 h-px bg-[rgb(var(--border))]" />
         </div>
 
         {/* Input */}

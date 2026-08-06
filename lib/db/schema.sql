@@ -231,3 +231,13 @@ CREATE INDEX IF NOT EXISTS idx_gap_alerts_active ON gap_alerts(active);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code TEXT UNIQUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by TEXT REFERENCES users(id);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_bonus_credits INTEGER NOT NULL DEFAULT 0;
+
+-- ─── Gap Votes ───────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS gap_votes (
+  user_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  saved_gap_id  TEXT NOT NULL REFERENCES saved_gaps(id) ON DELETE CASCADE,
+  direction     TEXT NOT NULL CHECK (direction IN ('up', 'down')),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, saved_gap_id)
+);
+CREATE INDEX IF NOT EXISTS idx_gap_votes_gap ON gap_votes(saved_gap_id);
