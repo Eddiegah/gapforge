@@ -1,0 +1,14 @@
+{
+  "name": "GapForge",
+  "short_name": "GapForge",
+  "description": "Research intelligence platform — find gaps nobody is exploring yet",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "categories": ["productivity", "education"]
+}

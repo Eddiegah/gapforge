@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, X, ArrowRight, Loader, AlertCircle, Bookmark,
   Share2, ExternalLink, ChevronDown, ChevronUp, Clock,
-  Sparkles, RefreshCw, CheckCircle2, FileText
+  Sparkles, RefreshCw, CheckCircle2, FileText, Download
 } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
@@ -523,9 +523,26 @@ export default function GapAIPage() {
                     {result.gaps.length > 0 && (
                       <div className="flex items-center gap-2 mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                         <CheckCircle2 size={15} className="text-emerald-500 flex-shrink-0" />
-                        <span className="text-sm text-emerald-400 font-medium">
+                        <span className="text-sm text-emerald-400 font-medium flex-1">
                           {result.gaps.length} gap{result.gaps.length !== 1 ? "s" : ""} found from {result.papersAnalyzed} papers
                         </span>
+                        <button
+                          onClick={async () => {
+                            const res = await fetch("/api/gap-ai/export", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ gaps: result.gaps, query: activeQuery }),
+                            });
+                            const blob = await res.blob();
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url; a.download = "gapforge-report.html"; a.click();
+                            URL.revokeObjectURL(url);
+                          }}
+                          className="flex items-center gap-1.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-lg px-3 py-1.5 transition-colors flex-shrink-0"
+                        >
+                          <Download size={12} /> Export report
+                        </button>
                       </div>
                     )}
                     {result.gaps.map((gap, idx) => (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Bookmark, BookOpen, FileText, Plus, Loader, Download } from "lucide-react";
+import { Bookmark, BookOpen, FileText, Plus, Loader, Download, Search, SlidersHorizontal } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,16 @@ import { formatRelativeDate } from "@/lib/utils";
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
 
 type Tab = "gaps" | "papers" | "reviews";
+
+const CATEGORY_OPTIONS = [
+  { value: "all", label: "All categories" },
+  { value: "contradiction", label: "Contradiction" },
+  { value: "missing-mechanistic-link", label: "Missing Link" },
+  { value: "unexplored-method-transfer", label: "Method Transfer" },
+  { value: "population-blind-spot", label: "Population Gap" },
+  { value: "untouched-dataset-opportunity", label: "Dataset Opportunity" },
+  { value: "translational-bottleneck", label: "Translational Gap" },
+];
 
 export default function LibraryPage() {
   const [tab, setTab] = useState<Tab>("gaps");
@@ -19,6 +29,8 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(false);
   const [showNewReview, setShowNewReview] = useState(false);
   const [reviewTitle, setReviewTitle] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const loadTab = async (t: Tab) => {
     setLoading(true);
@@ -61,6 +73,15 @@ export default function LibraryPage() {
     { id: "papers", label: "Simplified papers", icon: BookOpen },
     { id: "reviews", label: "Literature reviews", icon: FileText },
   ];
+
+  const filteredGaps = gaps.filter(g => {
+    const gap = g.gap_json;
+    const matchesSearch = !searchQuery ||
+      gap.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      gap.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || gap.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
@@ -125,11 +146,50 @@ export default function LibraryPage() {
           <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {tab === "gaps" && (
               <div className="space-y-3">
+                {/* Search & Filter bar */}
+                <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                  <div className="relative flex-1">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))]" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      placeholder="Search gaps by title or description..."
+                      className="input pl-9 w-full text-sm"
+                      aria-label="Search saved gaps"
+                    />
+                  </div>
+                  <div className="relative">
+                    <SlidersHorizontal size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))] pointer-events-none" />
+                    <select
+                      value={categoryFilter}
+                      onChange={e => setCategoryFilter(e.target.value)}
+                      className="input pl-9 pr-3 text-sm appearance-none cursor-pointer"
+                      aria-label="Filter by category"
+                    >
+                      {CATEGORY_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {gaps.length > 0 && (
+                  <p className="text-xs text-[rgb(var(--muted))] mb-2">
+                    Showing {filteredGaps.length} of {gaps.length} gaps
+                  </p>
+                )}
+
                 {gaps.length === 0 ? (
                   <EmptyState icon={Bookmark} message="No saved gaps. Save gaps from Gap AI searches." />
+                ) : filteredGaps.length === 0 ? (
+                  <div className="card p-10 text-center">
+                    <Search size={28} className="text-[rgb(var(--muted))] mx-auto mb-3" />
+                    <p className="text-sm text-[rgb(var(--muted))]">No gaps match your search. Try different keywords or clear the filter.</p>
+                  </div>
                 ) : (
-                  gaps.map((g) => (
-                    <GapCard key={g.id} gap={g.gap_json} />
+                  filteredGaps.map((g) => (
+                    <GapCard key={g.id} gap={g.gap_json} savedId={g.id} />
                   ))
                 )}
               </div>

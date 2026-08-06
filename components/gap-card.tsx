@@ -6,7 +6,7 @@ import {
   Bookmark, Share2, ExternalLink, AlertCircle, Link2,
   Users, Database, ArrowRightLeft, Beaker,
   FileText, Sparkles, Download, ChevronDown,
-  X, Loader, Copy, Check, Globe,
+  X, Loader, Copy, Check, Globe, Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
@@ -103,6 +103,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [selectedAudience, setSelectedAudience] = useState("general");
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [tracked, setTracked] = useState(false);
 
   // Close share menu on outside click
   useEffect(() => {
@@ -300,6 +301,43 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 border border-teal-500/20 transition-colors"
           >
             <Sparkles size={12} /> Simplify
+          </button>
+
+          {/* Track in My Issues */}
+          <button
+            onClick={() => {
+              fetch("/api/issues", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }),
+              }).then(() => {
+                // Brief confirmation via title change
+              }).catch(() => {});
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors"
+          >
+            <Layers size={12} /> Track
+          </button>
+
+          {/* Track */}
+          <button
+            onClick={() => {
+              if (tracked) return;
+              fetch("/api/issues", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }),
+              }).then(() => setTracked(true)).catch(() => {});
+            }}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors",
+              tracked
+                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 opacity-70 cursor-default"
+                : "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20"
+            )}
+            disabled={tracked}
+          >
+            <Layers size={12} /> {tracked ? "Tracked" : "Track"}
           </button>
 
           {/* Export citations */}

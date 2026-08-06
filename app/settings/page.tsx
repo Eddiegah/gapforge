@@ -40,7 +40,15 @@ export default function SettingsPage() {
   const [creating, setCreating] = useState(false);
   const [newKeyValue, setNewKeyValue] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+
+  // Notification prefs
+  const [notifPrefs, setNotifPrefs] = useState({
+    weeklyDigest: true,
+    gapAlerts: true,
+    dropNotifications: true,
+    upgradeNudges: true,
+  });
+  const [notifSaving, setNotifSaving] = useState(false);
 
   // Referral state
   const [referralUrl, setReferralUrl] = useState("");
@@ -52,6 +60,15 @@ export default function SettingsPage() {
       if (d.referralUrl) setReferralUrl(d.referralUrl);
       if (typeof d.referralCount === "number") setReferralCount(d.referralCount);
     }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/settings/notifications")
+      .then(r => r.json())
+      .then(d => {
+        if (d.prefs) setNotifPrefs(p => ({ ...p, ...d.prefs }));
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -95,6 +112,27 @@ export default function SettingsPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const saveNotifPrefs = async (updated: typeof notifPrefs) => {
+    setNotifSaving(true);
+    try {
+      await fetch("/api/settings/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+    } catch {
+      // non-critical
+    } finally {
+      setNotifSaving(false);
+    }
+  };
+
+  const toggleNotif = (key: keyof typeof notifPrefs) => {
+    const updated = { ...notifPrefs, [key]: !notifPrefs[key] };
+    setNotifPrefs(updated);
+    saveNotifPrefs(updated);
   };
 
   const user = session?.user;
@@ -178,32 +216,59 @@ export default function SettingsPage() {
           {tab === "newsletter" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               <div className="card p-6">
-                <h2 className="font-semibold text-[rgb(var(--fg))] mb-4 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
-                  Email Preferences
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-1 text-sm uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Notification Preferences
                 </h2>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-[rgb(var(--fg))]">Weekly Gap Drop digest</p>
-                    <p className="text-xs text-[rgb(var(--muted))] mt-0.5">
-                      Receive your personalized research intelligence every Friday at 12pm EST.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setNewsletterEnabled(!newsletterEnabled)}
-                    className={cn(
-                      "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                      newsletterEnabled ? "bg-violet-600" : "bg-[rgb(var(--border))]"
-                    )}
-                    role="switch"
-                    aria-checked={newsletterEnabled}
-                  >
-                    <span
-                      className={cn(
-                        "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
-                        newsletterEnabled ? "translate-x-6" : "translate-x-1"
-                      )}
-                    />
-                  </button>
+                <p className="text-xs text-[rgb(var(--muted))] mb-5">
+                  Choose what emails you receive from GapForge.{notifSaving && <span className="ml-2 text-violet-400">Saving...</span>}
+                </p>
+                <div className="space-y-5">
+                  {([
+                    {
+                      key: "weeklyDigest" as const,
+                      label: "Weekly email digest",
+                      description: "Receive your personalized research intelligence every Monday morning.",
+                    },
+                    {
+                      key: "gapAlerts" as const,
+                      label: "Gap alerts",
+                      description: "Get notified when new papers match topics in your saved gaps.",
+                    },
+                    {
+                      key: "dropNotifications" as const,
+                      label: "Drop notifications",
+                      description: "Know when your weekly Gap Drop is ready to read.",
+                    },
+                    {
+                      key: "upgradeNudges" as const,
+                      label: "Upgrade nudges",
+                      description: "Usage-based suggestions to upgrade when you're approaching your limit.",
+                    },
+                  ] as const).map(({ key, label, description }) => (
+                    <div key={key} className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-[rgb(var(--fg))]">{label}</p>
+                        <p className="text-xs text-[rgb(var(--muted))] mt-0.5">{description}</p>
+                      </div>
+                      <button
+                        onClick={() => toggleNotif(key)}
+                        className={cn(
+                          "relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0",
+                          notifPrefs[key] ? "bg-violet-600" : "bg-[rgb(var(--border))]"
+                        )}
+                        role="switch"
+                        aria-checked={notifPrefs[key]}
+                        aria-label={label}
+                      >
+                        <span
+                          className={cn(
+                            "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                            notifPrefs[key] ? "translate-x-6" : "translate-x-1"
+                          )}
+                        />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </motion.div>

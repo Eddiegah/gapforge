@@ -10,6 +10,7 @@ import Link from "next/link";
 import { AppNav } from "@/components/nav";
 import { useSession } from "next-auth/react";
 import { formatRelativeDate } from "@/lib/utils";
+import { OnboardingTour } from "@/components/onboarding-tour";
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -130,6 +131,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
+      <OnboardingTour />
       <main className="md:ml-60 pt-14 md:pt-0">
         <div className="max-w-4xl mx-auto px-4 py-10 pb-20 space-y-8">
 

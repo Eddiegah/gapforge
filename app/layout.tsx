@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     default: "GapForge — Research Intelligence Platform",
     template: "%s | GapForge",
   },
+  manifest: "/manifest.json",
   description:
     "Discover genuine research gaps, get weekly intelligence drops, and simplify academic papers with AI-powered source verification.",
   keywords: ["research gaps", "academic research", "literature review", "research intelligence"],
@@ -44,10 +45,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
-  ],
+  themeColor: "#7c3aed",
   width: "device-width",
   initialScale: 1,
 };
@@ -59,6 +57,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="GapForge" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         <Providers>
           <ErrorBoundary>

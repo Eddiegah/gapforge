@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, Users, Library, Settings,
-  Menu, X, Home, LogOut, Moon, Sun,
+  Menu, X, Home, LogOut, Moon, Sun, Layers, BarChart2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -116,11 +116,13 @@ export function PublicNav() {
    APP NAV — left sidebar for authenticated users
    ============================================================ */
 const APP_NAV_ITEMS = [
+  { href: "/issues", label: "My Issues", icon: Layers },
   { href: "/dashboard", label: "Home", icon: Home },
   { href: "/gap-ai", label: "Gap AI", icon: Search },
   { href: "/gap-drops", label: "Gap Drops", icon: Zap },
   { href: "/gap-simplify", label: "GapSimplify", icon: BookOpen },
   { href: "/library", label: "Saved Gaps", icon: Library },
+  { href: "/compare", label: "Compare Gaps", icon: BarChart2 },
   { href: "/workspaces", label: "Workspaces", icon: Users },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

@@ -241,3 +241,37 @@ CREATE TABLE IF NOT EXISTS gap_votes (
   PRIMARY KEY (user_id, saved_gap_id)
 );
 CREATE INDEX IF NOT EXISTS idx_gap_votes_gap ON gap_votes(saved_gap_id);
+
+-- ─── Research Issues (My Issues tracker) ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS research_issues (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  gap_id      TEXT REFERENCES saved_gaps(id) ON DELETE SET NULL,
+  title       TEXT NOT NULL,
+  description TEXT,
+  status      TEXT NOT NULL DEFAULT 'investigating' CHECK (status IN ('investigating', 'in_progress', 'completed', 'published')),
+  notes       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_research_issues_user ON research_issues(user_id);
+
+-- ─── Notification Preferences ───────────────────────────────────────────────
+ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_prefs JSONB DEFAULT '{"weeklyDigest":true,"gapAlerts":true,"dropNotifications":true,"upgradeNudges":true}'::jsonb;
+
+-- ─── Research Issues (My Issues tracker) ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS research_issues (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  gap_id      TEXT REFERENCES saved_gaps(id) ON DELETE SET NULL,
+  title       TEXT NOT NULL,
+  description TEXT,
+  status      TEXT NOT NULL DEFAULT 'investigating' CHECK (status IN ('investigating','in_progress','completed','published')),
+  notes       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_research_issues_user ON research_issues(user_id);
+
+-- ─── Notification Preferences ────────────────────────────────────────────────
+ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_prefs JSONB DEFAULT '{"weeklyDigest":true,"gapAlerts":true,"dropNotifications":true,"upgradeNudges":true}'::jsonb;
