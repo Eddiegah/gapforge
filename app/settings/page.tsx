@@ -375,19 +375,29 @@ export default function SettingsPage() {
                 <p className="text-sm text-[rgb(var(--muted))] mb-4">
                   Earn 5 extra searches for every researcher you refer. They get a head start too.
                 </p>
-                {referralUrl && (
-                  <div className="flex gap-2 mb-3">
-                    <input readOnly value={referralUrl} className="input flex-1 text-xs font-mono" aria-label="Referral URL" />
-                    <button
-                      onClick={() => { navigator.clipboard.writeText(referralUrl); setReferralCopied(true); setTimeout(() => setReferralCopied(false), 2000); }}
-                      className="btn-secondary text-xs flex items-center gap-1 flex-shrink-0"
-                    >
-                      <Copy size={12} /> {referralCopied ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
-                )}
+                <div className="flex gap-2 mb-3">
+                  <input
+                    readOnly
+                    value={referralUrl || "Loading your referral link..."}
+                    className="input flex-1 text-xs font-mono"
+                    aria-label="Referral URL"
+                  />
+                  <button
+                    onClick={() => {
+                      if (referralUrl) {
+                        navigator.clipboard.writeText(referralUrl);
+                        setReferralCopied(true);
+                        setTimeout(() => setReferralCopied(false), 2000);
+                      }
+                    }}
+                    disabled={!referralUrl}
+                    className="btn-secondary text-xs flex items-center gap-1 flex-shrink-0 disabled:opacity-50"
+                  >
+                    <Copy size={12} /> {referralCopied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
                 <p className="text-xs text-[rgb(var(--muted))]">
-                  {referralCount === 0 ? "No referrals yet." : `${referralCount} researcher${referralCount !== 1 ? "s" : ""} referred so far.`}
+                  {referralCount === 0 ? "No referrals yet. Share your link to earn bonus searches." : `${referralCount} researcher${referralCount !== 1 ? "s" : ""} referred so far. Keep sharing!`}
                 </p>
               </div>
             </motion.div>
