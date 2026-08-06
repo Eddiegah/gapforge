@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, ArrowRight,
-  Clock, Bookmark, TrendingUp, Tag,
+  Clock, Bookmark, TrendingUp, Tag, Flame, Users2, ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { AppNav } from "@/components/nav";
@@ -73,13 +73,16 @@ export default function DashboardPage() {
   const [recentSearches, setRecentSearches] = useState<HistoryRow[]>([]);
   const [savedCount, setSavedCount] = useState(0);
   const [profile, setProfile] = useState<ResearchProfile | null>(null);
+  const [streak, setStreak] = useState(0);
+  const [paperRecs, setPaperRecs] = useState<{ id: string; title: string; authors: string[]; year: number | null; url: string; venue: string | null }[]>([]);
+  const [researchers, setResearchers] = useState<{ id: string; name: string; image: string | null; research_areas: string[]; career_stage: string | null }[]>([]);
 
   const firstName = session?.user?.name?.split(" ")[0] ?? "researcher";
 
   useEffect(() => {
     fetch("/api/credits")
       .then(r => r.json())
-      .then(d => setCredits({ creditsUsed: d.creditsUsed ?? 0, creditsLimit: d.creditsLimit ?? 20 }))
+      .then(d => setCredits({ creditsUsed: d.creditsUsed ?? 0, creditsLimit: d.creditsLimit ?? 10 }))
       .catch(() => {});
 
     fetch("/api/gap-ai/history")
@@ -95,6 +98,21 @@ export default function DashboardPage() {
     fetch("/api/onboarding")
       .then(r => r.json())
       .then(d => setProfile(d.profile ?? null))
+      .catch(() => {});
+
+    fetch("/api/user/streak")
+      .then(r => r.json())
+      .then(d => setStreak(d.streak ?? 0))
+      .catch(() => {});
+
+    fetch("/api/papers/recommendations")
+      .then(r => r.json())
+      .then(d => setPaperRecs((d.papers ?? []).slice(0, 4)))
+      .catch(() => {});
+
+    fetch("/api/researchers")
+      .then(r => r.json())
+      .then(d => setResearchers((d.researchers ?? []).slice(0, 3)))
       .catch(() => {});
   }, []);
 
@@ -182,6 +200,19 @@ export default function DashboardPage() {
               <div>
                 <p className="text-2xl font-bold text-[rgb(var(--fg))]">{savedCount}</p>
                 <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Gaps saved</p>
+              </div>
+            </motion.div>
+
+            {/* Streak */}
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+              className="card p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0">
+                <Flame size={20} className="text-orange-400" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-[rgb(var(--fg))]">{streak}</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">{streak === 1 ? "day streak" : "day streak"}</p>
+                {streak === 0 && <p className="text-xs text-orange-400 mt-0.5">Start today</p>}
               </div>
             </motion.div>
           </div>
@@ -295,6 +326,63 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+
+          {/* Paper Recommendations */}
+          {paperRecs.length > 0 && (
+            <div>
+              <h2 className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-4">Papers for you this week</h2>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {paperRecs.map((paper, i) => (
+                  <motion.a key={paper.id} href={paper.url} target="_blank" rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
+                    className="card p-4 hover:border-violet-500/30 transition-colors block group">
+                    <p className="text-sm font-medium text-[rgb(var(--fg))] line-clamp-2 group-hover:text-violet-300 transition-colors">{paper.title}</p>
+                    <p className="text-xs text-[rgb(var(--muted))] mt-1">
+                      {(paper.authors ?? []).slice(0, 2).join(", ")}{(paper.authors ?? []).length > 2 ? " et al." : ""}
+                      {paper.year ? ` · ${paper.year}` : ""}
+                    </p>
+                    {paper.venue && <p className="text-xs text-[rgb(var(--muted))]/60 mt-0.5 truncate">{paper.venue}</p>}
+                    <div className="flex items-center gap-1 mt-2 text-xs text-violet-400">
+                      <ExternalLink size={10} /> Read paper
+                    </div>
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Researchers near your niche */}
+          {researchers.length > 0 && (
+            <div>
+              <h2 className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-4">Researchers near your niche</h2>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {researchers.map((r, i) => (
+                  <motion.div key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
+                    className="card p-4 flex items-start gap-3">
+                    {r.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={r.image} alt={r.name} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-violet-600 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-bold text-white">{r.name?.[0] ?? "R"}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[rgb(var(--fg))] truncate">{r.name}</p>
+                      {r.career_stage && <p className="text-xs text-[rgb(var(--muted))] capitalize">{r.career_stage.replace("-", " ")}</p>}
+                      {(r.research_areas ?? []).length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {(r.research_areas ?? []).slice(0, 2).map(a => (
+                            <span key={a} className="text-xs px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-400">{a}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       </main>

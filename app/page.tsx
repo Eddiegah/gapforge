@@ -534,6 +534,7 @@ export default function HomePage() {
                   ["Gap of the Day", "/gap-of-the-day"],
                   ["Niche Map", "/niche-map"],
                   ["Leaderboard", "/leaderboard"],
+                  ["Daily Challenge", "/daily-challenge"],
                 ].map(([label, href]) => (
                   <li key={href}>
                     <Link href={href} className="text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">

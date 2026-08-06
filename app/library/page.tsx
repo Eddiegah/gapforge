@@ -189,7 +189,12 @@ export default function LibraryPage() {
                   </div>
                 ) : (
                   filteredGaps.map((g) => (
-                    <GapCard key={g.id} gap={g.gap_json} savedId={g.id} />
+                    <div key={g.id} className="relative">
+                      {(Date.now() - new Date(g.created_at).getTime()) < 7 * 24 * 60 * 60 * 1000 && (
+                        <span className="absolute -top-2 -right-2 z-10 bg-violet-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">New</span>
+                      )}
+                      <GapCard gap={g.gap_json} savedId={g.id} />
+                    </div>
                   ))
                 )}
               </div>
