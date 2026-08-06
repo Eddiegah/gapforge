@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
+import { Check, Zap, Loader } from "lucide-react";
 import { PublicNav } from "@/components/nav";
-import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const PLANS = [
   {
@@ -7,96 +11,133 @@ const PLANS = [
     name: "Free",
     price: "$0",
     period: "/month",
-    description: "For individual researchers exploring GapForge.",
+    description: "For curious researchers just getting started.",
     features: [
-      "10 Gap AI searches/hour",
-      "GapSimplify (20 papers/hour)",
-      "Access to Gap Drops (view only)",
+      "20 Gap AI searches/month",
+      "Public weekly Gap Drops",
+      "GapSimplify (DOI & arXiv)",
+      "Save up to 20 gaps",
       "Basic library",
     ],
-    cta: "Get started",
+    cta: "Get started free",
     href: "/login",
     highlight: false,
+    planId: null,
+  },
+  {
+    id: "starter",
+    name: "Starter",
+    price: "$10",
+    period: "/month",
+    description: "For individual researchers who want more.",
+    features: [
+      "50 Gap AI searches/month",
+      "Personalized Gap Drops",
+      "PDF upload in GapSimplify",
+      "Unlimited saved gaps",
+      "Citation export",
+      "Research proposal drafts",
+    ],
+    cta: "Start Starter",
+    href: null,
+    highlight: false,
+    planId: "starter",
   },
   {
     id: "pro",
     name: "Pro",
-    price: "$19",
+    price: "$20",
     period: "/month",
-    description: "For active researchers who want personalized drops and premium features.",
+    description: "For active researchers who need intelligence every week.",
     features: [
-      "Everything in Free",
-      "Personalized weekly Gap Drops",
+      "500 Gap AI searches/month",
+      "Personalized daily drops",
       "Literature review compiler",
       "Zotero & Mendeley export",
-      "BibTeX / RIS export",
+      "AI Research Assistant",
+      "Research proposal drafts",
       "Priority processing",
     ],
     cta: "Start Pro",
-    href: "/api/payments/paystack?plan=pro",
+    href: null,
     highlight: true,
+    planId: "pro",
   },
   {
     id: "team",
     name: "Team",
-    price: "$49",
+    price: "$40",
     period: "/month",
-    description: "For research groups collaborating on gaps and reviews.",
+    description: "For research groups collaborating on shared intelligence.",
     features: [
+      "Unlimited searches",
       "Everything in Pro",
       "Team workspaces",
       "Collaborative commenting",
       "Up to 5 seats",
-      "Shared library",
+      "Institutional API access",
+      "Priority support",
     ],
     cta: "Start Team",
-    href: "/api/payments/paystack?plan=team",
+    href: null,
     highlight: false,
-  },
-  {
-    id: "institutional",
-    name: "Institutional",
-    price: "$199",
-    period: "/month",
-    description: "For universities and research institutions needing programmatic access.",
-    features: [
-      "Everything in Team",
-      "Institutional API access",
-      "Unlimited seats",
-      "API rate limit: 100 req/hour",
-      "Dedicated support",
-    ],
-    cta: "Contact us",
-    href: "mailto:hello@gapforge.app",
-    highlight: false,
+    planId: "team",
   },
 ];
 
 export default function PricingPage() {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleUpgrade = async (planId: string) => {
+    setLoadingPlan(planId);
+    setError(null);
+    try {
+      const res = await fetch("/api/payments/flutterwave", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Payment failed");
+      if (data.paymentLink) window.location.href = data.paymentLink;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Payment initialization failed. Please try again.");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
-      <div className="max-w-5xl mx-auto px-4 pt-24 pb-20">
+      <div className="max-w-6xl mx-auto px-4 pt-24 pb-20">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-[rgb(var(--foreground))] mb-3">Simple, honest pricing</h1>
-          <p className="text-[rgb(var(--muted))] max-w-lg mx-auto">
-            Payments processed via Paystack in USD. No hidden fees, no automatic renewal surprises.
-          </p>
+          <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-full px-4 py-1.5 text-xs text-violet-400 font-medium mb-6">
+            <Zap size={12} /> Simple, honest pricing
+          </div>
+          <h1 className="text-4xl font-bold text-[rgb(var(--fg))] mb-3">Research intelligence for every stage</h1>
+          <p className="text-[rgb(var(--muted))] max-w-lg mx-auto">Payments processed via Flutterwave — supports cards and mobile money across Africa and globally.</p>
         </div>
+
+        {error && (
+          <div className="max-w-md mx-auto mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400 text-center">
+            {error}
+          </div>
+        )}
 
         <div className="grid md:grid-cols-4 gap-5">
           {PLANS.map((plan) => (
-            <div
-              key={plan.id}
-              className={`card p-6 flex flex-col gap-5 ${plan.highlight ? "border-coral ring-1 ring-coral/20" : ""}`}
-            >
+            <div key={plan.id} className={cn("card p-6 flex flex-col gap-5 relative", plan.highlight ? "border-violet-500 ring-1 ring-violet-500/20" : "")}>
               {plan.highlight && (
-                <span className="badge bg-coral/10 text-coral w-fit">Most popular</span>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-violet-600 text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</span>
+                </div>
               )}
               <div>
-                <h3 className="font-bold text-[rgb(var(--foreground))]">{plan.name}</h3>
+                <h3 className="font-bold text-[rgb(var(--fg))]">{plan.name}</h3>
                 <div className="flex items-end gap-1 mt-2">
-                  <span className="text-3xl font-bold text-[rgb(var(--foreground))]">{plan.price}</span>
+                  <span className="text-3xl font-bold text-[rgb(var(--fg))]">{plan.price}</span>
                   <span className="text-[rgb(var(--muted))] text-sm pb-1">{plan.period}</span>
                 </div>
                 <p className="text-xs text-[rgb(var(--muted))] mt-2">{plan.description}</p>
@@ -105,28 +146,35 @@ export default function PricingPage() {
               <ul className="space-y-2 flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-[rgb(var(--muted))]">
-                    <Check size={13} className="text-coral mt-0.5 flex-shrink-0" />
+                    <Check size={13} className={cn("mt-0.5 flex-shrink-0", plan.highlight ? "text-violet-400" : "text-teal-400")} />
                     {f}
                   </li>
                 ))}
               </ul>
 
-              <a
-                href={plan.href}
-                className={`text-center py-2.5 rounded-lg font-medium text-sm transition-colors ${
-                  plan.highlight
-                    ? "bg-coral text-white hover:bg-coral-600"
-                    : "border border-[rgb(var(--border))] text-[rgb(var(--foreground))] hover:border-coral/50"
-                }`}
-              >
-                {plan.cta}
-              </a>
+              {plan.href ? (
+                <a href={plan.href} className={cn("text-center py-2.5 rounded-lg font-medium text-sm transition-colors", plan.highlight ? "bg-violet-600 text-white hover:bg-violet-700" : "border border-[rgb(var(--border))] text-[rgb(var(--fg))] hover:border-violet-500/50")}>
+                  {plan.cta}
+                </a>
+              ) : (
+                <button
+                  onClick={() => plan.planId && handleUpgrade(plan.planId)}
+                  disabled={loadingPlan === plan.planId}
+                  className={cn("text-center py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60",
+                    plan.highlight ? "bg-violet-600 text-white hover:bg-violet-700" : "border border-[rgb(var(--border))] text-[rgb(var(--fg))] hover:border-violet-500/50"
+                  )}
+                >
+                  {loadingPlan === plan.planId ? <Loader size={14} className="animate-spin" /> : null}
+                  {loadingPlan === plan.planId ? "Redirecting..." : plan.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>
 
         <p className="text-center text-xs text-[rgb(var(--muted))] mt-8">
-          GapForge is built in Ghana. Payments via Paystack support USD billing across West Africa and globally.
+          Payments via Flutterwave — supports Visa, Mastercard, MTN MoMo, Vodafone Cash, and bank transfer.
+          <br />Built in Ghana for researchers worldwide.
         </p>
       </div>
     </div>
