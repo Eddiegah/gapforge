@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Key, Copy, Trash2, Plus, Loader, User, Shield,
-  Bell, Tags, Lock, ExternalLink
+  Bell, Tags, Lock, ExternalLink, Check,
 } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { useSession } from "next-auth/react";
@@ -34,16 +34,25 @@ export default function SettingsPage() {
   const { data: session } = useSession();
   const [tab, setTab] = useState<Tab>("account");
 
-  // API Keys state (security tab)
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [loadingKeys, setLoadingKeys] = useState(true);
   const [newKeyName, setNewKeyName] = useState("");
   const [creating, setCreating] = useState(false);
   const [newKeyValue, setNewKeyValue] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-
-  // Newsletter toggle
   const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+
+  // Referral state
+  const [referralUrl, setReferralUrl] = useState("");
+  const [referralCount, setReferralCount] = useState(0);
+  const [referralCopied, setReferralCopied] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/referral").then(r => r.json()).then(d => {
+      if (d.referralUrl) setReferralUrl(d.referralUrl);
+      if (typeof d.referralCount === "number") setReferralCount(d.referralCount);
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (tab === "security") {
@@ -358,6 +367,28 @@ export default function SettingsPage() {
                 >
                   <ExternalLink size={13} /> Get Zotero API key
                 </a>
+              </div>
+
+              {/* Referral */}
+              <div className="card p-6">
+                <h2 className="font-semibold text-[rgb(var(--fg))] mb-1">Refer a colleague</h2>
+                <p className="text-sm text-[rgb(var(--muted))] mb-4">
+                  Earn 5 extra searches for every researcher you refer. They get a head start too.
+                </p>
+                {referralUrl && (
+                  <div className="flex gap-2 mb-3">
+                    <input readOnly value={referralUrl} className="input flex-1 text-xs font-mono" aria-label="Referral URL" />
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(referralUrl); setReferralCopied(true); setTimeout(() => setReferralCopied(false), 2000); }}
+                      className="btn-secondary text-xs flex items-center gap-1 flex-shrink-0"
+                    >
+                      <Copy size={12} /> {referralCopied ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                )}
+                <p className="text-xs text-[rgb(var(--muted))]">
+                  {referralCount === 0 ? "No referrals yet." : `${referralCount} researcher${referralCount !== 1 ? "s" : ""} referred so far.`}
+                </p>
               </div>
             </motion.div>
           )}

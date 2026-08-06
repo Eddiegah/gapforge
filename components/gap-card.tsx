@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bookmark, Share2, ExternalLink, AlertCircle, Link2,
   Users, Database, ArrowRightLeft, Beaker,
   FileText, Sparkles, Download, ChevronDown,
-  X, Loader, Copy, Check,
+  X, Loader, Copy, Check, Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
@@ -67,19 +67,53 @@ interface GapCardProps {
   onSave?: (gap: DetectedGap) => void;
   onShare?: (gap: DetectedGap) => void;
   saved?: boolean;
+  savedId?: string;
 }
 
-export function GapCard({ gap, index, onSave, onShare, saved = false }: GapCardProps) {
+// Simple toast for copy confirmation
+function CopyToast({ visible }: { visible: boolean }) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 16 }}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-4 py-2.5 rounded-xl bg-[rgb(var(--card))] border border-[rgb(var(--border))] shadow-xl text-sm text-[rgb(var(--fg))] flex items-center gap-2"
+        >
+          <Check size={14} className="text-green-400" />
+          Link copied to clipboard
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }: GapCardProps) {
   const [hoveredPaper, setHoveredPaper] = useState<string | null>(null);
   const [showCiteMenu, setShowCiteMenu] = useState(false);
   const [showProposal, setShowProposal] = useState(false);
   const [showSimplify, setShowSimplify] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
   const [proposal, setProposal] = useState<string | null>(null);
   const [simplified, setSimplified] = useState<string | null>(null);
   const [loadingProposal, setLoadingProposal] = useState(false);
   const [loadingSimplify, setLoadingSimplify] = useState(false);
   const [selectedAudience, setSelectedAudience] = useState("general");
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  // Close share menu on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(e.target as Node)) {
+        setShowShareMenu(false);
+      }
+    };
+    if (showShareMenu) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showShareMenu]);
 
   const config = CATEGORY_CONFIG[gap.category];
   const Icon = config.icon;
@@ -114,6 +148,22 @@ export function GapCard({ gap, index, onSave, onShare, saved = false }: GapCardP
     finally { setLoadingSimplify(false); }
   };
 
+  const copyLink = () => {
+    if (savedId) {
+      navigator.clipboard.writeText(`${window.location.origin}/gap/${savedId}`).catch(() => {});
+    } else if (onShare) {
+      onShare(gap);
+    }
+    setLinkCopied(true);
+    setShowShareMenu(false);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
+
+  const copyText = () => {
+    navigator.clipboard.writeText(`Research gap: ${gap.title}\n\n${gap.description ?? gap.whatsMissing ?? ""}\n\nFound via GapForge`).catch(() => {});
+    setShowShareMenu(false);
+  };
+
   const copyProposal = () => {
     if (proposal) {
       navigator.clipboard.writeText(proposal);
@@ -125,6 +175,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false }: GapCardP
   return (
     <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
       className="card hover:border-violet-500/30 transition-colors duration-200">
+      <CopyToast visible={linkCopied} />
 
       <div className="p-5 space-y-4">
         {/* Top row */}
@@ -152,13 +203,41 @@ export function GapCard({ gap, index, onSave, onShare, saved = false }: GapCardP
                 <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
               </button>
             )}
-            {onShare && (
-              <button onClick={() => onShare(gap)}
+            {/* Share dropdown */}
+            <div className="relative" ref={shareMenuRef}>
+              <button
+                onClick={() => setShowShareMenu(!showShareMenu)}
                 className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
-                aria-label="Share">
+                aria-label="Share"
+              >
                 <Share2 size={15} />
               </button>
-            )}
+              <AnimatePresence>
+                {showShareMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                    className="absolute right-0 top-full mt-1 z-30 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl shadow-xl overflow-hidden min-w-36"
+                  >
+                    <button
+                      onClick={copyLink}
+                      className="w-full text-left px-3 py-2.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors flex items-center gap-2"
+                    >
+                      <Globe size={12} />
+                      {savedId ? "Copy link" : "Copy link"}
+                    </button>
+                    <button
+                      onClick={copyText}
+                      className="w-full text-left px-3 py-2.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors flex items-center gap-2"
+                    >
+                      <Copy size={12} />
+                      Copy text
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <ScoreCircle score={gap.relevanceScore} />
           </div>
         </div>

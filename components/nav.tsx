@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, Users, Library, Settings,
-  Menu, X, Home, LogOut,
+  Menu, X, Home, LogOut, Moon, Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { LogoIcon } from "@/components/logo";
+import { useTheme } from "@/components/theme-provider";
 
 /* ============================================================
    PUBLIC NAV — shown on landing page / login / pricing
@@ -124,6 +125,19 @@ const APP_NAV_ITEMS = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  return (
+    <button
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
+    >
+      {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+      {theme === "dark" ? "Light mode" : "Dark mode"}
+    </button>
+  );
+}
+
 export function AppNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -211,6 +225,8 @@ export function AppNav() {
 
       {/* Bottom section */}
       <div className="px-2 pb-4 border-t border-[rgb(var(--border))] pt-3 space-y-2">
+        {/* Theme toggle */}
+        <ThemeToggle />
         {/* Gap AI Credits */}
         <div className="px-3 py-2.5 rounded-lg bg-[rgb(var(--card))] border border-[rgb(var(--border))]">
           <div className="flex items-center justify-between mb-1.5">

@@ -226,3 +226,8 @@ CREATE TABLE IF NOT EXISTS gap_alerts (
 
 CREATE INDEX IF NOT EXISTS idx_gap_alerts_user ON gap_alerts(user_id);
 CREATE INDEX IF NOT EXISTS idx_gap_alerts_active ON gap_alerts(active);
+
+-- ─── Referral System ────────────────────────────────────────────────────────
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code TEXT UNIQUE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by TEXT REFERENCES users(id);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_bonus_credits INTEGER NOT NULL DEFAULT 0;

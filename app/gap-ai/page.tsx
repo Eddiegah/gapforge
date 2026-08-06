@@ -90,7 +90,24 @@ export default function GapAIPage() {
   const [phaseLabel, setPhaseLabel] = useState("");
   const [showPaywall, setShowPaywall] = useState(false);
   const [daysUntilReset, setDaysUntilReset] = useState(0);
+  const [topicSuggestions, setTopicSuggestions] = useState<{subtopics: string[]; methodologies: string[]; crossDisciplinary: string[]} | null>(null);
+  const [loadingTopics, setLoadingTopics] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Debounced topic discovery
+  useEffect(() => {
+    if (query.trim().length < 10) { setTopicSuggestions(null); return; }
+    const timer = setTimeout(async () => {
+      setLoadingTopics(true);
+      try {
+        const res = await fetch("/api/gap-ai/topics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: query.trim() }) });
+        const data = await res.json();
+        if (data.subtopics?.length) setTopicSuggestions(data);
+      } catch { /* non-critical */ }
+      finally { setLoadingTopics(false); }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -369,6 +386,36 @@ export default function GapAIPage() {
                     </button>
                   ))}
                 </div>
+
+                {/* Topic Discovery */}
+                {(loadingTopics || topicSuggestions) && (
+                  <div className="mt-6 w-full">
+                    <p className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-3 text-center">
+                      {loadingTopics ? "Exploring related topics..." : "Related topics to explore"}
+                    </p>
+                    {topicSuggestions && (
+                      <div className="space-y-3">
+                        {[
+                          { label: "Subtopics", items: topicSuggestions.subtopics, color: "text-violet-400 border-violet-500/20 hover:border-violet-500/40" },
+                          { label: "Methodologies", items: topicSuggestions.methodologies, color: "text-teal-400 border-teal-500/20 hover:border-teal-500/40" },
+                          { label: "Cross-disciplinary", items: topicSuggestions.crossDisciplinary, color: "text-amber-400 border-amber-500/20 hover:border-amber-500/40" },
+                        ].map(({ label, items, color }) => (
+                          <div key={label}>
+                            <p className="text-xs text-[rgb(var(--muted))] mb-1.5">{label}</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {items.map(item => (
+                                <button key={item} onClick={() => { setQuery(item); runSearch(item); }}
+                                  className={`px-2.5 py-1 rounded-full border text-xs transition-all ${color}`}>
+                                  {item}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="mt-12 w-full max-w-2xl">
