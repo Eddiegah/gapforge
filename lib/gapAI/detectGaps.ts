@@ -46,6 +46,8 @@ export interface DetectedGap {
   suggestedDirection: string; // 1-2 sentences: specific research suggestion
   citations: GapCitation[];
   researchSuggestion: string;
+  difficulty: "easy" | "moderate" | "hard" | "moonshot";
+  difficultyRationale: string;
 }
 
 export interface GapDetectionResult {
@@ -185,6 +187,8 @@ Return ONLY a JSON array of gap objects. No other text. If you cannot find genui
     whyUnresolved?: string;
     suggestedDirection?: string;
     researchSuggestion?: string;
+    difficulty?: string;
+    difficultyRationale?: string;
     citations?: { paperId: string; relevantQuote?: string }[];
   }
 
@@ -214,6 +218,8 @@ Return ONLY a JSON array of gap objects. No other text. If you cannot find genui
         suggestedDirection: g.suggestedDirection ?? "",
         citations: verified,
         researchSuggestion: g.researchSuggestion ?? "",
+        difficulty: (g.difficulty as DetectedGap["difficulty"]) ?? "moderate",
+        difficultyRationale: g.difficultyRationale ?? "",
       };
     })
     .sort((a, b) => b.relevanceScore - a.relevanceScore);

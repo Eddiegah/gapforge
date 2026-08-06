@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, X, ArrowRight, Loader, AlertCircle, Bookmark,
   Share2, ExternalLink, ChevronDown, ChevronUp, Clock,
-  Sparkles, RefreshCw, CheckCircle2, FileText, Download
+  Sparkles, RefreshCw, CheckCircle2, FileText, Download, Search,
 } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
@@ -92,7 +92,23 @@ export default function GapAIPage() {
   const [daysUntilReset, setDaysUntilReset] = useState(0);
   const [topicSuggestions, setTopicSuggestions] = useState<{subtopics: string[]; methodologies: string[]; crossDisciplinary: string[]} | null>(null);
   const [loadingTopics, setLoadingTopics] = useState(false);
+  const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<string[]>([]);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Autocomplete
+  useEffect(() => {
+    if (query.trim().length < 2) { setAutocompleteSuggestions([]); setShowAutocomplete(false); return; }
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/gap-ai/autocomplete?q=${encodeURIComponent(query.trim())}`);
+        const data = await res.json();
+        if (data.suggestions?.length > 0) { setAutocompleteSuggestions(data.suggestions); setShowAutocomplete(true); }
+        else setShowAutocomplete(false);
+      } catch { /* non-critical */ }
+    }, 300);
+    return () => clearTimeout(t);
+  }, [query]);
 
   // Debounced topic discovery
   useEffect(() => {
@@ -361,7 +377,11 @@ export default function GapAIPage() {
                     ref={textareaRef}
                     value={query}
                     onChange={e => setQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={e => {
+                      if (e.key === "Escape") setShowAutocomplete(false);
+                      handleKeyDown(e);
+                    }}
+                    onFocus={() => autocompleteSuggestions.length > 0 && setShowAutocomplete(true)}
                     placeholder="e.g. gut microbiome and depression mechanisms..."
                     rows={3}
                     className="w-full bg-transparent resize-none px-5 py-4 pr-16 text-[rgb(var(--fg))] placeholder:text-[rgb(var(--muted))] text-base outline-none"
@@ -377,6 +397,19 @@ export default function GapAIPage() {
                   </button>
                 </div>
                 <p className="text-xs text-[rgb(var(--muted))] mt-2 text-center">Press Enter &middot; Shift+Enter for new line</p>
+
+                {/* Autocomplete dropdown */}
+                {showAutocomplete && autocompleteSuggestions.length > 0 && (
+                  <div className="mt-1 card rounded-xl overflow-hidden shadow-lg border border-violet-500/20">
+                    {autocompleteSuggestions.map((s, i) => (
+                      <button key={i} onClick={() => { setQuery(s); setShowAutocomplete(false); runSearch(s); }}
+                        className="w-full text-left px-4 py-2.5 text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-violet-500/5 transition-colors flex items-center gap-2">
+                        <Search size={12} className="text-violet-400 flex-shrink-0" />
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 <div className="mt-6 flex flex-wrap gap-2 justify-center">
                   {SUGGESTED.map(s => (

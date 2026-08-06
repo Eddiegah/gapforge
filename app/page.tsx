@@ -530,6 +530,9 @@ export default function HomePage() {
                   ["Gap Drops", "/gap-drops"],
                   ["GapSimplify", "/gap-simplify"],
                   ["Trending Gaps", "/trending"],
+                  ["Research Question Bank", "/question-bank"],
+                  ["Gap of the Day", "/gap-of-the-day"],
+                  ["Niche Map", "/niche-map"],
                 ].map(([label, href]) => (
                   <li key={href}>
                     <Link href={href} className="text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">

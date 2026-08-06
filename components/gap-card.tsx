@@ -7,7 +7,7 @@ import {
   Users, Database, ArrowRightLeft, Beaker,
   FileText, Sparkles, Download, ChevronDown,
   X, Loader, Copy, Check, Globe, Layers, MessageSquare, Send,
-  FlaskConical, ShieldCheck,
+  FlaskConical, ShieldCheck, ScrollText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
@@ -93,6 +93,10 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [showChat, setShowChat] = useState(false);
   const [showHypotheses, setShowHypotheses] = useState(false);
   const [showValidate, setShowValidate] = useState(false);
+  const [showGrant, setShowGrant] = useState(false);
+  const [grantFormat, setGrantFormat] = useState("general");
+  const [grant, setGrant] = useState<string | null>(null);
+  const [loadingGrant, setLoadingGrant] = useState(false);
   const [hypotheses, setHypotheses] = useState<Record<string, unknown>[] | null>(null);
   const [loadingHypotheses, setLoadingHypotheses] = useState(false);
   const [validation, setValidation] = useState<{ assessment: Record<string, unknown> | null; recentPapers: { title: string; year: number | null; url: string }[] } | null>(null);
@@ -114,6 +118,15 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
       const data = await res.json();
       setValidation(data);
     } catch { /* non-critical */ } finally { setLoadingValidate(false); }
+  };
+
+  const generateGrant = async (fmt: string) => {
+    setLoadingGrant(true); setGrant(null);
+    try {
+      const res = await fetch("/api/gap-ai/grant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gap, format: fmt }) });
+      const data = await res.json();
+      if (data.grant) setGrant(data.grant);
+    } catch { /* non-critical */ } finally { setLoadingGrant(false); }
   };
   const shareMenuRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -277,6 +290,12 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
           <button onClick={() => setShowValidate(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors">
             <ShieldCheck size={12} /> Validate
+          </button>
+
+          {/* Grant */}
+          <button onClick={() => { setShowGrant(true); if (!grant) generateGrant(grantFormat); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 border border-yellow-500/20 transition-colors">
+            <ScrollText size={12} /> Grant
           </button>
           <button
             onClick={() => { if (tracked) return; fetch("/api/issues", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: gap.title, description: gap.description, status: "investigating" }) }).then(() => setTracked(true)).catch(() => {}); }}
@@ -562,6 +581,38 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                     )}
                   </div>
                 )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Grant Modal */}
+      <AnimatePresence>
+        {showGrant && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowGrant(false); }}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
+                <div className="flex items-center gap-2"><ScrollText size={16} className="text-yellow-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Grant Proposal</h2></div>
+                <div className="flex items-center gap-2">
+                  <select value={grantFormat} onChange={e => { setGrantFormat(e.target.value); generateGrant(e.target.value); }}
+                    className="input text-xs py-1 pr-6" aria-label="Grant format">
+                    <option value="general">General</option>
+                    <option value="nih">NIH R01</option>
+                    <option value="nsf">NSF</option>
+                    <option value="eu">EU Horizon</option>
+                  </select>
+                  {grant && <button onClick={() => { if (grant) navigator.clipboard.writeText(grant); }} className="flex items-center gap-1 text-xs border border-[rgb(var(--border))] rounded-lg px-3 py-1.5 text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><Copy size={12} /> Copy</button>}
+                  <button onClick={() => setShowGrant(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                {loadingGrant ? <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-yellow-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Writing grant proposal...</p></div>
+                  : grant ? <pre className="whitespace-pre-wrap text-sm text-[rgb(var(--fg))] font-sans leading-relaxed">{grant}</pre>
+                  : <div className="text-center py-12"><ScrollText size={32} className="text-yellow-400/50 mx-auto mb-4" /><p className="text-sm text-[rgb(var(--muted))] mb-4">Generate a grant proposal for this research gap.</p><button onClick={() => generateGrant(grantFormat)} className="btn-primary">Generate grant</button></div>}
               </div>
             </motion.div>
           </motion.div>

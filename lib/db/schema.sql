@@ -275,3 +275,16 @@ CREATE INDEX IF NOT EXISTS idx_research_issues_user ON research_issues(user_id);
 
 -- ─── Notification Preferences ────────────────────────────────────────────────
 ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_prefs JSONB DEFAULT '{"weeklyDigest":true,"gapAlerts":true,"dropNotifications":true,"upgradeNudges":true}'::jsonb;
+
+-- ─── Streak tracking ─────────────────────────────────────────────────────────
+ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_search_date DATE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS longest_streak INTEGER NOT NULL DEFAULT 0;
+
+-- ─── Waitlist ────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS waitlist (
+  id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  email      TEXT NOT NULL,
+  feature    TEXT NOT NULL DEFAULT 'niche-map',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
