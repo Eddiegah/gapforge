@@ -288,3 +288,12 @@ CREATE TABLE IF NOT EXISTS waitlist (
   feature    TEXT NOT NULL DEFAULT 'niche-map',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- ─── User Badges ─────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS user_badges (
+  id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  badge_type TEXT NOT NULL,
+  earned_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, badge_type)
+);

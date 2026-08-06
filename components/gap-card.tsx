@@ -8,10 +8,13 @@ import {
   FileText, Sparkles, Download, ChevronDown,
   X, Loader, Copy, Check, Globe, Layers, MessageSquare, Send,
   FlaskConical, ShieldCheck, ScrollText, Clock,
+  FileOutput, DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
 import { exportCitations, type CitationFormat } from "@/lib/citations/export";
+import { exportToObsidian } from "@/lib/citations/obsidian-export";
+import { MarkdownContent } from "@/components/markdown-content";
 
 const CATEGORY_CONFIG: Record<GapCategory, { label: string; color: string; icon: React.ElementType }> = {
   contradiction: { label: "Contradiction", color: "text-red-400 bg-red-400/10 border-red-400/20", icon: AlertCircle },
@@ -88,6 +91,10 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [hoveredPaper, setHoveredPaper] = useState<string | null>(null);
   const [showCiteMenu, setShowCiteMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showFunding, setShowFunding] = useState(false);
+  const [funding, setFunding] = useState<{ funder: string; program: string; amount: string; deadline: string; url: string; fit: string; notes: string }[] | null>(null);
+  const [loadingFunding, setLoadingFunding] = useState(false);
   const [showProposal, setShowProposal] = useState(false);
   const [showSimplify, setShowSimplify] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -140,8 +147,17 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
       if (data.whyNow) setWhyNow(data.whyNow);
     } catch { /* non-critical */ } finally { setLoadingWhyNow(false); }
   };
-  const shareMenuRef = useRef<HTMLDivElement>(null);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const fetchFunding = async () => {
+    setLoadingFunding(true);
+    try {
+      const res = await fetch("/api/gap-ai/funding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gap }) });
+      const data = await res.json();
+      setFunding(data.opportunities ?? []);
+    } catch { /* non-critical */ } finally { setLoadingFunding(false); }
+  };
+
+  const shareMenuRef = useRef<HTMLDivElement>(null);  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const [proposal, setProposal] = useState<string | null>(null);
   const [simplified, setSimplified] = useState<string | null>(null);
@@ -163,7 +179,6 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
     if (showShareMenu) document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [showShareMenu]);
-
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
@@ -293,9 +308,38 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
           </div>
         )}
 
+        {/* Research Timeline */}
+        {gap.citations.length > 1 && (() => {
+          const years = gap.citations.map(c => c.year).filter((y): y is number => y !== null).sort((a,b) => a-b);
+          if (years.length < 2) return null;
+          const minYear = years[0];
+          const maxYear = years[years.length - 1];
+          const span = maxYear - minYear || 1;
+          const currentYear = new Date().getFullYear();
+          const ageYears = currentYear - minYear;
+          return (
+            <div>
+              <p className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-wider mb-3">Research Timeline</p>
+              <div className="relative h-2 bg-[rgb(var(--border))] rounded-full mb-1">
+                {gap.citations.filter(c => c.year).map((cite) => (
+                  <div key={cite.paperId} title={`${cite.title} (${cite.year})`}
+                    className="absolute w-3 h-3 rounded-full bg-violet-500 border-2 border-[rgb(var(--card))] -top-0.5 hover:scale-150 transition-transform cursor-pointer"
+                    style={{ left: `${((cite.year! - minYear) / span) * 100}%`, transform: 'translateX(-50%)' }} />
+                ))}
+              </div>
+              <div className="flex justify-between text-xs text-[rgb(var(--muted))]">
+                <span>{minYear}</span>
+                <span className={ageYears >= 10 ? "text-red-400" : ageYears >= 5 ? "text-amber-400" : "text-teal-400"}>
+                  {ageYears} year gap
+                </span>
+                <span>{maxYear}</span>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Action buttons */}
-        <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-[rgb(var(--border))]">
-          <button onClick={() => { setShowProposal(true); if (!proposal) generateProposal(); }}
+        <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-[rgb(var(--border))]">          <button onClick={() => { setShowProposal(true); if (!proposal) generateProposal(); }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 border border-violet-500/20 transition-colors">
             <FileText size={12} /> Draft proposal
           </button>
@@ -338,27 +382,39 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
               tracked ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 opacity-70 cursor-default" : "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20")}>
             <Layers size={12} /> {tracked ? "Tracked" : "Track"}
           </button>
-          {gap.citations.length > 0 && (
-            <div className="relative">
-              <button onClick={() => setShowCiteMenu(!showCiteMenu)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors">
-                <Download size={12} /> Cite <ChevronDown size={10} />
-              </button>
-              <AnimatePresence>
-                {showCiteMenu && (
-                  <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }}
-                    className="absolute left-0 top-full mt-1 z-20 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl shadow-xl overflow-hidden min-w-32">
-                    {CITATION_FORMATS.map(fmt => (
-                      <button key={fmt.value} onClick={() => { exportCitations(gap.citations, fmt.value, gap.title); setShowCiteMenu(false); }}
-                        className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
-                        {fmt.label}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
+          {/* Export */}
+          <div className="relative">
+            <button onClick={() => setShowExportMenu(!showExportMenu)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 border border-slate-500/20 transition-colors">
+              <FileOutput size={12} /> Export <ChevronDown size={10} />
+            </button>
+            <AnimatePresence>
+              {showExportMenu && (
+                <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }}
+                  className="absolute left-0 top-full mt-1 z-20 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl shadow-xl overflow-hidden min-w-36">
+                  <button onClick={() => { exportToObsidian(gap, savedId); setShowExportMenu(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
+                    Obsidian (.md)
+                  </button>
+                  <button onClick={() => { exportToObsidian(gap, savedId); setShowExportMenu(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
+                    Notion (.md)
+                  </button>
+                  {gap.citations.length > 0 && CITATION_FORMATS.map(fmt => (
+                    <button key={fmt.value} onClick={() => { exportCitations(gap.citations, fmt.value, gap.title); setShowExportMenu(false); }}
+                      className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
+                      {fmt.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          {/* Funding */}
+          <button onClick={() => { setShowFunding(true); if (!funding) fetchFunding(); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/20 transition-colors">
+            <DollarSign size={12} /> Funding
+          </button>
         </div>
 
         {/* Citations */}
@@ -405,7 +461,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
               </div>
               <div className="flex-1 overflow-y-auto px-6 py-4">
                 {loadingProposal ? <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-violet-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Drafting proposal...</p></div>
-                  : proposal ? <pre className="whitespace-pre-wrap text-sm text-[rgb(var(--fg))] font-sans leading-relaxed">{proposal}</pre>
+                  : proposal ? <MarkdownContent content={proposal} className="px-1" />
                   : <div className="text-center py-12 text-[rgb(var(--muted))] text-sm">Failed to generate. <button onClick={generateProposal} className="text-violet-400 underline">Try again</button></div>}
               </div>
             </motion.div>
@@ -471,8 +527,8 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                 {chatMessages.map((msg, i) => (
                   <div key={i} className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}>
                     <div className={cn("max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed",
-                      msg.role === "user" ? "bg-violet-600 text-white rounded-br-sm" : "bg-[rgb(var(--bg))] border border-[rgb(var(--border))] text-[rgb(var(--fg))] rounded-bl-sm")}>
-                      {msg.content}
+                      msg.role === "user" ? "bg-violet-600 text-white rounded-br-sm" : "bg-[rgb(var(--bg))] border border-[rgb(var(--border))] rounded-bl-sm")}>
+                      {msg.role === "user" ? msg.content : <MarkdownContent content={msg.content} />}
                     </div>
                   </div>
                 ))}
@@ -645,7 +701,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
               </div>
               <div className="flex-1 overflow-y-auto px-6 py-4">
                 {loadingGrant ? <div className="flex flex-col items-center justify-center py-16 gap-4"><Loader size={24} className="text-yellow-400 animate-spin" /><p className="text-sm text-[rgb(var(--muted))]">Writing grant proposal...</p></div>
-                  : grant ? <pre className="whitespace-pre-wrap text-sm text-[rgb(var(--fg))] font-sans leading-relaxed">{grant}</pre>
+                  : grant ? <MarkdownContent content={grant} className="px-1" />
                   : <div className="text-center py-12"><ScrollText size={32} className="text-yellow-400/50 mx-auto mb-4" /><p className="text-sm text-[rgb(var(--muted))] mb-4">Generate a grant proposal for this research gap.</p><button onClick={() => generateGrant(grantFormat)} className="btn-primary">Generate grant</button></div>}
               </div>
             </motion.div>

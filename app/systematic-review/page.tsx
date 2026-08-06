@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Loader, Copy, Check, Download } from "lucide-react";
 import { AppNav } from "@/components/nav";
+import { MarkdownContent } from "@/components/markdown-content";
 
 export default function SystematicReviewPage() {
   const [topic, setTopic] = useState("");
@@ -95,7 +96,7 @@ export default function SystematicReviewPage() {
                 </div>
               </div>
               <div className="card p-6">
-                <pre className="whitespace-pre-wrap text-sm text-[rgb(var(--fg))] font-sans leading-relaxed">{result.review}</pre>
+                <MarkdownContent content={result.review} />
               </div>
             </motion.div>
           )}

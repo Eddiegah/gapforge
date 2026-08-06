@@ -341,6 +341,27 @@ export function AppNav() {
           </motion.aside>
         </>
       )}
+
+      {/* Mobile bottom nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[rgb(var(--bg))]/95 backdrop-blur-md border-t border-[rgb(var(--border))] px-2 py-2 flex items-center justify-around">
+        {[
+          { href: "/dashboard", label: "Home", icon: Home },
+          { href: "/gap-ai", label: "Gap AI", icon: Search },
+          { href: "/gap-drops", label: "Drops", icon: Zap },
+          { href: "/library", label: "Saved", icon: Library },
+          { href: "/settings", label: "Settings", icon: Settings },
+        ].map(({ href, label, icon: Icon }) => {
+          const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+          return (
+            <Link key={href} href={href}
+              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors",
+                active ? "text-violet-400" : "text-[rgb(var(--muted))]")}>
+              <Icon size={18} />
+              <span className="text-xs">{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }
