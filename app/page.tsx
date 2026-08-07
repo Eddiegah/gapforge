@@ -294,67 +294,98 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4">
 
           {/* Universities row */}
-          <p className="text-center text-sm text-[rgb(var(--muted))] mb-8">
+          <p className="text-center text-sm text-[rgb(var(--muted))] mb-10">
             Trusted by researchers from the world&apos;s top universities...
           </p>
+
           <div className="overflow-hidden mb-12">
-            <div className="flex gap-10 animate-marquee whitespace-nowrap items-center">
-              {[
-                { name: "HARVARD", sub: "UNIVERSITY" },
-                { name: "Yale" },
-                { name: "CAMBRIDGE", sub: "UNIVERSITY OF" },
-                { name: "JOHNS HOPKINS", sub: "UNIVERSITY" },
-                { name: "Stanford", sub: "University" },
-                { name: "MIT" },
-                { name: "OXFORD" },
-                { name: "ETH Zürich" },
-                { name: "HARVARD", sub: "UNIVERSITY" },
-                { name: "Yale" },
-                { name: "CAMBRIDGE", sub: "UNIVERSITY OF" },
-                { name: "JOHNS HOPKINS", sub: "UNIVERSITY" },
-                { name: "Stanford", sub: "University" },
-                { name: "MIT" },
-                { name: "OXFORD" },
-                { name: "ETH Zürich" },
-              ].map((uni, i) => (
-                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center opacity-50 hover:opacity-80 transition-opacity cursor-default">
-                  {uni.sub && <span className="text-[9px] font-semibold tracking-[0.2em] text-[rgb(var(--fg))] uppercase leading-none">{uni.sub}</span>}
-                  <span className={`font-bold text-[rgb(var(--fg))] tracking-tight leading-tight ${uni.sub ? "text-base" : "text-2xl"}`}
-                    style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    {uni.name}
-                  </span>
-                </div>
-              ))}
+            <div className="flex gap-16 animate-marquee whitespace-nowrap items-center">
+              {[...Array(2)].flatMap(() => [
+                /* Harvard */
+                <div key="h1" className="flex-shrink-0 flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity">
+                  <svg width="20" height="24" viewBox="0 0 20 24" fill="currentColor" className="text-[rgb(var(--fg))]">
+                    <path d="M10 0L0 4v8c0 5.5 4.2 10.7 10 12 5.8-1.3 10-6.5 10-12V4L10 0z" fillOpacity="0.2" stroke="currentColor" strokeWidth="1"/>
+                    <text x="10" y="16" textAnchor="middle" fontSize="9" fontWeight="bold" fontFamily="serif">H</text>
+                  </svg>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-bold tracking-[0.2em] text-[rgb(var(--fg))] leading-none uppercase">Harvard</span>
+                    <span className="text-[7px] tracking-[0.25em] text-[rgb(var(--muted))] leading-none uppercase">University</span>
+                  </div>
+                </div>,
+                /* Yale */
+                <span key="y1" className="flex-shrink-0 text-2xl font-bold text-[rgb(var(--fg))] opacity-40 hover:opacity-70 transition-opacity" style={{fontFamily:"Georgia,serif"}}>Yale</span>,
+                /* Cambridge */
+                <div key="c1" className="flex-shrink-0 flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity">
+                  <svg width="18" height="22" viewBox="0 0 18 22" fill="none" className="text-[rgb(var(--fg))]">
+                    <path d="M9 1L1 4v8c0 5 3.6 9.5 8 11 4.4-1.5 8-6 8-11V4L9 1z" stroke="currentColor" strokeWidth="1.2" fillOpacity="0"/>
+                    <text x="9" y="15" textAnchor="middle" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="serif">C</text>
+                  </svg>
+                  <div className="flex flex-col">
+                    <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase leading-none">University of</span>
+                    <span className="text-[10px] font-bold tracking-[0.1em] text-[rgb(var(--fg))] uppercase leading-none">Cambridge</span>
+                  </div>
+                </div>,
+                /* Johns Hopkins */
+                <div key="jh1" className="flex-shrink-0 flex items-center gap-1.5 opacity-40 hover:opacity-70 transition-opacity">
+                  <svg width="16" height="20" viewBox="0 0 16 20" fill="none" className="text-[rgb(var(--fg))]">
+                    <circle cx="8" cy="10" r="7" stroke="currentColor" strokeWidth="1"/>
+                    <text x="8" y="14" textAnchor="middle" fontSize="9" fill="currentColor" fontFamily="serif">JH</text>
+                  </svg>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-bold tracking-[0.1em] text-[rgb(var(--fg))] uppercase leading-none">Johns Hopkins</span>
+                    <span className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase leading-none">University</span>
+                  </div>
+                </div>,
+                /* Stanford */
+                <div key="s1" className="flex-shrink-0 flex items-center gap-1.5 opacity-40 hover:opacity-70 transition-opacity">
+                  <svg width="16" height="20" viewBox="0 0 16 20" fill="none" className="text-[rgb(var(--fg))]">
+                    <polygon points="8,1 15,5 15,15 8,19 1,15 1,5" stroke="currentColor" strokeWidth="1"/>
+                    <text x="8" y="13" textAnchor="middle" fontSize="7" fill="currentColor" fontFamily="serif">S</text>
+                  </svg>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold tracking-[0.05em] text-[rgb(var(--fg))] leading-none" style={{fontFamily:"Georgia,serif"}}>Stanford</span>
+                    <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase leading-none">University</span>
+                  </div>
+                </div>,
+                /* MIT */
+                <span key="m1" className="flex-shrink-0 text-xl font-black tracking-tight text-[rgb(var(--fg))] opacity-40 hover:opacity-70 transition-opacity">MIT</span>,
+                /* Oxford */
+                <div key="o1" className="flex-shrink-0 flex flex-col items-start opacity-40 hover:opacity-70 transition-opacity">
+                  <span className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase leading-none">University of</span>
+                  <span className="text-[13px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Oxford</span>
+                </div>,
+                /* ETH */
+                <span key="e1" className="flex-shrink-0 text-[13px] font-black tracking-wide text-[rgb(var(--fg))] opacity-40 hover:opacity-70 transition-opacity">ETH Zürich</span>,
+              ])}
             </div>
           </div>
 
           {/* Industry row */}
-          <p className="text-center text-sm text-[rgb(var(--muted))] mb-8">
+          <p className="text-center text-sm text-[rgb(var(--muted))] mb-10">
             to R&amp;D teams in Pharma, Biotech, and research institutions across the globe
           </p>
+
           <div className="overflow-hidden">
-            <div className="flex gap-10 animate-marquee-reverse whitespace-nowrap items-center">
-              {[
-                { name: "NIH", style: "font-black text-2xl" },
-                { name: "Wellcome", style: "text-xl font-bold italic" },
-                { name: "Gates Foundation", style: "text-base font-semibold" },
-                { name: "Max Planck", style: "text-base font-bold tracking-wide" },
-                { name: "CERN", style: "font-black text-2xl tracking-widest" },
-                { name: "WHO", style: "font-black text-2xl" },
-                { name: "Karolinska", style: "text-base font-bold italic" },
-                { name: "Weizmann", style: "text-base font-semibold tracking-wide" },
-                { name: "NIH", style: "font-black text-2xl" },
-                { name: "Wellcome", style: "text-xl font-bold italic" },
-                { name: "Gates Foundation", style: "text-base font-semibold" },
-                { name: "Max Planck", style: "text-base font-bold tracking-wide" },
-                { name: "CERN", style: "font-black text-2xl tracking-widest" },
-                { name: "WHO", style: "font-black text-2xl" },
-              ].map((org, i) => (
-                <span key={i} className={`flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity cursor-default text-[rgb(var(--fg))] ${org.style}`}
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                  {org.name}
-                </span>
-              ))}
+            <div className="flex gap-16 animate-marquee-reverse whitespace-nowrap items-center">
+              {[...Array(2)].flatMap(() => [
+                <span key="nih1" className="flex-shrink-0 text-xl font-black tracking-tight text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">NIH</span>,
+                <span key="who1" className="flex-shrink-0 text-xl font-black tracking-wider text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">WHO</span>,
+                <span key="cern1" className="flex-shrink-0 text-lg font-black tracking-[0.2em] text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">CERN</span>,
+                <div key="wt1" className="flex-shrink-0 flex flex-col items-start opacity-35 hover:opacity-60 transition-opacity">
+                  <span className="text-[13px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Wellcome</span>
+                  <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase">Trust</span>
+                </div>,
+                <div key="gf1" className="flex-shrink-0 flex flex-col items-start opacity-35 hover:opacity-60 transition-opacity">
+                  <span className="text-[10px] font-semibold text-[rgb(var(--fg))] tracking-wide">Gates</span>
+                  <span className="text-[10px] font-semibold text-[rgb(var(--fg))] tracking-wide">Foundation</span>
+                </div>,
+                <div key="mp1" className="flex-shrink-0 flex flex-col items-start opacity-35 hover:opacity-60 transition-opacity">
+                  <span className="text-[10px] font-bold tracking-wide text-[rgb(var(--fg))] uppercase">Max Planck</span>
+                  <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase">Institute</span>
+                </div>,
+                <span key="k1" className="flex-shrink-0 text-[13px] font-bold text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity" style={{fontFamily:"Georgia,serif"}}>Karolinska</span>,
+                <span key="w1" className="flex-shrink-0 text-[13px] font-semibold tracking-wide text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">Weizmann</span>,
+              ])}
             </div>
           </div>
 

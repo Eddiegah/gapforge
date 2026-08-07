@@ -381,11 +381,11 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
               {showExportMenu && (
                 <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }}
                   className="absolute left-0 top-full mt-1 z-20 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl shadow-xl overflow-hidden min-w-36">
-                  <button onClick={() => { exportToObsidian(gap, savedId); setShowExportMenu(false); }}
+                  <button onClick={() => { exportToObsidian(gap, savedId, "obsidian"); setShowExportMenu(false); }}
                     className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
                     Obsidian (.md)
                   </button>
-                  <button onClick={() => { exportToObsidian(gap, savedId); setShowExportMenu(false); }}
+                  <button onClick={() => { exportToObsidian(gap, savedId, "notion"); setShowExportMenu(false); }}
                     className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
                     Notion (.md)
                   </button>

@@ -5,8 +5,6 @@
  * Last resort: Claude Haiku
  */
 
-import Groq from "groq-sdk";
-
 export interface LLMResponse {
   text: string;
   provider: "groq" | "gemini" | "claude";

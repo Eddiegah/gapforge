@@ -6,10 +6,10 @@ import { createHmac } from "crypto";
 const FLW_SECRET = process.env.FLW_SECRET_KEY!;
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
 
-const PLANS: Record<string, { name: string; plan: string; amountUSD: number }> = {
-  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10 },
-  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20 },
-  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40 },
+const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number }> = {
+  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, creditsLimit: 50 },
+  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, creditsLimit: 500 },
+  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, creditsLimit: 9999 },
 };
 
 /** Initialize a Flutterwave payment */
@@ -84,8 +84,8 @@ export async function GET(req: NextRequest) {
     const { userId, planId } = verifyData.data.meta ?? {};
     if (userId && planId && PLANS[planId]) {
       await sql`UPDATE users SET plan = ${PLANS[planId].plan}, updated_at = NOW() WHERE id = ${userId}`;
-      // Update credits limit for paid plans
-      const newLimit = planId === "team" ? 999 : planId === "pro" ? 500 : 50;
+      // Update credits limit for paid plans — same limits as Paystack for consistency
+      const newLimit = PLANS[planId].creditsLimit;
       await sql`
         INSERT INTO user_credits (user_id, credits_limit)
         VALUES (${userId}, ${newLimit})
@@ -111,7 +111,13 @@ export async function PUT(req: NextRequest) {
   if (event.event === "charge.completed" && event.data?.status === "successful") {
     const { userId, planId } = event.data.meta ?? {};
     if (userId && planId && PLANS[planId]) {
-      await sql`UPDATE users SET plan = ${PLANS[planId].plan}, updated_at = NOW() WHERE id = ${userId}`;
+      const p = PLANS[planId];
+      await sql`UPDATE users SET plan = ${p.plan}, updated_at = NOW() WHERE id = ${userId}`;
+      await sql`
+        INSERT INTO user_credits (user_id, credits_limit)
+        VALUES (${userId}, ${p.creditsLimit})
+        ON CONFLICT (user_id) DO UPDATE SET credits_limit = ${p.creditsLimit}, updated_at = NOW()
+      `;
     }
   }
 

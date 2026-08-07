@@ -2,11 +2,24 @@
 
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
 
-export function exportToObsidian(gap: DetectedGap, savedId?: string): void {
+export function exportToObsidian(
+  gap: DetectedGap,
+  savedId?: string,
+  target: "obsidian" | "notion" = "obsidian"
+): void {
   const years = gap.citations.map(c => c.year).filter(Boolean) as number[];
   const ageStr = years.length ? `${new Date().getFullYear() - Math.min(...years)} years` : "unknown";
   const origin = typeof window !== "undefined" ? window.location.origin : "https://gapforge-self.vercel.app";
+
+  // Notion uses plain headers without the YAML frontmatter Obsidian prefers.
+  // Obsidian gets a tags frontmatter block for its graph view.
+  const frontmatter =
+    target === "obsidian"
+      ? `---\ntags: [research-gap, ${gap.category}]\ncreated: ${new Date().toISOString().split("T")[0]}\n---\n\n`
+      : "";
+
   const lines = [
+    frontmatter,
     `# ${gap.title}`, "",
     `**Category:** ${gap.category.replace(/-/g, " ")}`,
     `**Relevance:** ${gap.relevanceScore * 10}/100`,
@@ -22,7 +35,7 @@ export function exportToObsidian(gap: DetectedGap, savedId?: string): void {
     `- Source: GapForge`,
     `- Date: ${new Date().toISOString().split("T")[0]}`,
     savedId ? `- URL: ${origin}/gap/${savedId}` : "",
-    `- Tags: #research-gap #${gap.category}`,
+    target === "notion" ? `- Tags: research-gap, ${gap.category}` : "",
   ].filter(l => l !== "").join("\n");
 
   const blob = new Blob([lines], { type: "text/markdown" });
