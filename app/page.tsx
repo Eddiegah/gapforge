@@ -290,48 +290,74 @@ export default function HomePage() {
       </div>
 
       {/* ── TRUST / UNIVERSITIES MARQUEE ── */}
-      <section className="py-16 border-y border-[rgb(var(--border))]/50 overflow-hidden bg-[rgb(var(--card))]/30">
-        <div className="max-w-5xl mx-auto px-4 text-center mb-10">
-          <p className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-1">Trusted by researchers from</p>
-          <h2 className="text-xl font-bold text-[rgb(var(--fg))]">The world's top research institutions</h2>
-        </div>
+      <section className="py-16 border-y border-[rgb(var(--border))]/50 overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4">
 
-        {/* Row 1 — Universities */}
-        <div className="relative mb-6">
-          <div className="flex gap-12 animate-marquee whitespace-nowrap items-center">
-            {[
-              "Harvard University", "MIT", "Stanford University", "University of Cambridge",
-              "Johns Hopkins University", "Yale University", "Oxford University", "ETH Zurich",
-              "University of Toronto", "Imperial College London", "Caltech", "Princeton University",
-              "Harvard University", "MIT", "Stanford University", "University of Cambridge",
-              "Johns Hopkins University", "Yale University", "Oxford University", "ETH Zurich",
-            ].map((name, i) => (
-              <span key={i} className="inline-flex items-center gap-2 text-sm font-semibold text-[rgb(var(--muted))] flex-shrink-0 hover:text-[rgb(var(--fg))] transition-colors">
-                <span className="w-5 h-5 rounded-full bg-violet-500/20 flex items-center justify-center text-xs text-violet-400 font-bold flex-shrink-0">
-                  {name[0]}
+          {/* Universities row */}
+          <p className="text-center text-sm text-[rgb(var(--muted))] mb-8">
+            Trusted by researchers from the world&apos;s top universities...
+          </p>
+          <div className="overflow-hidden mb-12">
+            <div className="flex gap-10 animate-marquee whitespace-nowrap items-center">
+              {[
+                { name: "HARVARD", sub: "UNIVERSITY" },
+                { name: "Yale" },
+                { name: "CAMBRIDGE", sub: "UNIVERSITY OF" },
+                { name: "JOHNS HOPKINS", sub: "UNIVERSITY" },
+                { name: "Stanford", sub: "University" },
+                { name: "MIT" },
+                { name: "OXFORD" },
+                { name: "ETH Zürich" },
+                { name: "HARVARD", sub: "UNIVERSITY" },
+                { name: "Yale" },
+                { name: "CAMBRIDGE", sub: "UNIVERSITY OF" },
+                { name: "JOHNS HOPKINS", sub: "UNIVERSITY" },
+                { name: "Stanford", sub: "University" },
+                { name: "MIT" },
+                { name: "OXFORD" },
+                { name: "ETH Zürich" },
+              ].map((uni, i) => (
+                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center opacity-50 hover:opacity-80 transition-opacity cursor-default">
+                  {uni.sub && <span className="text-[9px] font-semibold tracking-[0.2em] text-[rgb(var(--fg))] uppercase leading-none">{uni.sub}</span>}
+                  <span className={`font-bold text-[rgb(var(--fg))] tracking-tight leading-tight ${uni.sub ? "text-base" : "text-2xl"}`}
+                    style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                    {uni.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Industry row */}
+          <p className="text-center text-sm text-[rgb(var(--muted))] mb-8">
+            to R&amp;D teams in Pharma, Biotech, and research institutions across the globe
+          </p>
+          <div className="overflow-hidden">
+            <div className="flex gap-10 animate-marquee-reverse whitespace-nowrap items-center">
+              {[
+                { name: "NIH", style: "font-black text-2xl" },
+                { name: "Wellcome", style: "text-xl font-bold italic" },
+                { name: "Gates Foundation", style: "text-base font-semibold" },
+                { name: "Max Planck", style: "text-base font-bold tracking-wide" },
+                { name: "CERN", style: "font-black text-2xl tracking-widest" },
+                { name: "WHO", style: "font-black text-2xl" },
+                { name: "Karolinska", style: "text-base font-bold italic" },
+                { name: "Weizmann", style: "text-base font-semibold tracking-wide" },
+                { name: "NIH", style: "font-black text-2xl" },
+                { name: "Wellcome", style: "text-xl font-bold italic" },
+                { name: "Gates Foundation", style: "text-base font-semibold" },
+                { name: "Max Planck", style: "text-base font-bold tracking-wide" },
+                { name: "CERN", style: "font-black text-2xl tracking-widest" },
+                { name: "WHO", style: "font-black text-2xl" },
+              ].map((org, i) => (
+                <span key={i} className={`flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity cursor-default text-[rgb(var(--fg))] ${org.style}`}
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                  {org.name}
                 </span>
-                {name}
-              </span>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Row 2 — Research institutions / pharma (reverse direction) */}
-        <div className="relative">
-          <div className="flex gap-12 animate-marquee-reverse whitespace-nowrap items-center">
-            {[
-              "NIH", "WHO Research", "Max Planck Institute", "CERN", "Wellcome Trust",
-              "Gates Foundation", "Chan Zuckerberg Initiative", "Howard Hughes Medical Institute",
-              "Karolinska Institute", "Weizmann Institute", "RIKEN", "INSERM",
-              "NIH", "WHO Research", "Max Planck Institute", "CERN", "Wellcome Trust",
-              "Gates Foundation", "Chan Zuckerberg Initiative", "Howard Hughes Medical Institute",
-            ].map((name, i) => (
-              <span key={i} className="inline-flex items-center gap-2 text-sm font-medium text-[rgb(var(--muted))]/70 flex-shrink-0 hover:text-[rgb(var(--fg))] transition-colors">
-                <span className="w-1.5 h-1.5 rounded-full bg-violet-400/40 flex-shrink-0" />
-                {name}
-              </span>
-            ))}
-          </div>
         </div>
       </section>
 
