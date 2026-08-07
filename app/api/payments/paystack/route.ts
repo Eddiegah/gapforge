@@ -6,10 +6,10 @@ import { createHmac } from "crypto";
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY!;
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
 
-const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number; amountNGN: number }> = {
-  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, amountNGN: 1600000, creditsLimit: 50 },
-  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, amountNGN: 3200000, creditsLimit: 500 },
-  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, amountNGN: 6400000, creditsLimit: 9999 },
+const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number; amountGHS: number }> = {
+  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, amountGHS: 160000, creditsLimit: 50 },
+  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, amountGHS: 320000, creditsLimit: 500 },
+  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, amountGHS: 640000, creditsLimit: 9999 },
 };
 
 /** Initialize a Paystack payment */
@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
 
   // Use GHS — Paystack Ghana supports GHS natively
-  // Amount in kobo (NGN * 100)
-  const amount = plan.amountNGN;
+  // Amount in pesewas (GHS * 100). Paystack Ghana uses GHS.
+  const amount = plan.amountGHS;
 
   const res = await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       email: user.email,
       amount: amount,
-      currency: "NGN",
+      currency: "GHS",
       callback_url: `${BASE_URL}/api/payments/paystack/callback`,
       metadata: {
         userId: session.user.id,
