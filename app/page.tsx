@@ -292,51 +292,95 @@ export default function HomePage() {
       {/* ── TRUST / UNIVERSITIES ── */}
       <section className="py-16 border-y border-[rgb(var(--border))]/50">
         <div className="max-w-5xl mx-auto px-4">
-
-          <p className="text-center text-base text-[rgb(var(--fg))] font-medium mb-10">
+          <p className="text-center text-base text-[rgb(var(--fg))] font-medium mb-12">
             Trusted by researchers from the world&apos;s top universities...
           </p>
 
-          {/* University logos — static grid */}
-          <div className="flex flex-wrap items-center justify-center gap-10 mb-14">
+          {/* University row — styled wordmarks matching real logo typography */}
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 mb-14">
             {[
-              { name: "Harvard University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/320px-Harvard_University_logo.svg.png" },
-              { name: "Yale", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Yale_University_logo.svg/240px-Yale_University_logo.svg.png" },
-              { name: "University of Cambridge", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Cam_logo_sm_stacked.png/320px-Cam_logo_sm_stacked.png" },
-              { name: "Johns Hopkins University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Johns_Hopkins_University_logo_%282007%29.svg/320px-Johns_Hopkins_University_logo_%282007%29.svg.png" },
-              { name: "Stanford University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Stanford_Cardinal_logo.svg/240px-Stanford_Cardinal_logo.svg.png" },
-              { name: "MIT", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/240px-MIT_logo.svg.png" },
-              { name: "Oxford University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Oxford-University-Circlet.svg/200px-Oxford-University-Circlet.svg.png" },
-              { name: "ETH Zürich", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/ETH_Z%C3%BCrich_Logo_black.svg/320px-ETH_Z%C3%BCrich_Logo_black.svg.png" },
-            ].map(uni => (
-              <div key={uni.name} className="flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity grayscale hover:grayscale-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={uni.src} alt={uni.name} className="h-10 w-auto object-contain" loading="lazy" />
-              </div>
-            ))}
+              /* Harvard — shield + stacked text */
+              <div key="harvard" className="flex items-center gap-2 opacity-40 hover:opacity-75 transition-opacity cursor-default">
+                <svg width="28" height="32" viewBox="0 0 28 32" fill="currentColor" className="text-[rgb(var(--fg))] flex-shrink-0">
+                  <path d="M14 1L1 5.5v10C1 23 6.8 29 14 31 21.2 29 27 23 27 15.5v-10L14 1z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                  <rect x="5" y="10" width="18" height="1.5" rx="0.5"/>
+                  <rect x="5" y="14" width="18" height="1.5" rx="0.5"/>
+                  <rect x="5" y="18" width="18" height="1.5" rx="0.5"/>
+                  <rect x="13" y="9" width="2" height="15" rx="0.5"/>
+                </svg>
+                <div>
+                  <div className="text-[9px] font-black tracking-[0.25em] text-[rgb(var(--fg))] uppercase leading-none">Harvard</div>
+                  <div className="text-[7px] tracking-[0.3em] text-[rgb(var(--muted))] uppercase leading-none mt-0.5">University</div>
+                </div>
+              </div>,
+              /* Yale */
+              <span key="yale" className="text-[26px] font-bold text-[rgb(var(--fg))] opacity-40 hover:opacity-75 transition-opacity" style={{fontFamily:"Georgia,'Times New Roman',serif",letterSpacing:"-0.01em"}}>Yale</span>,
+              /* Cambridge */
+              <div key="cambridge" className="text-center opacity-40 hover:opacity-75 transition-opacity cursor-default">
+                <div className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase">University of</div>
+                <div className="text-[15px] font-bold text-[rgb(var(--fg))] uppercase tracking-[0.08em]" style={{fontFamily:"Georgia,serif"}}>Cambridge</div>
+              </div>,
+              /* Johns Hopkins */
+              <div key="jhu" className="text-center opacity-40 hover:opacity-75 transition-opacity cursor-default">
+                <div className="text-[10px] font-bold text-[rgb(var(--fg))] uppercase tracking-[0.1em]">Johns Hopkins</div>
+                <div className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase">University</div>
+              </div>,
+              /* Stanford */
+              <div key="stanford" className="flex items-center gap-1.5 opacity-40 hover:opacity-75 transition-opacity cursor-default">
+                <svg width="18" height="24" viewBox="0 0 18 24" fill="none" className="text-[rgb(var(--fg))] flex-shrink-0">
+                  <path d="M9 1L17 5v10L9 23 1 15V5L9 1z" stroke="currentColor" strokeWidth="1.5"/>
+                  <text x="9" y="15" textAnchor="middle" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="serif">S</text>
+                </svg>
+                <div>
+                  <div className="text-[11px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Stanford</div>
+                  <div className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase">University</div>
+                </div>
+              </div>,
+              /* MIT */
+              <span key="mit" className="text-[20px] font-black text-[rgb(var(--fg))] tracking-tight opacity-40 hover:opacity-75 transition-opacity">MIT</span>,
+              /* Oxford */
+              <div key="oxford" className="text-center opacity-40 hover:opacity-75 transition-opacity cursor-default">
+                <div className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase">University of</div>
+                <div className="text-[14px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Oxford</div>
+              </div>,
+              /* ETH */
+              <span key="eth" className="text-[13px] font-black tracking-wide text-[rgb(var(--fg))] opacity-40 hover:opacity-75 transition-opacity">ETH Zürich</span>,
+              /* Princeton */
+              <div key="princeton" className="text-center opacity-40 hover:opacity-75 transition-opacity cursor-default">
+                <div className="text-[11px] font-bold text-[rgb(var(--fg))] tracking-wide" style={{fontFamily:"Georgia,serif"}}>Princeton</div>
+                <div className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase">University</div>
+              </div>,
+              /* Caltech */
+              <span key="caltech" className="text-[12px] font-black tracking-wide text-[rgb(var(--fg))] opacity-40 hover:opacity-75 transition-opacity uppercase">Caltech</span>,
+            ]}
           </div>
 
-          <p className="text-center text-base text-[rgb(var(--fg))] font-medium mb-10">
+          <p className="text-center text-base text-[rgb(var(--fg))] font-medium mb-12">
             to R&amp;D teams in Pharma, Biotech, and hospitals across the globe
           </p>
 
           {/* Industry logos */}
-          <div className="flex flex-wrap items-center justify-center gap-10">
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
             {[
-              { name: "NIH", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/NIH_Master_Logo_Vertical_2Color.svg/200px-NIH_Master_Logo_Vertical_2Color.svg.png" },
-              { name: "WHO", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/World_Health_Organization_Logo.svg/200px-World_Health_Organization_Logo.svg.png" },
-              { name: "Wellcome Trust", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wellcome_Trust_logo.svg/320px-Wellcome_Trust_logo.svg.png" },
-              { name: "Gates Foundation", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bill_%26_Melinda_Gates_Foundation.svg/320px-Bill_%26_Melinda_Gates_Foundation.svg.png" },
-              { name: "Max Planck", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Max-Planck-Gesellschaft.svg/320px-Max-Planck-Gesellschaft.svg.png" },
-              { name: "Karolinska", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Karolinska_Institutet_logo.svg/320px-Karolinska_Institutet_logo.svg.png" },
-            ].map(org => (
-              <div key={org.name} className="flex-shrink-0 opacity-35 hover:opacity-65 transition-opacity grayscale hover:grayscale-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={org.src} alt={org.name} className="h-8 w-auto object-contain" loading="lazy" />
-              </div>
-            ))}
+              <span key="nih" className="text-[22px] font-black text-[rgb(var(--fg))] tracking-tight opacity-35 hover:opacity-65 transition-opacity">NIH</span>,
+              <span key="who" className="text-[22px] font-black text-[rgb(var(--fg))] tracking-widest opacity-35 hover:opacity-65 transition-opacity">WHO</span>,
+              <span key="cern" className="text-[18px] font-black text-[rgb(var(--fg))] tracking-[0.2em] opacity-35 hover:opacity-65 transition-opacity">CERN</span>,
+              <div key="wellcome" className="text-center opacity-35 hover:opacity-65 transition-opacity cursor-default">
+                <div className="text-[14px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Wellcome</div>
+                <div className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase">Trust</div>
+              </div>,
+              <div key="gates" className="text-center opacity-35 hover:opacity-65 transition-opacity cursor-default">
+                <div className="text-[10px] font-semibold text-[rgb(var(--fg))] tracking-wide leading-tight">Bill &amp; Melinda Gates</div>
+                <div className="text-[10px] font-semibold text-[rgb(var(--fg))] tracking-wide">Foundation</div>
+              </div>,
+              <div key="maxplanck" className="text-center opacity-35 hover:opacity-65 transition-opacity cursor-default">
+                <div className="text-[10px] font-bold tracking-wide text-[rgb(var(--fg))] uppercase">Max Planck</div>
+                <div className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase">Society</div>
+              </div>,
+              <span key="karolinska" className="text-[13px] font-bold text-[rgb(var(--fg))] opacity-35 hover:opacity-65 transition-opacity" style={{fontFamily:"Georgia,serif"}}>Karolinska</span>,
+              <span key="weizmann" className="text-[13px] font-semibold tracking-wide text-[rgb(var(--fg))] opacity-35 hover:opacity-65 transition-opacity">Weizmann</span>,
+            ]}
           </div>
-
         </div>
       </section>
 
