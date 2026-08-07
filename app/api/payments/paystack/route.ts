@@ -7,9 +7,9 @@ const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY!;
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
 
 const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number; amountGHS: number }> = {
-  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, amountGHS: 160000, creditsLimit: 50 },
-  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, amountGHS: 320000, creditsLimit: 500 },
-  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, amountGHS: 640000, creditsLimit: 9999 },
+  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, amountGHS: 11800, creditsLimit: 50 },
+  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, amountGHS: 23600, creditsLimit: 500 },
+  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, amountGHS: 47200, creditsLimit: 9999 },
 };
 
 /** Initialize a Paystack payment */
