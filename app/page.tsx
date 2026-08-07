@@ -289,104 +289,52 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── TRUST / UNIVERSITIES MARQUEE ── */}
-      <section className="py-16 border-y border-[rgb(var(--border))]/50 overflow-hidden">
+      {/* ── TRUST / UNIVERSITIES ── */}
+      <section className="py-16 border-y border-[rgb(var(--border))]/50">
         <div className="max-w-5xl mx-auto px-4">
 
-          {/* Universities row */}
-          <p className="text-center text-sm text-[rgb(var(--muted))] mb-10">
+          <p className="text-center text-base text-[rgb(var(--fg))] font-medium mb-10">
             Trusted by researchers from the world&apos;s top universities...
           </p>
 
-          <div className="overflow-hidden mb-12">
-            <div className="flex gap-16 animate-marquee whitespace-nowrap items-center">
-              {[...Array(2)].flatMap(() => [
-                /* Harvard */
-                <div key="h1" className="flex-shrink-0 flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity">
-                  <svg width="20" height="24" viewBox="0 0 20 24" fill="currentColor" className="text-[rgb(var(--fg))]">
-                    <path d="M10 0L0 4v8c0 5.5 4.2 10.7 10 12 5.8-1.3 10-6.5 10-12V4L10 0z" fillOpacity="0.2" stroke="currentColor" strokeWidth="1"/>
-                    <text x="10" y="16" textAnchor="middle" fontSize="9" fontWeight="bold" fontFamily="serif">H</text>
-                  </svg>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-bold tracking-[0.2em] text-[rgb(var(--fg))] leading-none uppercase">Harvard</span>
-                    <span className="text-[7px] tracking-[0.25em] text-[rgb(var(--muted))] leading-none uppercase">University</span>
-                  </div>
-                </div>,
-                /* Yale */
-                <span key="y1" className="flex-shrink-0 text-2xl font-bold text-[rgb(var(--fg))] opacity-40 hover:opacity-70 transition-opacity" style={{fontFamily:"Georgia,serif"}}>Yale</span>,
-                /* Cambridge */
-                <div key="c1" className="flex-shrink-0 flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity">
-                  <svg width="18" height="22" viewBox="0 0 18 22" fill="none" className="text-[rgb(var(--fg))]">
-                    <path d="M9 1L1 4v8c0 5 3.6 9.5 8 11 4.4-1.5 8-6 8-11V4L9 1z" stroke="currentColor" strokeWidth="1.2" fillOpacity="0"/>
-                    <text x="9" y="15" textAnchor="middle" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="serif">C</text>
-                  </svg>
-                  <div className="flex flex-col">
-                    <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase leading-none">University of</span>
-                    <span className="text-[10px] font-bold tracking-[0.1em] text-[rgb(var(--fg))] uppercase leading-none">Cambridge</span>
-                  </div>
-                </div>,
-                /* Johns Hopkins */
-                <div key="jh1" className="flex-shrink-0 flex items-center gap-1.5 opacity-40 hover:opacity-70 transition-opacity">
-                  <svg width="16" height="20" viewBox="0 0 16 20" fill="none" className="text-[rgb(var(--fg))]">
-                    <circle cx="8" cy="10" r="7" stroke="currentColor" strokeWidth="1"/>
-                    <text x="8" y="14" textAnchor="middle" fontSize="9" fill="currentColor" fontFamily="serif">JH</text>
-                  </svg>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-bold tracking-[0.1em] text-[rgb(var(--fg))] uppercase leading-none">Johns Hopkins</span>
-                    <span className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase leading-none">University</span>
-                  </div>
-                </div>,
-                /* Stanford */
-                <div key="s1" className="flex-shrink-0 flex items-center gap-1.5 opacity-40 hover:opacity-70 transition-opacity">
-                  <svg width="16" height="20" viewBox="0 0 16 20" fill="none" className="text-[rgb(var(--fg))]">
-                    <polygon points="8,1 15,5 15,15 8,19 1,15 1,5" stroke="currentColor" strokeWidth="1"/>
-                    <text x="8" y="13" textAnchor="middle" fontSize="7" fill="currentColor" fontFamily="serif">S</text>
-                  </svg>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-bold tracking-[0.05em] text-[rgb(var(--fg))] leading-none" style={{fontFamily:"Georgia,serif"}}>Stanford</span>
-                    <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase leading-none">University</span>
-                  </div>
-                </div>,
-                /* MIT */
-                <span key="m1" className="flex-shrink-0 text-xl font-black tracking-tight text-[rgb(var(--fg))] opacity-40 hover:opacity-70 transition-opacity">MIT</span>,
-                /* Oxford */
-                <div key="o1" className="flex-shrink-0 flex flex-col items-start opacity-40 hover:opacity-70 transition-opacity">
-                  <span className="text-[7px] tracking-[0.2em] text-[rgb(var(--muted))] uppercase leading-none">University of</span>
-                  <span className="text-[13px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Oxford</span>
-                </div>,
-                /* ETH */
-                <span key="e1" className="flex-shrink-0 text-[13px] font-black tracking-wide text-[rgb(var(--fg))] opacity-40 hover:opacity-70 transition-opacity">ETH Zürich</span>,
-              ])}
-            </div>
+          {/* University logos — static grid */}
+          <div className="flex flex-wrap items-center justify-center gap-10 mb-14">
+            {[
+              { name: "Harvard University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/320px-Harvard_University_logo.svg.png" },
+              { name: "Yale", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Yale_University_logo.svg/240px-Yale_University_logo.svg.png" },
+              { name: "University of Cambridge", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Cam_logo_sm_stacked.png/320px-Cam_logo_sm_stacked.png" },
+              { name: "Johns Hopkins University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Johns_Hopkins_University_logo_%282007%29.svg/320px-Johns_Hopkins_University_logo_%282007%29.svg.png" },
+              { name: "Stanford University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Stanford_Cardinal_logo.svg/240px-Stanford_Cardinal_logo.svg.png" },
+              { name: "MIT", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/240px-MIT_logo.svg.png" },
+              { name: "Oxford University", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Oxford-University-Circlet.svg/200px-Oxford-University-Circlet.svg.png" },
+              { name: "ETH Zürich", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/ETH_Z%C3%BCrich_Logo_black.svg/320px-ETH_Z%C3%BCrich_Logo_black.svg.png" },
+            ].map(uni => (
+              <div key={uni.name} className="flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity grayscale hover:grayscale-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={uni.src} alt={uni.name} className="h-10 w-auto object-contain" loading="lazy" />
+              </div>
+            ))}
           </div>
 
-          {/* Industry row */}
-          <p className="text-center text-sm text-[rgb(var(--muted))] mb-10">
-            to R&amp;D teams in Pharma, Biotech, and research institutions across the globe
+          <p className="text-center text-base text-[rgb(var(--fg))] font-medium mb-10">
+            to R&amp;D teams in Pharma, Biotech, and hospitals across the globe
           </p>
 
-          <div className="overflow-hidden">
-            <div className="flex gap-16 animate-marquee-reverse whitespace-nowrap items-center">
-              {[...Array(2)].flatMap(() => [
-                <span key="nih1" className="flex-shrink-0 text-xl font-black tracking-tight text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">NIH</span>,
-                <span key="who1" className="flex-shrink-0 text-xl font-black tracking-wider text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">WHO</span>,
-                <span key="cern1" className="flex-shrink-0 text-lg font-black tracking-[0.2em] text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">CERN</span>,
-                <div key="wt1" className="flex-shrink-0 flex flex-col items-start opacity-35 hover:opacity-60 transition-opacity">
-                  <span className="text-[13px] font-bold text-[rgb(var(--fg))]" style={{fontFamily:"Georgia,serif"}}>Wellcome</span>
-                  <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase">Trust</span>
-                </div>,
-                <div key="gf1" className="flex-shrink-0 flex flex-col items-start opacity-35 hover:opacity-60 transition-opacity">
-                  <span className="text-[10px] font-semibold text-[rgb(var(--fg))] tracking-wide">Gates</span>
-                  <span className="text-[10px] font-semibold text-[rgb(var(--fg))] tracking-wide">Foundation</span>
-                </div>,
-                <div key="mp1" className="flex-shrink-0 flex flex-col items-start opacity-35 hover:opacity-60 transition-opacity">
-                  <span className="text-[10px] font-bold tracking-wide text-[rgb(var(--fg))] uppercase">Max Planck</span>
-                  <span className="text-[7px] tracking-[0.15em] text-[rgb(var(--muted))] uppercase">Institute</span>
-                </div>,
-                <span key="k1" className="flex-shrink-0 text-[13px] font-bold text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity" style={{fontFamily:"Georgia,serif"}}>Karolinska</span>,
-                <span key="w1" className="flex-shrink-0 text-[13px] font-semibold tracking-wide text-[rgb(var(--fg))] opacity-35 hover:opacity-60 transition-opacity">Weizmann</span>,
-              ])}
-            </div>
+          {/* Industry logos */}
+          <div className="flex flex-wrap items-center justify-center gap-10">
+            {[
+              { name: "NIH", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/NIH_Master_Logo_Vertical_2Color.svg/200px-NIH_Master_Logo_Vertical_2Color.svg.png" },
+              { name: "WHO", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/World_Health_Organization_Logo.svg/200px-World_Health_Organization_Logo.svg.png" },
+              { name: "Wellcome Trust", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wellcome_Trust_logo.svg/320px-Wellcome_Trust_logo.svg.png" },
+              { name: "Gates Foundation", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bill_%26_Melinda_Gates_Foundation.svg/320px-Bill_%26_Melinda_Gates_Foundation.svg.png" },
+              { name: "Max Planck", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Max-Planck-Gesellschaft.svg/320px-Max-Planck-Gesellschaft.svg.png" },
+              { name: "Karolinska", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Karolinska_Institutet_logo.svg/320px-Karolinska_Institutet_logo.svg.png" },
+            ].map(org => (
+              <div key={org.name} className="flex-shrink-0 opacity-35 hover:opacity-65 transition-opacity grayscale hover:grayscale-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={org.src} alt={org.name} className="h-8 w-auto object-contain" loading="lazy" />
+              </div>
+            ))}
           </div>
 
         </div>
