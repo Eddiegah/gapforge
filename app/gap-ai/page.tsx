@@ -494,22 +494,6 @@ export default function GapAIPage() {
                   </div>
                 )}
               </div>
-
-              <div className="mt-12 w-full max-w-2xl">
-                <div className="flex items-center gap-2 text-xs text-[rgb(var(--muted))] mb-3">
-                  <div className="w-3 h-3 rounded-full border border-[rgb(var(--accent))]/50 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--accent))]" />
-                  </div>
-                  NOW SCANNING SOURCES ACROSS SCIENCE, LAW, ECONOMICS &amp; MORE
-                </div>
-                <div className="overflow-hidden">
-                  <div className="flex gap-2 animate-marquee whitespace-nowrap">
-                    {["Semantic Scholar","arXiv","PubMed","OpenAlex","Crossref","CORE","bioRxiv","DOAJ","NASA ADS","Semantic Scholar","arXiv","PubMed","OpenAlex","Crossref","CORE","bioRxiv","DOAJ","NASA ADS"].map((s, i) => (
-                      <span key={i} className="inline-flex items-center px-2.5 py-1 rounded-full border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] bg-[rgb(var(--card))]/60 flex-shrink-0">{s}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           ) : (
             <div className="flex flex-col h-full overflow-hidden">
