@@ -6,61 +6,42 @@ interface LogoIconProps {
 }
 
 export function LogoIcon({ size = 32, className }: LogoIconProps) {
-  // Use a stable ID suffix to avoid conflicts when multiple instances render
-  const gradId = "gf-bg-grad";
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 32 32"
+      viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="GapForge logo"
     >
       <defs>
-        <linearGradient id={gradId} x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+        <linearGradient id="gf-bg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#8b5cf6" />
           <stop offset="100%" stopColor="#6d28d9" />
         </linearGradient>
+        <linearGradient id="gf-glow" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
-      {/* Background: rounded rect with violet gradient */}
-      <rect width="32" height="32" rx="8" fill={`url(#${gradId})`} />
+      {/* Background with rounded square */}
+      <rect width="40" height="40" rx="10" fill="url(#gf-bg)" />
+      <rect width="40" height="40" rx="10" fill="url(#gf-glow)" />
 
-      {/* Stylized "G" with a deliberate gap on the right side */}
-      {/* Top-left arc / serif of G — top bar */}
-      <path
-        d="M20 9H13C10.24 9 8 11.24 8 14V18C8 20.76 10.24 23 13 23H18"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Middle crossbar of G (the "gap" — it stops before closing the right side) */}
-      <path
-        d="M16 16H20"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      {/* Right vertical stub — deliberately SHORT so there's a visible gap above */}
-      <path
-        d="M20 19V23"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
+      {/* Magnifying glass / search lens — represents discovery */}
+      <circle cx="17" cy="17" r="7.5" stroke="white" strokeWidth="2.5" fill="none" strokeOpacity="0.95" />
 
-      {/* Spark / forge lightning — 3-pointed, top-right corner */}
-      <path
-        d="M24 7L22 11.5L24.5 11L22 16"
-        stroke="white"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.85"
-      />
+      {/* Gap in the circle — the "gap" metaphor, top-right break */}
+      <path d="M22.5 11.5 L24.5 9.5" stroke="url(#gf-bg)" strokeWidth="3" strokeLinecap="round" />
+
+      {/* Search handle — angled bottom-right */}
+      <line x1="22.5" y1="22.5" x2="29" y2="29" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeOpacity="0.95" />
+
+      {/* Lightning bolt spark — the "forge" / intelligence element */}
+      <path d="M26 10 L23.5 15 L26.5 15 L24 20" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.9" fill="none" />
     </svg>
   );
 }

@@ -14,7 +14,7 @@ const PLANS = [
     period: "/month",
     description: "For curious researchers just getting started.",
     features: [
-      "20 Gap AI searches/month",
+      "10 Gap AI searches/month",
       "Public weekly Gap Drops",
       "GapSimplify (DOI & arXiv)",
       "Save up to 20 gaps",

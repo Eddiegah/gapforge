@@ -35,7 +35,7 @@ const FAQS = [
   },
   {
     q: "Is there a free plan?",
-    a: "Yes. The free plan gives you 20 Gap AI searches per month, access to public Gap Drops, and GapSimplify via DOI/arXiv links. Starter ($10), Pro ($20), and Team ($40) plans unlock more searches, personalized drops, PDF upload, workspaces, and API access.",
+    a: "Yes. The free plan gives you 10 Gap AI searches per month, access to public Gap Drops, and GapSimplify via DOI/arXiv links. Starter ($10), Pro ($20), and Team ($40) plans unlock more searches, personalized drops, PDF upload, workspaces, and API access.",
   },
 ];
 
@@ -47,7 +47,7 @@ const PLANS = [
     period: "/month",
     description: "For curious researchers just getting started.",
     features: [
-      "20 Gap AI searches/month",
+      "10 Gap AI searches/month",
       "Public weekly Gap Drops",
       "GapSimplify (DOI & arXiv)",
       "Save up to 20 gaps",
