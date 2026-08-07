@@ -220,7 +220,7 @@ export function AppNav() {
       </div>
 
       {/* Nav items */}
-      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto min-h-0">
+      <nav className="flex-1 px-2 py-3 overflow-y-auto min-h-0 space-y-0.5">
         {APP_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
           return (
@@ -247,23 +247,23 @@ export function AppNav() {
             </Link>
           );
         })}
-      </nav>
 
-      {/* Tools section */}
-      <div className="px-2 py-2 border-t border-[rgb(var(--border))]">
-        <p className="px-3 py-1 text-[10px] font-semibold text-[rgb(var(--muted))] uppercase tracking-widest">Tools</p>
-        {TOOL_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
-          return (
-            <Link key={href} href={href} onClick={() => setMobileOpen(false)}
-              className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all",
-                active ? "bg-violet-600/15 text-violet-400" : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))]")}>
-              <Icon size={14} className="flex-shrink-0" />
-              {label}
-            </Link>
-          );
-        })}
-      </div>
+        {/* Tools section — inside scrollable nav */}
+        <div className="pt-3 mt-1 border-t border-[rgb(var(--border))]">
+          <p className="px-3 py-1 text-[10px] font-semibold text-[rgb(var(--muted))] uppercase tracking-widest">Tools</p>
+          {TOOL_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+            const active = pathname.startsWith(href);
+            return (
+              <Link key={href} href={href} onClick={() => setMobileOpen(false)}
+                className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all",
+                  active ? "bg-violet-600/15 text-violet-400" : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))]")}>
+                <Icon size={14} className="flex-shrink-0" />
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
 
       {/* Bottom section */}
       <div className="px-2 pb-4 border-t border-[rgb(var(--border))] pt-3 space-y-2">
