@@ -267,28 +267,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── SOURCE TICKER ── */}
-      <div className="border-y border-[rgb(var(--border))] bg-[rgb(var(--card))]/40 py-4 overflow-hidden">
-        <div className="flex items-center gap-6 mb-3 px-4">
-          <span className="text-xs font-semibold tracking-widest text-[rgb(var(--muted))] uppercase whitespace-nowrap flex-shrink-0">
-            NOW SCANNING SOURCES ACROSS SCIENCE, LAW, ECONOMICS &amp; MORE
-          </span>
-        </div>
-        <div className="overflow-hidden">
-          <div className="marquee-track">
-            {/* Two copies for seamless loop */}
-            {[...SOURCES, ...SOURCES].map((src, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center mx-3 px-4 py-1.5 rounded-full bg-violet-600/10 border border-violet-600/20 text-violet-300 text-xs font-medium whitespace-nowrap"
-              >
-                {src}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* ── TRUST / UNIVERSITIES ── */}
       <section className="py-16 border-y border-[rgb(var(--border))]/50">
         <div className="max-w-5xl mx-auto px-4">
