@@ -127,7 +127,7 @@ export default function PricingPage() {
             <Zap size={12} /> Simple, honest pricing
           </div>
           <h1 className="text-4xl font-bold text-[rgb(var(--fg))] mb-3">Research intelligence for every stage</h1>
-          <p className="text-[rgb(var(--muted))] max-w-lg mx-auto">Payments processed via Flutterwave — supports cards and mobile money across Africa and globally.</p>
+          <p className="text-[rgb(var(--muted))] max-w-lg mx-auto">Payments processed securely via Paystack — supports cards, mobile money, and bank transfer in Ghana and globally.</p>
         </div>
 
         {error && (
@@ -190,8 +190,8 @@ export default function PricingPage() {
         </div>
 
         <p className="text-center text-xs text-[rgb(var(--muted))] mt-8">
-          Payments processed securely via Paystack — supports Visa, Mastercard, and bank transfer.
-          <br />Built in Ghana for researchers worldwide.
+          Payments processed securely via Paystack in GHS — supports Visa, Mastercard, Mobile Money, and bank transfer.
+          <br />Prices shown in USD for reference. GHS equivalent charged at checkout.
         </p>
       </div>
     </div>

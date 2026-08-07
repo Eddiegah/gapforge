@@ -6,10 +6,10 @@ import { createHmac } from "crypto";
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY!;
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
 
-const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number }> = {
-  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, creditsLimit: 50 },
-  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, creditsLimit: 500 },
-  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, creditsLimit: 9999 },
+const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number; amountNGN: number }> = {
+  starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, amountNGN: 1600000, creditsLimit: 50 },
+  pro:     { name: "GapForge Pro",     plan: "pro",     amountUSD: 20, amountNGN: 3200000, creditsLimit: 500 },
+  team:    { name: "GapForge Team",    plan: "team",    amountUSD: 40, amountNGN: 6400000, creditsLimit: 9999 },
 };
 
 /** Initialize a Paystack payment */
@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
   const [user] = await sql`SELECT email, name FROM users WHERE id = ${session.user.id}`;
   if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
 
-  // Paystack amount is in kobo (NGN) or lowest currency unit
-  // For USD: amount in cents (Paystack supports USD)
-  const amountCents = plan.amountUSD * 100;
+  // Use GHS — Paystack Ghana supports GHS natively
+  // Amount in kobo (NGN * 100)
+  const amount = plan.amountNGN;
 
   const res = await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",
@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({
       email: user.email,
-      amount: amountCents,
-      currency: "USD",
+      amount: amount,
+      currency: "NGN",
       callback_url: `${BASE_URL}/api/payments/paystack/callback`,
       metadata: {
         userId: session.user.id,

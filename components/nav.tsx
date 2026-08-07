@@ -206,18 +206,6 @@ export function AppNav() {
         </button>
       </div>
 
-      {/* Quick navigate / Command palette trigger */}
-      <div className="px-2 pt-3 pb-1">
-        <button onClick={() => {
-          const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true });
-          document.dispatchEvent(event);
-        }} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:border-violet-500/30 transition-colors w-full">
-          <Search size={12} />
-          <span className="flex-1 text-left">Quick navigate...</span>
-          <kbd className="text-xs">⌘K</kbd>
-        </button>
-      </div>
-
       {/* Nav items */}
       <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
         {APP_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
