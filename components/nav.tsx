@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, Users, Library, Settings,
   Menu, X, Home, LogOut, Moon, Sun, Layers, BarChart2,
+  PenLine, Shuffle, ShieldCheck as ShieldIcon, BookMarked, LayoutTemplate, Grid3X3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -128,6 +129,18 @@ const APP_NAV_ITEMS = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+// Tools submenu items (shown as a collapsible section)
+const TOOL_NAV_ITEMS = [
+  { href: "/ai-writer", label: "AI Writer", icon: PenLine },
+  { href: "/paraphraser", label: "Paraphraser", icon: Shuffle },
+  { href: "/ai-detector", label: "AI Detector", icon: ShieldIcon },
+  { href: "/citation-booster", label: "Citation Booster", icon: BookMarked },
+  { href: "/browse-papers", label: "Browse Papers", icon: BookOpen },
+  { href: "/agents", label: "Agent Gallery", icon: Zap },
+  { href: "/templates", label: "Templates", icon: LayoutTemplate },
+  { href: "/directories", label: "Directories", icon: Grid3X3 },
+];
+
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   return (
@@ -235,6 +248,22 @@ export function AppNav() {
           );
         })}
       </nav>
+
+      {/* Tools section */}
+      <div className="px-2 py-2 border-t border-[rgb(var(--border))]">
+        <p className="px-3 py-1 text-[10px] font-semibold text-[rgb(var(--muted))] uppercase tracking-widest">Tools</p>
+        {TOOL_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          const active = pathname.startsWith(href);
+          return (
+            <Link key={href} href={href} onClick={() => setMobileOpen(false)}
+              className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all",
+                active ? "bg-violet-600/15 text-violet-400" : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))]")}>
+              <Icon size={14} className="flex-shrink-0" />
+              {label}
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Bottom section */}
       <div className="px-2 pb-4 border-t border-[rgb(var(--border))] pt-3 space-y-2">
