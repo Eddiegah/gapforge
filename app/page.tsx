@@ -289,6 +289,52 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* ── TRUST / UNIVERSITIES MARQUEE ── */}
+      <section className="py-16 border-y border-[rgb(var(--border))]/50 overflow-hidden bg-[rgb(var(--card))]/30">
+        <div className="max-w-5xl mx-auto px-4 text-center mb-10">
+          <p className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-1">Trusted by researchers from</p>
+          <h2 className="text-xl font-bold text-[rgb(var(--fg))]">The world's top research institutions</h2>
+        </div>
+
+        {/* Row 1 — Universities */}
+        <div className="relative mb-6">
+          <div className="flex gap-12 animate-marquee whitespace-nowrap items-center">
+            {[
+              "Harvard University", "MIT", "Stanford University", "University of Cambridge",
+              "Johns Hopkins University", "Yale University", "Oxford University", "ETH Zurich",
+              "University of Toronto", "Imperial College London", "Caltech", "Princeton University",
+              "Harvard University", "MIT", "Stanford University", "University of Cambridge",
+              "Johns Hopkins University", "Yale University", "Oxford University", "ETH Zurich",
+            ].map((name, i) => (
+              <span key={i} className="inline-flex items-center gap-2 text-sm font-semibold text-[rgb(var(--muted))] flex-shrink-0 hover:text-[rgb(var(--fg))] transition-colors">
+                <span className="w-5 h-5 rounded-full bg-violet-500/20 flex items-center justify-center text-xs text-violet-400 font-bold flex-shrink-0">
+                  {name[0]}
+                </span>
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 2 — Research institutions / pharma (reverse direction) */}
+        <div className="relative">
+          <div className="flex gap-12 animate-marquee-reverse whitespace-nowrap items-center">
+            {[
+              "NIH", "WHO Research", "Max Planck Institute", "CERN", "Wellcome Trust",
+              "Gates Foundation", "Chan Zuckerberg Initiative", "Howard Hughes Medical Institute",
+              "Karolinska Institute", "Weizmann Institute", "RIKEN", "INSERM",
+              "NIH", "WHO Research", "Max Planck Institute", "CERN", "Wellcome Trust",
+              "Gates Foundation", "Chan Zuckerberg Initiative", "Howard Hughes Medical Institute",
+            ].map((name, i) => (
+              <span key={i} className="inline-flex items-center gap-2 text-sm font-medium text-[rgb(var(--muted))]/70 flex-shrink-0 hover:text-[rgb(var(--fg))] transition-colors">
+                <span className="w-1.5 h-1.5 rounded-full bg-violet-400/40 flex-shrink-0" />
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
