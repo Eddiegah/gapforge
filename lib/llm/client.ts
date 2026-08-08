@@ -15,7 +15,7 @@ export interface LLMResponse {
 async function callAzureOpenAI(system: string, prompt: string, maxTokens = 4096): Promise<string> {
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const deployment = process.env.AZURE_OPENAI_DEPLOYMENT ?? "gpt-4o-mini";
+  const deployment = process.env.AZURE_OPENAI_DEPLOYMENT ?? "gpt-4o";
   const apiVersion = process.env.AZURE_OPENAI_API_VERSION ?? "2024-08-01-preview";
 
   if (!apiKey || !endpoint) throw new Error("Azure OpenAI not configured");
