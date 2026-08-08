@@ -10,6 +10,7 @@ import {
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
   HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map, Lightbulb,
+  Rocket, DollarSign, RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -107,6 +108,8 @@ const TOOL_GROUPS = [
       { href: "/gap-radar",          label: "Gap Radar",           icon: Radar },
       { href: "/literature-map",     label: "Literature Map",      icon: Map },
       { href: "/research-ideas",     label: "Research Idea Gen",   icon: Lightbulb },
+      { href: "/gap-startup",        label: "Gap to Startup",      icon: Rocket },
+      { href: "/gap-freshness",      label: "Gap Freshness",       icon: RefreshCw },
       { href: "/citation-graph",     label: "Citation Graph",      icon: Network },
       { href: "/paper-gap",          label: "Paper Gap Detector",  icon: Upload },
       { href: "/related-papers",     label: "Related Papers",      icon: BookOpen },
@@ -163,6 +166,9 @@ const TOOL_GROUPS = [
     icon: Grid3X3,
     color: "text-pink-400",
     items: [
+      { href: "/grant-tracker",      label: "Grant Tracker",       icon: DollarSign },
+      { href: "/policy-brief",       label: "Policy Brief",        icon: FileText },
+      { href: "/concept-explainer",  label: "Concept Explainer",   icon: Lightbulb },
       { href: "/agents",             label: "Agent Gallery",       icon: Zap },
       { href: "/templates",          label: "Templates",           icon: LayoutTemplate },
       { href: "/directories",        label: "Directories",         icon: Grid3X3 },
