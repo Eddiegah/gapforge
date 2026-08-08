@@ -380,3 +380,25 @@ CREATE TABLE IF NOT EXISTS gap_comments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_gap_comments_gap ON gap_comments(gap_id);
+
+-- ─── Research Timeline ────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS research_timeline (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  description TEXT,
+  date        DATE NOT NULL,
+  type        TEXT NOT NULL DEFAULT 'milestone' CHECK (type IN ('paper','gap','milestone','collaboration','award','submission')),
+  linked_url  TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_timeline_user ON research_timeline(user_id);
+CREATE INDEX IF NOT EXISTS idx_timeline_date ON research_timeline(date);
+
+-- ─── User profile extras ──────────────────────────────────────────────────────
+ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS institution TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS website TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS twitter TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS orcid TEXT;
