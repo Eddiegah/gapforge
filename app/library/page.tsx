@@ -87,7 +87,7 @@ export default function LibraryPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
       <div className="md:ml-60 pt-14 md:pt-0">
-      <div className="max-w-4xl mx-auto px-4 pt-6 pb-20">
+      <div className="max-w-4xl mx-auto px-4 pt-6 pb-24 md:pb-10">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-[rgb(var(--foreground))]">Library</h1>
           {tab === "reviews" && (

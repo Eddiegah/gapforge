@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Zap, BookOpen, Home, Layers, BarChart2, Trophy, DollarSign, FileText,
   BookText, Rss, BarChart3, BookmarkCheck, CalendarDays, Keyboard, PenLine, Shuffle,
-  ShieldCheck, BookMarked, Grid3X3, LayoutTemplate, Users, Server, MessageSquare,
+  ShieldCheck, BookMarked, Grid3X3, LayoutTemplate, Users, Server, MessageSquare, Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const COMMANDS = [
   { id: "chat",         label: "AI Chat",              desc: "Chat with research AI (memory saved)", icon: MessageSquare, href: "/chat" },
+  { id: "demo",         label: "Platform Demo",         desc: "Full feature overview",               icon: Sparkles,      href: "/demo" },
   { id: "gap-ai",        label: "Gap AI",              desc: "Search for research gaps",       icon: Search,        href: "/gap-ai",           shortcut: "G" },
   { id: "drops",         label: "Gap Drops",            desc: "Your weekly digest",             icon: Zap,           href: "/gap-drops",        shortcut: "D" },
   { id: "simplify",      label: "GapSimplify",          desc: "Simplify a paper",               icon: BookOpen,      href: "/gap-simplify",     shortcut: "S" },

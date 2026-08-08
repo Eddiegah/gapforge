@@ -22,6 +22,7 @@ export function PublicNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const links = [
+    { label: "Demo", href: "/demo" },
     { label: "How it works", href: "/#how-it-works" },
     { label: "Features", href: "/#features" },
     { label: "Pricing", href: "/#pricing" },
