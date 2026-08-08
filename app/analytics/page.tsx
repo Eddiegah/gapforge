@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Loader, Search, Bookmark, BookOpen, Zap, Flame, TrendingUp, Trophy } from "lucide-react";
+import { BarChart3, Loader, Search, Bookmark, BookOpen, Zap, Flame, TrendingUp, Trophy, Download } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { cn } from "@/lib/utils";
 
@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
           )}
 
           {/* Credits */}
-          <div className="card p-5">
+          <div className="card p-5 mb-6">
             <h2 className="text-sm font-semibold text-[rgb(var(--fg))] mb-3">Credit usage this month</h2>
             <div className="flex items-center gap-4">
               <div className="flex-1 h-3 bg-[rgb(var(--border))] rounded-full overflow-hidden">
@@ -129,6 +129,28 @@ export default function AnalyticsPage() {
               <span className="text-sm font-bold text-violet-400 tabular-nums flex-shrink-0">{data.creditsUsed}/{data.creditsLimit}</span>
             </div>
             <p className="text-xs text-[rgb(var(--muted))] mt-2">{data.creditsLimit - data.creditsUsed} searches remaining this month</p>
+          </div>
+
+          {/* Export search history */}
+          <div className="card p-5">
+            <h2 className="text-sm font-semibold text-[rgb(var(--fg))] mb-1">Export search history</h2>
+            <p className="text-xs text-[rgb(var(--muted))] mb-4">Download all your Gap AI search history as JSON or CSV.</p>
+            <div className="flex gap-3">
+              <a
+                href="/api/gap-ai/export-history?format=json"
+                download="gapforge-search-history.json"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgb(var(--border))] text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:border-violet-500/30 transition-colors"
+              >
+                <Download size={14} /> JSON
+              </a>
+              <a
+                href="/api/gap-ai/export-history?format=csv"
+                download="gapforge-search-history.csv"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgb(var(--border))] text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:border-violet-500/30 transition-colors"
+              >
+                <Download size={14} /> CSV
+              </a>
+            </div>
           </div>
         </div>
       </div>

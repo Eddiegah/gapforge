@@ -11,6 +11,7 @@ import { AppNav } from "@/components/nav";
 import { useSession } from "next-auth/react";
 import { formatRelativeDate } from "@/lib/utils";
 import { OnboardingTour } from "@/components/onboarding-tour";
+import { OnboardingChecklist } from "@/components/onboarding-checklist";
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -163,6 +164,9 @@ export default function DashboardPage() {
             </h1>
             <p className="text-[rgb(var(--muted))] mt-1">Your research intelligence platform</p>
           </motion.div>
+
+          {/* Onboarding checklist */}
+          <OnboardingChecklist />
 
           {/* ROW 1: Stats cards */}
           <div className="grid sm:grid-cols-3 gap-4">

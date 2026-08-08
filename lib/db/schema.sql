@@ -316,3 +316,67 @@ CREATE TABLE IF NOT EXISTS saved_searches (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_saved_searches_user ON saved_searches(user_id);
+
+-- ─── Read Later / Paper Queue ─────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS read_later (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  authors     TEXT[] DEFAULT '{}',
+  year        INTEGER,
+  url         TEXT,
+  source      TEXT DEFAULT 'manual',
+  abstract    TEXT,
+  tags        TEXT[] DEFAULT '{}',
+  read        BOOLEAN NOT NULL DEFAULT false,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_read_later_user ON read_later(user_id);
+
+-- ─── Research Calendar ────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS research_calendar (
+  id            TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title         TEXT NOT NULL,
+  description   TEXT,
+  date          DATE NOT NULL,
+  type          TEXT NOT NULL DEFAULT 'deadline' CHECK (type IN ('deadline','milestone','meeting','review','submission')),
+  priority      TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low','medium','high')),
+  linked_gap    TEXT REFERENCES saved_gaps(id) ON DELETE SET NULL,
+  linked_issue  TEXT REFERENCES research_issues(id) ON DELETE SET NULL,
+  completed     BOOLEAN NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_calendar_user ON research_calendar(user_id);
+CREATE INDEX IF NOT EXISTS idx_calendar_date ON research_calendar(date);
+
+-- ─── AI Chat with Memory ──────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS ai_conversations (
+  id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title      TEXT NOT NULL DEFAULT 'New conversation',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_ai_conv_user ON ai_conversations(user_id);
+
+CREATE TABLE IF NOT EXISTS ai_messages (
+  id              TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  conversation_id TEXT NOT NULL REFERENCES ai_conversations(id) ON DELETE CASCADE,
+  role            TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+  content         TEXT NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_ai_msg_conv ON ai_messages(conversation_id);
+
+-- ─── Gap Comments (Question Bank) ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS gap_comments (
+  id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  gap_id     TEXT NOT NULL REFERENCES saved_gaps(id) ON DELETE CASCADE,
+  user_id    TEXT REFERENCES users(id) ON DELETE SET NULL,
+  content    TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_gap_comments_gap ON gap_comments(gap_id);

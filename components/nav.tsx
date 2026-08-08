@@ -7,7 +7,7 @@ import {
   Search, Zap, BookOpen, Users, Library, Settings,
   Menu, X, Home, LogOut, Moon, Sun, Layers, BarChart2,
   PenLine, Shuffle, ShieldCheck as ShieldIcon, BookMarked, LayoutTemplate, Grid3X3,
-  BookText, Users2, BarChart3, Rss,
+  BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -132,9 +132,13 @@ const APP_NAV_ITEMS = [
 
 // Tools submenu items (shown as a collapsible section)
 const TOOL_NAV_ITEMS = [
+  { href: "/chat", label: "AI Chat", icon: MessageSquare },
   { href: "/notebook", label: "Notebook", icon: BookText },
   { href: "/feed", label: "Research Feed", icon: Rss },
   { href: "/analytics", label: "My Analytics", icon: BarChart3 },
+  { href: "/read-later", label: "Read Later", icon: BookmarkCheck },
+  { href: "/calendar", label: "Research Calendar", icon: CalendarDays },
+  { href: "/challenges", label: "Challenges", icon: Trophy },
   { href: "/ai-writer", label: "AI Writer", icon: PenLine },
   { href: "/paraphraser", label: "Paraphraser", icon: Shuffle },
   { href: "/ai-detector", label: "AI Detector", icon: ShieldIcon },
@@ -143,6 +147,7 @@ const TOOL_NAV_ITEMS = [
   { href: "/agents", label: "Agent Gallery", icon: Zap },
   { href: "/templates", label: "Templates", icon: LayoutTemplate },
   { href: "/directories", label: "Directories", icon: Grid3X3 },
+  { href: "/shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
 ];
 
 function ThemeToggle() {

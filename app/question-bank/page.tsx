@@ -1,12 +1,118 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Search, Library, ExternalLink, ChevronLeft, ChevronRight, Loader } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Library, ExternalLink, ChevronLeft, ChevronRight, Loader, MessageSquare, Send, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { LogoIcon } from "@/components/logo";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
+
+interface Comment {
+  id: string;
+  author_name: string;
+  author_image?: string;
+  content: string;
+  created_at: string;
+}
+
+function GapComments({ gapId }: { gapId: string }) {
+  const [open, setOpen] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState("");
+  const [posting, setPosting] = useState(false);
+
+  const loadComments = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/question-bank/${gapId}/comments`);
+      const d = await res.json();
+      setComments(d.comments ?? []);
+      setCount(d.comments?.length ?? 0);
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
+  };
+
+  const toggle = () => {
+    if (!open) loadComments();
+    setOpen(v => !v);
+  };
+
+  const postComment = async () => {
+    if (!input.trim()) return;
+    setPosting(true);
+    try {
+      const res = await fetch(`/api/question-bank/${gapId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: input }),
+      });
+      const d = await res.json();
+      if (d.comment) {
+        setComments(prev => [...prev, d.comment]);
+        setCount(c => c + 1);
+        setInput("");
+      }
+    } catch { /* ignore */ }
+    finally { setPosting(false); }
+  };
+
+  return (
+    <div className="mt-3 border-t border-[rgb(var(--border))] pt-2">
+      <button onClick={toggle}
+        className="flex items-center gap-1.5 text-xs text-[rgb(var(--muted))] hover:text-violet-400 transition-colors">
+        <MessageSquare size={12} />
+        {count > 0 ? `${count} comment${count !== 1 ? "s" : ""}` : "Add comment"}
+        <ChevronDown size={12} className={cn("transition-transform", open && "rotate-180")} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }} className="overflow-hidden">
+            <div className="pt-3 space-y-3">
+              {loading ? (
+                <div className="flex justify-center py-3"><Loader size={14} className="animate-spin text-violet-400" /></div>
+              ) : comments.length === 0 ? (
+                <p className="text-xs text-[rgb(var(--muted))] text-center py-2">No comments yet. Be the first.</p>
+              ) : comments.map(c => (
+                <div key={c.id} className="flex items-start gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-white">{(c.author_name?.[0] ?? "?").toUpperCase()}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-[rgb(var(--fg))]">{c.author_name ?? "Anonymous"}</p>
+                    <p className="text-xs text-[rgb(var(--muted))] mt-0.5 leading-relaxed">{c.content}</p>
+                    <p className="text-xs text-[rgb(var(--muted))]/50 mt-0.5">
+                      {new Date(c.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add comment input */}
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  className="flex-1 px-3 py-2 rounded-lg bg-[rgb(var(--bg))] border border-[rgb(var(--border))] text-xs text-[rgb(var(--fg))] placeholder:text-[rgb(var(--muted))] outline-none focus:border-violet-500"
+                  onKeyDown={e => e.key === "Enter" && postComment()}
+                />
+                <button onClick={postComment} disabled={!input.trim() || posting}
+                  className="p-2 rounded-lg bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white transition-colors">
+                  {posting ? <Loader size={12} className="animate-spin" /> : <Send size={12} />}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 const CATEGORIES = [
   { value: "all", label: "All categories" },
@@ -142,6 +248,7 @@ export default function QuestionBankPage() {
                       <ExternalLink size={11} /> View
                     </Link>
                   </div>
+                  <GapComments gapId={row.id} />
                 </motion.div>
               );
             })}
@@ -170,7 +277,7 @@ export default function QuestionBankPage() {
             GapForge scans thousands of live academic papers to surface genuine research gaps with real citations.
           </p>
           <Link href="/login" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm transition-colors">
-            Start for free — 20 searches/month
+            Start for free — 10 searches/month
           </Link>
         </div>
       </div>
