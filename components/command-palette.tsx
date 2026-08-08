@@ -6,7 +6,7 @@ import {
   Search, Zap, BookOpen, Home, Layers, BarChart2, Trophy, DollarSign, FileText,
   BookText, Rss, BarChart3, BookmarkCheck, CalendarDays, Keyboard, PenLine, Shuffle,
   ShieldCheck, BookMarked, Grid3X3, LayoutTemplate, Users, Server, MessageSquare, Sparkles,
-  Radar, Network, TrendingUp, Bell, Upload, Code2, Clock, UserPlus,
+  Radar, Network, TrendingUp, Bell, Upload, Code2, Clock, UserPlus, HelpCircle, MapPin,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,12 @@ const COMMANDS = [
   { id: "gap-radar",      label: "Gap Radar",            desc: "Visual gap landscape map",             icon: Radar,       href: "/gap-radar" },
   { id: "citation-graph", label: "Citation Graph",       desc: "Map how papers connect",               icon: Network,     href: "/citation-graph" },
   { id: "paper-writer",   label: "Paper Writer",         desc: "Write full research paper with AI",    icon: FileText,    href: "/paper-writer" },
-  { id: "paper-gap",      label: "Paper Gap Detector",   desc: "Upload PDF, find gaps it opens",       icon: Upload,      href: "/paper-gap" },
+  { id: "pdf-chat",          label: "PDF Chat",              desc: "Chat with any research paper",         icon: MessageSquare, href: "/pdf-chat" },
+  { id: "research-questions",label: "Research Questions",    desc: "Generate 10 novel research questions",  icon: HelpCircle,    href: "/research-questions" },
+  { id: "abstract-writer",   label: "Abstract Writer",       desc: "Write publication-ready abstracts",     icon: FileText,      href: "/abstract-writer" },
+  { id: "conference-finder", label: "Conference Finder",     desc: "Find best conferences for your paper",  icon: MapPin,        href: "/conference-finder" },
+  { id: "related-papers",    label: "Related Papers",        desc: "Find similar papers + gap analysis",    icon: BookOpen,      href: "/related-papers" },
+  { id: "paper-gap",         label: "Paper Gap Detector",    desc: "Upload PDF, find gaps it opens",        icon: Upload,        href: "/paper-gap" },
   { id: "trending",       label: "Trending",             desc: "What researchers are exploring now",   icon: TrendingUp,  href: "/trending" },
   { id: "gap-alerts",     label: "Gap Alerts",           desc: "Get notified when gaps are addressed", icon: Bell,        href: "/gap-alerts" },
   { id: "collab",         label: "Find Collaborators",   desc: "Match with researchers in your niche", icon: UserPlus,    href: "/collab" },
