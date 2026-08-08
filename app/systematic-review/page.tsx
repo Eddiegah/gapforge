@@ -46,7 +46,7 @@ export default function SystematicReviewPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
       <div className="md:ml-60 pt-14 md:pt-0">
-        <div className="max-w-4xl mx-auto px-4 py-8 pb-20">
+        <div className="max-w-4xl mx-auto px-4 py-8 pb-24 md:pb-10">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">

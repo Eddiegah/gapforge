@@ -65,7 +65,7 @@ export default function IssuesPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
       <div className="md:ml-60 pt-14 md:pt-0">
-        <div className="px-4 py-6 pb-20">
+        <div className="px-4 py-6 pb-24 md:pb-10">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <Layers size={20} className="text-violet-400" />

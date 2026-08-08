@@ -28,7 +28,7 @@ export default function NicheMapPage() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
-      <div className="max-w-3xl mx-auto px-4 pt-24 pb-20 text-center">
+      <div className="max-w-3xl mx-auto px-4 pt-24 pb-24 md:pb-10 text-center">
         {/* Animated preview */}
         <div className="relative w-full h-64 mb-10 rounded-2xl overflow-hidden border border-violet-500/20 bg-[rgb(var(--card))]">
           <div className="absolute inset-0 blur-sm opacity-40">

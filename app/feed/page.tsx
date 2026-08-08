@@ -46,7 +46,7 @@ export default function FeedPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
       <div className="md:ml-60 pt-14 md:pt-0">
-        <div className="max-w-4xl mx-auto px-4 py-8 pb-20">
+        <div className="max-w-4xl mx-auto px-4 py-8 pb-24 md:pb-10">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center"><Users2 size={18} className="text-violet-400" /></div>
             <div><h1 className="text-2xl font-bold text-[rgb(var(--fg))]">Research Feed</h1><p className="text-sm text-[rgb(var(--muted))]">Gaps from researchers you follow.</p></div>

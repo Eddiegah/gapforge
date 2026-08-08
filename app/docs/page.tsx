@@ -8,7 +8,7 @@ export default function DocsPage() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
-      <div className="max-w-4xl mx-auto px-4 pt-24 pb-20">
+      <div className="max-w-4xl mx-auto px-4 pt-24 pb-24 md:pb-10">
         <div className="mb-10">
           <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-full px-4 py-1.5 text-xs text-violet-400 font-medium mb-4">
             <Zap size={12} /> Institutional API

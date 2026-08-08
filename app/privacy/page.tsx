@@ -43,7 +43,7 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
-      <div className="max-w-3xl mx-auto px-4 pt-24 pb-20">
+      <div className="max-w-3xl mx-auto px-4 pt-24 pb-24 md:pb-10">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[rgb(var(--fg))]">Privacy Policy</h1>
           <p className="text-sm text-[rgb(var(--muted))] mt-2">Effective date: August 5, 2026</p>

@@ -34,7 +34,7 @@ export default function DailyChallengePageClient() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
-      <div className="max-w-2xl mx-auto px-4 pt-24 pb-20 text-center">
+      <div className="max-w-2xl mx-auto px-4 pt-24 pb-24 md:pb-10 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-full px-4 py-1.5 text-xs text-violet-400 font-medium mb-6">
             <Zap size={12} /> Daily Research Challenge

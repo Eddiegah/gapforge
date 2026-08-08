@@ -80,7 +80,7 @@ export default function DemoPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
 
-      <div className="max-w-5xl mx-auto px-4 pt-24 pb-20">
+      <div className="max-w-5xl mx-auto px-4 pt-24 pb-24 md:pb-10">
         {/* Hero */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-medium mb-5">

@@ -16,7 +16,7 @@ export default async function StatusPage() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <PublicNav />
-      <div className="max-w-3xl mx-auto px-4 pt-24 pb-20">
+      <div className="max-w-3xl mx-auto px-4 pt-24 pb-24 md:pb-10">
         <div className="flex items-center gap-3 mb-8">
           <div className={`w-4 h-4 rounded-full ${data?.healthyCount === data?.totalCount ? "bg-green-500" : "bg-amber-500"} animate-pulse`} />
           <h1 className="text-2xl font-bold text-[rgb(var(--fg))]">GapForge Status</h1>

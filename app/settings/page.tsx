@@ -142,7 +142,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
       <main className="md:ml-60 pt-14 md:pt-0">
-        <div className="max-w-2xl mx-auto px-4 py-10 pb-20">
+        <div className="max-w-2xl mx-auto px-4 py-10 pb-24 md:pb-10">
           <h1 className="text-2xl font-bold text-[rgb(var(--fg))] mb-8">Settings</h1>
 
           {/* Tab bar */}

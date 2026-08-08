@@ -133,7 +133,7 @@ export default function AdminPage() {
 
       {/* Main content */}
       <main className="ml-56 flex-1">
-        <div className="max-w-5xl mx-auto px-6 py-10 pb-20">
+        <div className="max-w-5xl mx-auto px-6 py-10 pb-24 md:pb-10">
 
           {/* ── DASHBOARD ── */}
           {section === "dashboard" && (

@@ -52,7 +52,7 @@ export default function ParaphraserPage() {
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <AppNav />
       <div className="md:ml-60 pt-14 md:pt-0">
-        <div className="max-w-5xl mx-auto px-4 py-8 pb-20">
+        <div className="max-w-5xl mx-auto px-4 py-8 pb-24 md:pb-10">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
               <Shuffle size={18} className="text-teal-400" />
