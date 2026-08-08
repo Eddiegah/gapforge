@@ -347,7 +347,7 @@ export default function GapAIPage() {
         daysUntilReset={daysUntilReset}
       />
 
-      {/* Main content — 3 panels */}
+      {/* Main content — 3 panels on desktop, single column on mobile */}
       <div className="flex flex-1 md:ml-60 overflow-hidden">
 
         {/* Panel 1: History sidebar */}
@@ -409,13 +409,13 @@ export default function GapAIPage() {
         {/* Panel 2: Main query + results */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
           {phase === "idle" ? (
-            <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 overflow-y-auto">
-              <h1 className="text-3xl font-bold text-[rgb(var(--fg))] text-center mb-2">Discover Research Gaps</h1>
-              <p className="text-[rgb(var(--muted))] text-center mb-8 max-w-md">
+            <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-12 overflow-y-auto">
+              <h1 className="text-2xl md:text-3xl font-bold text-[rgb(var(--fg))] text-center mb-2">Discover Research Gaps</h1>
+              <p className="text-[rgb(var(--muted))] text-center mb-6 md:mb-8 max-w-md text-sm md:text-base">
                 Describe any field or niche. We scan <strong className="text-[rgb(var(--fg))]">thousands of live papers</strong> then surface the most meaningful gaps, ranked with full citations.
               </p>
 
-              <div className="w-full max-w-2xl">
+              <div className="w-full max-w-2xl px-1 md:px-0">
                 <div className="relative card rounded-2xl overflow-hidden shadow-lg shadow-[rgb(var(--accent))]/5">
                   <textarea
                     ref={textareaRef}
@@ -497,7 +497,7 @@ export default function GapAIPage() {
             </div>
           ) : (
             <div className="flex flex-col h-full overflow-hidden">
-              <div className="flex items-center gap-3 px-5 py-3 border-b border-[rgb(var(--border))] bg-[rgb(var(--card))]/50 flex-shrink-0">
+              <div className="flex items-center gap-2 md:gap-3 px-3 md:px-5 py-3 border-b border-[rgb(var(--border))] bg-[rgb(var(--card))]/50 flex-shrink-0">
                 <div className={cn("w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0",
                   isActive ? "bg-[rgb(var(--accent))]/20" : phase === "done" ? "bg-emerald-500/20" : "bg-red-500/20"
                 )}>
@@ -578,7 +578,7 @@ export default function GapAIPage() {
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+              <div className="flex-1 overflow-y-auto px-3 md:px-5 py-4 space-y-3 pb-24 md:pb-4">
                 {phase === "done" && result && (
                   <>
                     {result.gaps.length > 0 && (

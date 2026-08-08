@@ -152,7 +152,7 @@ export default function DashboardPage() {
       <AppNav />
       <OnboardingTour />
       <main className="md:ml-60 pt-14 md:pt-0">
-        <div className="max-w-4xl mx-auto px-4 py-10 pb-20 space-y-8">
+        <div className="max-w-4xl mx-auto px-4 py-6 md:py-10 pb-24 md:pb-10 space-y-6 md:space-y-8">
 
           {/* Greeting */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
@@ -169,54 +169,52 @@ export default function DashboardPage() {
           <OnboardingChecklist />
 
           {/* ROW 1: Stats cards */}
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
             {/* Credits */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-              className="card p-5 flex items-center gap-4">
+              className="card p-3 md:p-5 flex items-center gap-3">
               <CreditsRing used={credits.creditsUsed} limit={credits.creditsLimit} />
               <div>
                 <p className="text-sm font-semibold text-[rgb(var(--fg))]">
                   {credits.creditsLimit - credits.creditsUsed}/{credits.creditsLimit}
                 </p>
-                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Credits remaining</p>
-                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Resets monthly</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Credits left</p>
               </div>
             </motion.div>
 
             {/* Searches this month */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="card p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-violet-500/15 flex items-center justify-center flex-shrink-0">
-                <Search size={20} className="text-violet-400" />
+              className="card p-3 md:p-5 flex items-center gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-violet-500/15 flex items-center justify-center flex-shrink-0">
+                <Search size={18} className="text-violet-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[rgb(var(--fg))]">{credits.creditsUsed}</p>
-                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Searches this month</p>
+                <p className="text-xl md:text-2xl font-bold text-[rgb(var(--fg))]">{credits.creditsUsed}</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Searches</p>
               </div>
             </motion.div>
 
             {/* Saved gaps */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-              className="card p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-                <Bookmark size={20} className="text-amber-400" />
+              className="card p-3 md:p-5 flex items-center gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+                <Bookmark size={18} className="text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[rgb(var(--fg))]">{savedCount}</p>
-                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Gaps saved</p>
+                <p className="text-xl md:text-2xl font-bold text-[rgb(var(--fg))]">{savedCount}</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Saved</p>
               </div>
             </motion.div>
 
             {/* Streak */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="card p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0">
-                <Flame size={20} className="text-orange-400" />
+              className="card p-3 md:p-5 flex items-center gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0">
+                <Flame size={18} className="text-orange-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[rgb(var(--fg))]">{streak}</p>
-                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">{streak === 1 ? "day streak" : "day streak"}</p>
-                {streak === 0 && <p className="text-xs text-orange-400 mt-0.5">Start today</p>}
+                <p className="text-xl md:text-2xl font-bold text-[rgb(var(--fg))]">{streak}</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-0.5">Day streak</p>
               </div>
             </motion.div>
           </div>
@@ -224,7 +222,7 @@ export default function DashboardPage() {
           {/* ROW 2: Quick actions */}
           <div>
             <h2 className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-4">Quick Actions</h2>
-            <div className="grid sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
               {quickActions.map(({ icon: Icon, title, description, href, color, iconColor, hoverBorder }, i) => (
                 <motion.div key={title} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.07 }}>
                   <Link href={href} className={`block card p-5 bg-gradient-to-b ${color} ${hoverBorder} hover:-translate-y-0.5 transition-all`}>

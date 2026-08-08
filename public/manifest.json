@@ -1,14 +1,36 @@
 {
   "name": "GapForge",
   "short_name": "GapForge",
-  "description": "Research intelligence platform — find gaps nobody is exploring yet",
+  "description": "Research gap intelligence platform — find, validate and act on unstudied gaps in any field.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0a0a1a",
   "theme_color": "#7c3aed",
   "orientation": "portrait-primary",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
-  "categories": ["productivity", "education"]
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "GapForge on mobile"
+    }
+  ],
+  "categories": ["education", "productivity", "research"],
+  "lang": "en",
+  "dir": "ltr"
 }

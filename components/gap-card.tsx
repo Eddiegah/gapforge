@@ -328,7 +328,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
         })()}
 
         {/* Action buttons */}
-        <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-[rgb(var(--border))]">          <button onClick={() => { setShowProposal(true); if (!proposal) generateProposal(); }}
+        <div className="action-row pt-1 border-t border-[rgb(var(--border))]">          <button onClick={() => { setShowProposal(true); if (!proposal) generateProposal(); }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 border border-violet-500/20 transition-colors">
             <FileText size={12} /> Draft proposal
           </button>
@@ -440,7 +440,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowProposal(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-3xl max-h-[85vh] sm:max-h-[85vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><FileText size={16} className="text-violet-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Research Proposal Draft</h2></div>
                 <div className="flex items-center gap-2">
@@ -465,7 +465,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowSimplify(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><Sparkles size={16} className="text-teal-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Simplified Explanation</h2></div>
                 <button onClick={() => setShowSimplify(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
@@ -496,7 +496,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowChat(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl h-[75vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl h-[75vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><MessageSquare size={16} className="text-blue-400" /><div><h2 className="font-semibold text-[rgb(var(--fg))]">Ask AI about this gap</h2><p className="text-xs text-[rgb(var(--muted))]">{gap.title.slice(0, 60)}{gap.title.length > 60 ? "..." : ""}</p></div></div>
                 <button onClick={() => setShowChat(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
@@ -554,7 +554,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowHypotheses(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><FlaskConical size={16} className="text-indigo-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Testable Hypotheses</h2></div>
                 <div className="flex items-center gap-2">
@@ -609,7 +609,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowValidate(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-rose-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Gap Validation Check</h2></div>
                 <div className="flex items-center gap-2">
@@ -673,7 +673,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowGrant(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-3xl max-h-[85vh] sm:max-h-[85vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><ScrollText size={16} className="text-yellow-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Grant Proposal</h2></div>
                 <div className="flex items-center gap-2">
@@ -705,7 +705,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) setShowWhyNow(false); }}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl">
+              className="bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl modal-mobile-full">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--border))]">
                 <div className="flex items-center gap-2"><Clock size={16} className="text-cyan-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Why Now?</h2></div>
                 <div className="flex items-center gap-2">
