@@ -1,5 +1,5 @@
 import { PublicNav } from "@/components/nav";
-import { ArrowRight, Search, Zap, BookOpen, Brain, Database, CheckCircle, Users, FileText, BarChart3, MessageSquare, BookmarkCheck, CalendarDays } from "lucide-react";
+import { ArrowRight, Search, Zap, BookOpen, Brain, Database, CheckCircle, Users, FileText, BarChart3, MessageSquare, BookmarkCheck, CalendarDays, Play } from "lucide-react";
 import Link from "next/link";
 
 const FEATURES = [
@@ -82,7 +82,7 @@ export default function DemoPage() {
 
       <div className="max-w-5xl mx-auto px-4 pt-24 pb-24 md:pb-10">
         {/* Hero */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-medium mb-5">
             <Zap size={11} /> Live platform demo
           </div>
@@ -105,6 +105,70 @@ export default function DemoPage() {
               Browse community gaps <ArrowRight size={15} />
             </Link>
           </div>
+        </div>
+
+        {/* Video Demo Section */}
+        <div className="mb-16">
+          <div className="relative rounded-2xl overflow-hidden border border-violet-500/20 bg-gradient-to-br from-violet-900/20 to-violet-950/40 aspect-video flex items-center justify-center group cursor-pointer shadow-2xl shadow-violet-500/10">
+            {/* Placeholder background - replace src with actual video */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[rgb(var(--card))] to-[rgb(var(--bg))]" />
+            
+            {/* Animated grid overlay */}
+            <div className="absolute inset-0 opacity-10" style={{
+              backgroundImage: "linear-gradient(rgb(124 58 237 / 0.3) 1px, transparent 1px), linear-gradient(90deg, rgb(124 58 237 / 0.3) 1px, transparent 1px)",
+              backgroundSize: "40px 40px"
+            }} />
+
+            {/* Mock screen content */}
+            <div className="absolute inset-4 md:inset-8 rounded-xl bg-[rgb(var(--card))]/80 backdrop-blur border border-[rgb(var(--border))] overflow-hidden shadow-2xl">
+              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-[rgb(var(--border))] bg-[rgb(var(--sidebar))]/80">
+                <div className="w-3 h-3 rounded-full bg-red-400/60" />
+                <div className="w-3 h-3 rounded-full bg-amber-400/60" />
+                <div className="w-3 h-3 rounded-full bg-green-400/60" />
+                <div className="flex-1 mx-4 h-5 rounded-full bg-[rgb(var(--border))] flex items-center px-3">
+                  <span className="text-[9px] text-[rgb(var(--muted))]">gapforge-self.vercel.app/gap-ai</span>
+                </div>
+              </div>
+              <div className="p-6 space-y-3">
+                <div className="h-3 bg-violet-500/20 rounded-full w-3/4" />
+                <div className="h-2 bg-[rgb(var(--border))] rounded-full w-1/2" />
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="h-16 rounded-xl bg-[rgb(var(--border))]/40 border border-[rgb(var(--border))]" />
+                  ))}
+                </div>
+                <div className="space-y-2">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="h-14 rounded-xl bg-violet-500/5 border border-violet-500/10" />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Play button overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-violet-600/90 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-violet-500/40 group-hover:scale-110 transition-transform">
+                <Play size={28} className="text-white ml-1.5" fill="white" />
+              </div>
+            </div>
+
+            {/* Caption */}
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+              <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs text-white font-medium">
+                GapForge Platform Demo — 3 min walkthrough
+              </div>
+              <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                <span className="text-xs text-white font-medium">LIVE</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-center text-xs text-[rgb(var(--muted))] mt-3">
+            Click to watch · Or{" "}
+            <Link href="/gap-ai" className="text-violet-400 hover:text-violet-300 transition-colors">
+              try Gap AI live right now
+            </Link>
+          </p>
         </div>
 
         {/* Stats */}
