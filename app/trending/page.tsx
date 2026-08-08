@@ -1,10 +1,34 @@
-import { sql } from "@/lib/db/client";
-import Link from "next/link";
-import { LogoIcon } from "@/components/logo";
-import { TrendingUp } from "lucide-react";
-import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
+"use client";
 
-const CATEGORY_COLORS: Record<GapCategory, string> = {
+import { useState, useEffect } from "react";
+import { AppNav } from "@/components/nav";
+import { motion } from "framer-motion";
+import {
+  TrendingUp, Flame, Clock, Search, BookOpen,
+  ArrowUp, ChevronRight, Zap, BarChart3,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import type { DetectedGap } from "@/lib/gapAI/detectGaps";
+
+interface TrendingGap {
+  id: string;
+  gap_json: DetectedGap;
+  search_count: number;
+  save_count: number;
+  upvotes: number;
+  trend_score: number;
+  pct_change: number;
+  created_at: string;
+}
+
+interface TrendingQuery {
+  query: string;
+  count: number;
+  category: string;
+}
+
+const CATEGORY_COLORS: Record<string, string> = {
   contradiction: "text-red-400 bg-red-400/10",
   "missing-mechanistic-link": "text-amber-400 bg-amber-400/10",
   "unexplored-method-transfer": "text-blue-400 bg-blue-400/10",
@@ -13,106 +37,203 @@ const CATEGORY_COLORS: Record<GapCategory, string> = {
   "translational-bottleneck": "text-orange-400 bg-orange-400/10",
 };
 
-async function getTrendingGaps() {
-  try {
-    const rows = await sql`
-      SELECT sg.id, sg.gap_json, COUNT(gv.saved_gap_id) as vote_count
-      FROM saved_gaps sg
-      LEFT JOIN gap_votes gv ON gv.saved_gap_id = sg.id AND gv.direction = 'up'
-      GROUP BY sg.id, sg.gap_json
-      ORDER BY vote_count DESC, sg.created_at DESC
-      LIMIT 20
-    `;
-    return rows;
-  } catch {
-    // If gap_votes table doesn't exist yet, fall back to recent
-    try {
-      const rows = await sql`
-        SELECT id, gap_json, 0 as vote_count FROM saved_gaps
-        ORDER BY created_at DESC LIMIT 20
-      `;
-      return rows;
-    } catch { return []; }
-  }
-}
+export default function TrendingPage() {
+  const [gaps, setGaps] = useState<TrendingGap[]>([]);
+  const [queries, setQueries] = useState<TrendingQuery[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<"gaps" | "searches">("gaps");
+  const [period, setPeriod] = useState<"today" | "week" | "month">("week");
 
-export default async function TrendingPage() {
-  const gaps = await getTrendingGaps();
+  useEffect(() => {
+    Promise.all([
+      fetch(`/api/trending?type=gaps&period=${period}`).then(r => r.json()),
+      fetch(`/api/trending?type=searches&period=${period}`).then(r => r.json()),
+    ])
+      .then(([gapData, queryData]) => {
+        setGaps(gapData.gaps ?? []);
+        setQueries(queryData.searches ?? []);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [period]);
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--bg))]">
-      <header className="border-b border-[rgb(var(--border))] px-4 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <LogoIcon size={28} />
-            <span className="font-bold text-lg bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">GapForge</span>
-          </Link>
-          <Link href="/login" className="px-4 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors">
-            Try free
-          </Link>
-        </div>
-      </header>
+    <div className="flex min-h-screen bg-[rgb(var(--bg))]">
+      <AppNav />
+      <main className="flex-1 md:ml-60 pt-14 md:pt-0 px-4 md:px-8 py-6 pb-24 md:pb-10">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-[rgb(var(--fg))] flex items-center gap-2">
+                <TrendingUp size={22} className="text-violet-400" /> Trending
+              </h1>
+              <p className="text-sm text-[rgb(var(--muted))] mt-1">
+                What the research community is focused on right now.
+              </p>
+            </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="flex items-center gap-3 mb-8">
-          <TrendingUp size={24} className="text-violet-400" />
-          <div>
-            <h1 className="text-2xl font-bold text-[rgb(var(--fg))]">Trending Research Gaps</h1>
-            <p className="text-sm text-[rgb(var(--muted))] mt-0.5">Most upvoted gaps from the GapForge community</p>
+            {/* Period selector */}
+            <div className="flex items-center gap-1 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-xl p-1">
+              {(["today", "week", "month"] as const).map(p => (
+                <button key={p} onClick={() => setPeriod(p)}
+                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors",
+                    period === p ? "bg-violet-600 text-white" : "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))]")}>
+                  {p === "today" ? "24h" : p === "week" ? "7 days" : "30 days"}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {gaps.length === 0 ? (
-          <div className="card p-12 text-center text-[rgb(var(--muted))] text-sm">
-            No gaps yet. Be the first to find and save one.
-            <br />
-            <Link href="/login" className="text-violet-400 mt-2 inline-block">Start searching</Link>
+          {/* Tabs */}
+          <div className="flex items-center gap-1 mb-6 border-b border-[rgb(var(--border))]">
+            <button onClick={() => setTab("gaps")}
+              className={cn("flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px",
+                tab === "gaps" ? "border-violet-500 text-violet-400" : "border-transparent text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))]")}>
+              <Flame size={14} /> Trending Gaps
+            </button>
+            <button onClick={() => setTab("searches")}
+              className={cn("flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px",
+                tab === "searches" ? "border-violet-500 text-violet-400" : "border-transparent text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))]")}>
+              <Search size={14} /> Hot Searches
+            </button>
           </div>
-        ) : (
-          <div className="space-y-4">
-            {gaps.map((row: Record<string, unknown>, i: number) => {
-              const gap = row.gap_json as DetectedGap;
-              const votes = Number(row.vote_count ?? 0);
-              const catColor = CATEGORY_COLORS[gap.category] ?? "text-violet-400 bg-violet-400/10";
-              return (
-                <div key={row.id as string} className="card p-5 hover:border-violet-500/30 transition-colors">
+
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="card p-5 animate-pulse">
                   <div className="flex items-start gap-4">
-                    <div className="flex flex-col items-center gap-1 flex-shrink-0 w-10">
-                      <span className="text-lg font-bold text-violet-400">{i + 1}</span>
-                      {votes > 0 && <span className="text-xs text-[rgb(var(--muted))]">{votes} ↑</span>}
+                    <div className="w-10 h-10 rounded-xl bg-[rgb(var(--border))]" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-[rgb(var(--border))] rounded w-3/4" />
+                      <div className="h-3 bg-[rgb(var(--border))] rounded w-1/2" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${catColor}`}>
-                          {gap.category.replace(/-/g, " ")}
-                        </span>
-                        <span className="text-xs text-[rgb(var(--muted))]">{gap.relevanceScore * 10}/100</span>
-                      </div>
-                      <h3 className="font-semibold text-[rgb(var(--fg))] leading-snug mb-1">{gap.title}</h3>
-                      <p className="text-sm text-[rgb(var(--muted))] line-clamp-2 leading-relaxed">{gap.description}</p>
-                      {gap.suggestedDirection && (
-                        <p className="text-xs text-violet-400 mt-2 font-medium line-clamp-1">{gap.suggestedDirection}</p>
-                      )}
-                    </div>
-                    <Link href={`/gap/${row.id}`}
-                      className="flex-shrink-0 text-xs text-violet-400 hover:text-violet-300 font-medium border border-violet-500/20 rounded-lg px-3 py-1.5 transition-colors">
-                      View
-                    </Link>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          ) : tab === "gaps" ? (
+            <div className="space-y-3">
+              {gaps.length === 0 ? (
+                <div className="card p-12 text-center">
+                  <TrendingUp size={36} className="mx-auto text-[rgb(var(--muted))] mb-4 opacity-40" />
+                  <p className="text-[rgb(var(--muted))] text-sm">No trending gaps yet for this period.</p>
+                  <p className="text-xs text-[rgb(var(--muted))]/60 mt-1">Trending data builds up as researchers use GapForge.</p>
+                </div>
+              ) : gaps.map((item, i) => {
+                const gap = item.gap_json;
+                const catColor = CATEGORY_COLORS[gap.category] ?? "text-violet-400 bg-violet-400/10";
+                return (
+                  <motion.div key={item.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="card p-5 hover:border-violet-500/30 transition-colors">
+                    <div className="flex items-start gap-4">
+                      {/* Rank */}
+                      <div className="flex flex-col items-center w-10 flex-shrink-0">
+                        <span className="text-2xl font-black text-[rgb(var(--border))] leading-none">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        {item.pct_change > 0 && (
+                          <div className="flex items-center gap-0.5 text-green-400 mt-1">
+                            <ArrowUp size={10} />
+                            <span className="text-xs font-bold">{item.pct_change}%</span>
+                          </div>
+                        )}
+                      </div>
 
-        <div className="mt-12 card p-8 text-center">
-          <h2 className="font-bold text-[rgb(var(--fg))] mb-2">Find your own research gaps</h2>
-          <p className="text-sm text-[rgb(var(--muted))] mb-5">Scan thousands of live papers for genuine gaps in any field.</p>
-          <Link href="/login" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm transition-colors">
-            Start for free
-          </Link>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium", catColor)}>
+                            {gap.category.replace(/-/g, " ")}
+                          </span>
+                          {item.trend_score > 80 && (
+                            <span className="flex items-center gap-0.5 text-xs text-amber-400 font-medium">
+                              <Flame size={11} /> Hot
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-sm font-semibold text-[rgb(var(--fg))] leading-snug mb-1">
+                          {gap.title}
+                        </h3>
+                        <p className="text-xs text-[rgb(var(--muted))] line-clamp-2">{gap.description}</p>
+
+                        <div className="flex items-center gap-4 mt-3 text-xs text-[rgb(var(--muted))]">
+                          <span className="flex items-center gap-1"><Search size={11} /> {item.search_count} searches</span>
+                          <span className="flex items-center gap-1"><BookOpen size={11} /> {item.save_count} saves</span>
+                          <span className="flex items-center gap-1"><ArrowUp size={11} /> {item.upvotes} upvotes</span>
+                          <span className="flex items-center gap-1"><Clock size={11} /> {new Date(item.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+
+                      <Link href={`/gap-ai?q=${encodeURIComponent(gap.title)}`}
+                        className="flex-shrink-0 p-2 rounded-xl text-[rgb(var(--muted))] hover:text-violet-400 hover:bg-violet-400/10 transition-colors">
+                        <ChevronRight size={16} />
+                      </Link>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            // Hot searches
+            <div className="space-y-3">
+              {queries.length === 0 ? (
+                <div className="card p-12 text-center">
+                  <Search size={36} className="mx-auto text-[rgb(var(--muted))] mb-4 opacity-40" />
+                  <p className="text-[rgb(var(--muted))] text-sm">No trending searches yet.</p>
+                </div>
+              ) : queries.map((item, i) => (
+                <motion.div key={item.query}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="card p-4 flex items-center gap-4 hover:border-violet-500/30 transition-colors">
+                  <span className="text-xl font-black text-[rgb(var(--border))] w-8 text-center flex-shrink-0">
+                    {i + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[rgb(var(--fg))] truncate">{item.query}</p>
+                    <p className="text-xs text-[rgb(var(--muted))] mt-0.5">{item.count} searches</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="h-1.5 w-24 bg-[rgb(var(--border))] rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full"
+                        style={{ width: `${Math.min(100, (item.count / (queries[0]?.count || 1)) * 100)}%` }} />
+                    </div>
+                    <Link href={`/gap-ai?q=${encodeURIComponent(item.query)}`}
+                      className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-violet-400 hover:bg-violet-400/10 transition-colors">
+                      <Search size={13} />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* Stats summary */}
+          {!loading && (gaps.length > 0 || queries.length > 0) && (
+            <div className="mt-8 grid grid-cols-3 gap-4">
+              <div className="card p-4 text-center">
+                <p className="text-xl font-bold text-violet-400">{gaps.length}</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-1">Trending gaps</p>
+              </div>
+              <div className="card p-4 text-center">
+                <p className="text-xl font-bold text-amber-400">{queries.length}</p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-1">Hot searches</p>
+              </div>
+              <div className="card p-4 text-center">
+                <p className="text-xl font-bold text-green-400">
+                  {gaps.reduce((sum, g) => sum + (g.upvotes ?? 0), 0)}
+                </p>
+                <p className="text-xs text-[rgb(var(--muted))] mt-1">Total upvotes</p>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

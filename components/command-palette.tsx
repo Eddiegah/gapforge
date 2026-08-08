@@ -6,14 +6,20 @@ import {
   Search, Zap, BookOpen, Home, Layers, BarChart2, Trophy, DollarSign, FileText,
   BookText, Rss, BarChart3, BookmarkCheck, CalendarDays, Keyboard, PenLine, Shuffle,
   ShieldCheck, BookMarked, Grid3X3, LayoutTemplate, Users, Server, MessageSquare, Sparkles,
+  Radar, Network, TrendingUp, Bell,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const COMMANDS = [
-  { id: "chat",         label: "AI Chat",              desc: "Chat with research AI (memory saved)", icon: MessageSquare, href: "/chat" },
-  { id: "demo",         label: "Platform Demo",         desc: "Full feature overview",               icon: Sparkles,      href: "/demo" },
-  { id: "gap-ai",        label: "Gap AI",              desc: "Search for research gaps",       icon: Search,        href: "/gap-ai",           shortcut: "G" },
+  { id: "chat",          label: "AI Chat",              desc: "Chat with research AI (memory saved)", icon: MessageSquare, href: "/chat" },
+  { id: "demo",          label: "Platform Demo",         desc: "Full feature overview",               icon: Sparkles,      href: "/demo" },
+  { id: "gap-radar",     label: "Gap Radar",             desc: "Visual gap landscape map",            icon: Radar,         href: "/gap-radar" },
+  { id: "citation-graph",label: "Citation Graph",        desc: "Map how papers connect",              icon: Network,       href: "/citation-graph" },
+  { id: "paper-writer",  label: "Paper Writer",          desc: "Write full research paper with AI",   icon: FileText,      href: "/paper-writer" },
+  { id: "trending",      label: "Trending",              desc: "What researchers are exploring now",  icon: TrendingUp,    href: "/trending" },
+  { id: "gap-alerts",    label: "Gap Alerts",            desc: "Get notified when gaps are addressed",icon: Bell,          href: "/gap-alerts" },
+  { id: "gap-ai",        label: "Gap AI",                desc: "Search for research gaps",            icon: Search,        href: "/gap-ai",           shortcut: "G" },
   { id: "drops",         label: "Gap Drops",            desc: "Your weekly digest",             icon: Zap,           href: "/gap-drops",        shortcut: "D" },
   { id: "simplify",      label: "GapSimplify",          desc: "Simplify a paper",               icon: BookOpen,      href: "/gap-simplify",     shortcut: "S" },
   { id: "dashboard",     label: "Dashboard",            desc: "Home",                           icon: Home,          href: "/dashboard" },

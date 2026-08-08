@@ -8,6 +8,7 @@ import {
   Menu, X, Home, LogOut, Moon, Sun, Layers, BarChart2,
   PenLine, Shuffle, ShieldCheck as ShieldIcon, BookMarked, LayoutTemplate, Grid3X3,
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
+  Radar, Network, TrendingUp, Bell, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -133,6 +134,11 @@ const APP_NAV_ITEMS = [
 
 // Tools submenu items (shown as a collapsible section)
 const TOOL_NAV_ITEMS = [
+  { href: "/gap-radar", label: "Gap Radar", icon: Radar },
+  { href: "/citation-graph", label: "Citation Graph", icon: Network },
+  { href: "/paper-writer", label: "Paper Writer", icon: FileText },
+  { href: "/trending", label: "Trending", icon: TrendingUp },
+  { href: "/gap-alerts", label: "Gap Alerts", icon: Bell },
   { href: "/chat", label: "AI Chat", icon: MessageSquare },
   { href: "/notebook", label: "Notebook", icon: BookText },
   { href: "/feed", label: "Research Feed", icon: Rss },

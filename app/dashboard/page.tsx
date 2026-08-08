@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, ArrowRight,
   Clock, Bookmark, TrendingUp, Tag, Flame, Users2, ExternalLink,
+  Radar, Network, FileText, Bell,
 } from "lucide-react";
 import Link from "next/link";
 import { AppNav } from "@/components/nav";
@@ -385,6 +386,28 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
+
+          {/* Discover new tools */}
+          <div>
+            <h2 className="text-xs font-semibold text-[rgb(var(--muted))] uppercase tracking-widest mb-4">Discover</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { href: "/gap-radar", icon: Radar, label: "Gap Radar", desc: "Visual gap map", color: "text-violet-400 bg-violet-400/10" },
+                { href: "/paper-writer", icon: FileText, label: "Paper Writer", desc: "Write full papers", color: "text-blue-400 bg-blue-400/10" },
+                { href: "/citation-graph", icon: Network, label: "Citation Graph", desc: "Map paper networks", color: "text-teal-400 bg-teal-400/10" },
+                { href: "/gap-alerts", icon: Bell, label: "Gap Alerts", desc: "Monitor your gaps", color: "text-amber-400 bg-amber-400/10" },
+              ].map(({ href, icon: Icon, label, desc, color }) => (
+                <Link key={href} href={href}
+                  className="card p-4 flex flex-col items-center gap-2 text-center hover:border-violet-500/30 hover:-translate-y-0.5 transition-all">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color}`}>
+                    <Icon size={18} />
+                  </div>
+                  <p className="text-xs font-semibold text-[rgb(var(--fg))]">{label}</p>
+                  <p className="text-xs text-[rgb(var(--muted))]">{desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
 
         </div>
       </main>
