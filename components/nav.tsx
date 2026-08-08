@@ -9,7 +9,7 @@ import {
   PenLine, Shuffle, ShieldCheck as ShieldIcon, BookMarked, LayoutTemplate, Grid3X3,
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
-  HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map,
+  HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map, Lightbulb,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -106,6 +106,7 @@ const TOOL_GROUPS = [
       { href: "/gap-scorecard",     label: "Gap Score Card",      icon: BarChart3 },
       { href: "/gap-radar",          label: "Gap Radar",           icon: Radar },
       { href: "/literature-map",     label: "Literature Map",      icon: Map },
+      { href: "/research-ideas",     label: "Research Idea Gen",   icon: Lightbulb },
       { href: "/citation-graph",     label: "Citation Graph",      icon: Network },
       { href: "/paper-gap",          label: "Paper Gap Detector",  icon: Upload },
       { href: "/related-papers",     label: "Related Papers",      icon: BookOpen },
