@@ -301,3 +301,162 @@ html {
     padding-bottom: 0;
   }
 }
+
+/* ============================================
+   UI POLISH — Animations, transitions, effects
+   ============================================ */
+
+/* Smooth page transitions */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Better card hover states */
+.card {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  box-shadow: 0 2px 16px rgba(124, 58, 237, 0.06);
+}
+
+/* Elevated cards */
+.card-elevated {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.dark .card-elevated {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Gradient border cards */
+.card-gradient-border {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Glow effect for active elements */
+.glow-violet {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.25), 0 0 40px rgba(124, 58, 237, 0.1);
+}
+
+/* Smooth number transitions */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Better focus rings */
+:focus-visible {
+  outline: 2px solid rgb(124 58 237 / 0.6);
+  outline-offset: 2px;
+}
+
+/* Link hover transitions */
+a {
+  transition: color 0.12s ease, opacity 0.12s ease;
+}
+
+/* Prose content */
+.prose-content p {
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+}
+.prose-content p:last-child {
+  margin-bottom: 0;
+}
+.prose-content h2, .prose-content h3 {
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: rgb(var(--fg));
+}
+.prose-content ul, .prose-content ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.prose-content li {
+  margin-bottom: 0.25rem;
+}
+.prose-content strong {
+  font-weight: 600;
+  color: rgb(var(--fg));
+}
+.prose-content code {
+  background: rgb(var(--border) / 0.6);
+  padding: 0.1em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  font-family: var(--font-geist-mono);
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgb(var(--border)) 25%, rgb(var(--card)) 50%, rgb(var(--border)) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* Floating label animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.float-anim {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Smooth scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--border)) transparent;
+}
+
+/* Badge pulse */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(0.97); }
+}
+.badge-live {
+  animation: badge-pulse 2s ease infinite;
+}
+
+/* Input focus enhancement */
+input:focus, textarea:focus, select:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+/* Button click feedback */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Gradient text utility */
+.text-gradient-violet {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(var(--card), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Improved scrollbar for nav */
+nav::-webkit-scrollbar {
+  width: 3px;
+}
+nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+nav::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 2px;
+}

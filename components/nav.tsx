@@ -103,6 +103,7 @@ const TOOL_GROUPS = [
     icon: Search,
     color: "text-violet-400",
     items: [
+      { href: "/gap-scorecard",     label: "Gap Score Card",      icon: BarChart3 },
       { href: "/gap-radar",          label: "Gap Radar",           icon: Radar },
       { href: "/citation-graph",     label: "Citation Graph",      icon: Network },
       { href: "/paper-gap",          label: "Paper Gap Detector",  icon: Upload },
