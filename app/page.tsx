@@ -191,7 +191,7 @@ export default function HomePage() {
       <PublicNav />
 
       {/* ── HERO ── */}
-      <section className="relative pt-32 pb-24 px-4 overflow-hidden">
+      <section className="relative pt-24 md:pt-32 pb-16 md:pb-24 px-4 overflow-hidden">
         {/* Animated background orbs */}
         <div className="absolute inset-0 pointer-events-none">
           <motion.div
@@ -226,7 +226,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.1 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[rgb(var(--fg))] leading-[1.08] mb-6"
+            className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-[rgb(var(--fg))] leading-[1.1] mb-6"
           >
             Find the research gaps{" "}
             <span className="bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
@@ -238,7 +238,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.2 }}
-            className="text-lg text-[rgb(var(--muted))] max-w-2xl mx-auto leading-relaxed mb-10"
+            className="text-base md:text-lg text-[rgb(var(--muted))] max-w-2xl mx-auto leading-relaxed mb-8 md:mb-10"
           >
             GapForge scans 10+ live academic databases and surfaces genuine candidate gaps for your judgment. Every gap is backed by verified citations from papers that actually exist.
           </motion.p>
@@ -478,8 +478,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {PLANS.map(({ name, price, period, description, features, cta, highlight }, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <motion.div
                 key={name}
                 initial={{ opacity: 0, y: 24 }}
