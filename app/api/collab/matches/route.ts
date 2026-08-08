@@ -46,8 +46,7 @@ export async function GET() {
       LIMIT 40
     `;
 
-    // Compute match scores
-    const matches = rows.map((r: {
+    type MatchRow = {
       id: string;
       name: string;
       image: string | null;
@@ -59,7 +58,10 @@ export async function GET() {
       institution: string | null;
       gap_count: number;
       is_following: boolean;
-    }) => {
+    };
+
+    // Compute match scores
+    const matches = (rows as unknown as MatchRow[]).map((r) => {
       const theirAreas = r.research_areas ?? [];
       const theirKeywords = r.keywords ?? [];
 
