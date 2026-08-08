@@ -216,10 +216,27 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 border border-violet-600/30 bg-violet-600/10 rounded-full px-4 py-1.5 text-xs text-violet-400 font-medium mb-8"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8"
           >
-            <Zap size={11} />
-            Research intelligence grounded in real sources
+            {/* Main tagline badge */}
+            <div className="inline-flex items-center gap-2 border border-violet-600/30 bg-violet-600/10 rounded-full px-4 py-1.5 text-xs text-violet-400 font-medium">
+              <Zap size={11} />
+              Research intelligence grounded in real sources
+            </div>
+
+            {/* Microsoft for Startups badge */}
+            <div className="inline-flex items-center gap-2.5 border border-[rgb(var(--border))] bg-[rgb(var(--card))] rounded-full px-4 py-1.5 text-xs font-medium text-[rgb(var(--fg))] shadow-sm">
+              {/* Microsoft logo squares */}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="7.5" height="7.5" fill="#F25022"/>
+                <rect x="8.5" y="0" width="7.5" height="7.5" fill="#7FBA00"/>
+                <rect x="0" y="8.5" width="7.5" height="7.5" fill="#00A4EF"/>
+                <rect x="8.5" y="8.5" width="7.5" height="7.5" fill="#FFB900"/>
+              </svg>
+              <span>Backed by Microsoft for Startups</span>
+              <span className="text-[rgb(var(--muted))]">·</span>
+              <span className="font-bold text-[rgb(var(--fg))]">$1,000 in credits</span>
+            </div>
           </motion.div>
 
           <motion.h1
@@ -358,6 +375,22 @@ export default function HomePage() {
               <span key="karolinska" className="text-[13px] font-bold text-[rgb(var(--fg))] opacity-35 hover:opacity-65 transition-opacity" style={{fontFamily:"Georgia,serif"}}>Karolinska</span>,
               <span key="weizmann" className="text-[13px] font-semibold tracking-wide text-[rgb(var(--fg))] opacity-35 hover:opacity-65 transition-opacity">Weizmann</span>,
             ]}
+          </div>
+
+          {/* Microsoft for Startups badge */}
+          <div className="flex justify-center mt-10">
+            <div className="inline-flex items-center gap-3 border border-[rgb(var(--border))] bg-[rgb(var(--card))] rounded-full px-5 py-2.5 shadow-sm">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="7.5" height="7.5" fill="#F25022"/>
+                <rect x="8.5" y="0" width="7.5" height="7.5" fill="#7FBA00"/>
+                <rect x="0" y="8.5" width="7.5" height="7.5" fill="#00A4EF"/>
+                <rect x="8.5" y="8.5" width="7.5" height="7.5" fill="#FFB900"/>
+              </svg>
+              <span className="text-sm text-[rgb(var(--muted))]">Backed by</span>
+              <span className="text-sm font-semibold text-[rgb(var(--fg))]">Microsoft for Startups Founders Hub</span>
+              <span className="text-[rgb(var(--muted))]">·</span>
+              <span className="text-sm font-bold text-[rgb(var(--fg))]">$1,000 in Azure credits</span>
+            </div>
           </div>
         </div>
       </section>
