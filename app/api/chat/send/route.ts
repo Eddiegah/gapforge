@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { getSession } from "@/lib/session";
+import { sql } from "@/lib/db/client";
 import { llmCall } from "@/lib/llm/client";
 
 export const maxDuration = 45;
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { conversationId, message, history } = await req.json() as {
@@ -52,7 +51,7 @@ Answer concisely and helpfully. You are a research intelligence assistant for Ga
       VALUES (${session.user.id}, ${title})
       RETURNING id
     `;
-    convId = convRows[0].id;
+    convId = (convRows[0] as { id: string }).id;
 
     // Save user message
     await sql`

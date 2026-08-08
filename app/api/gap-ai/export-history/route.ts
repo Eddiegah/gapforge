@@ -1,26 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { getSession } from "@/lib/session";
+import { sql } from "@/lib/db/client";
+
+interface SearchRow {
+  id: string;
+  query: string;
+  sources_queried: string[];
+  papers_analyzed: number;
+  gaps_found: number;
+  created_at: string;
+}
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
-  const format = searchParams.get("format") ?? "json"; // json | csv
+  const format = searchParams.get("format") ?? "json";
 
-  const rows = await sql`
+  const rows = (await sql`
     SELECT id, query, sources_queried, papers_analyzed, gaps_found, created_at
     FROM gap_searches
     WHERE user_id = ${session.user.id}
     ORDER BY created_at DESC
     LIMIT 500
-  `;
+  `) as unknown as SearchRow[];
 
   if (format === "csv") {
     const header = "id,query,sources,papers_analyzed,gaps_found,date\n";
-    const body = rows.map(r =>
+    const body = rows.map((r: SearchRow) =>
       [
         r.id,
         `"${(r.query ?? "").replace(/"/g, '""')}"`,
@@ -39,8 +47,7 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // JSON
-  const data = rows.map(r => ({
+  const data = rows.map((r: SearchRow) => ({
     id: r.id,
     query: r.query,
     sources: r.sources_queried,

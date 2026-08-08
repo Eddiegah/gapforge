@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { getSession } from "@/lib/session";
+import { sql } from "@/lib/db/client";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const rows = await sql`
     SELECT
       c.id,
@@ -13,15 +13,16 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       u.image as author_image
     FROM gap_comments c
     LEFT JOIN users u ON u.id = c.user_id
-    WHERE c.gap_id = ${params.id}
+    WHERE c.gap_id = ${id}
     ORDER BY c.created_at ASC
     LIMIT 100
   `;
   return NextResponse.json({ comments: rows });
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Sign in to comment" }, { status: 401 });
 
   const { content } = await req.json();
@@ -30,13 +31,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   const rows = await sql`
     INSERT INTO gap_comments (gap_id, user_id, content)
-    VALUES (${params.id}, ${session.user.id}, ${content.trim()})
+    VALUES (${id}, ${session.user.id}, ${content.trim()})
     RETURNING id, content, created_at
   `;
 
   return NextResponse.json({
     comment: {
-      ...rows[0],
+      ...(rows[0] as object),
       author_name: session.user.name ?? "Anonymous",
       author_image: session.user.image ?? null,
     }
