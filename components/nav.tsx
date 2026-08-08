@@ -9,7 +9,7 @@ import {
   PenLine, Shuffle, ShieldCheck as ShieldIcon, BookMarked, LayoutTemplate, Grid3X3,
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
-  HelpCircle, MapPin,
+  HelpCircle, MapPin, Building2, ScrollText, ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -138,12 +138,16 @@ const TOOL_NAV_ITEMS = [
   { href: "/gap-radar",          label: "Gap Radar",           icon: Radar },
   { href: "/citation-graph",     label: "Citation Graph",      icon: Network },
   { href: "/paper-writer",       label: "Paper Writer",        icon: FileText },
+  { href: "/grant-writer",       label: "Grant Writer",        icon: ScrollText },
+  { href: "/peer-review",        label: "Peer Review AI",      icon: ShieldCheck },
   { href: "/paper-gap",          label: "Paper Gap Detector",  icon: Upload },
   { href: "/pdf-chat",           label: "PDF Chat",            icon: MessageSquare },
   { href: "/research-questions", label: "Research Questions",  icon: HelpCircle },
   { href: "/abstract-writer",    label: "Abstract Writer",     icon: FileText },
   { href: "/conference-finder",  label: "Conference Finder",   icon: MapPin },
   { href: "/related-papers",     label: "Related Papers",      icon: BookOpen },
+  { href: "/portfolio",          label: "My Portfolio",        icon: UserPlus },
+  { href: "/institutional",      label: "Institutional",       icon: Building2 },
   { href: "/trending",           label: "Trending",            icon: TrendingUp },
   { href: "/gap-alerts",         label: "Gap Alerts",          icon: Bell },
   { href: "/collab",             label: "Find Collaborators",  icon: UserPlus },
