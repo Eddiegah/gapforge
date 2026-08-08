@@ -280,3 +280,39 @@ CREATE TABLE IF NOT EXISTS user_badges (
   earned_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(user_id, badge_type)
 );
+
+-- ─── Research Notebook ───────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS notebook_entries (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL DEFAULT 'Untitled',
+  content     TEXT NOT NULL DEFAULT '',
+  gap_id      TEXT REFERENCES saved_gaps(id) ON DELETE SET NULL,
+  paper_id    TEXT REFERENCES simplified_papers(id) ON DELETE SET NULL,
+  issue_id    TEXT REFERENCES research_issues(id) ON DELETE SET NULL,
+  tags        TEXT[] DEFAULT '{}',
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_notebook_user ON notebook_entries(user_id);
+
+-- ─── Follow System ────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS user_follows (
+  follower_id  TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  following_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (follower_id, following_id)
+);
+CREATE INDEX IF NOT EXISTS idx_follows_follower ON user_follows(follower_id);
+CREATE INDEX IF NOT EXISTS idx_follows_following ON user_follows(following_id);
+
+-- ─── Saved Search Alerts ──────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS saved_searches (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  query       TEXT NOT NULL,
+  alert_enabled BOOLEAN NOT NULL DEFAULT true,
+  last_alerted TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_saved_searches_user ON saved_searches(user_id);

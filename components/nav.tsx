@@ -7,6 +7,7 @@ import {
   Search, Zap, BookOpen, Users, Library, Settings,
   Menu, X, Home, LogOut, Moon, Sun, Layers, BarChart2,
   PenLine, Shuffle, ShieldCheck as ShieldIcon, BookMarked, LayoutTemplate, Grid3X3,
+  BookText, Users2, BarChart3, Rss,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -131,6 +132,9 @@ const APP_NAV_ITEMS = [
 
 // Tools submenu items (shown as a collapsible section)
 const TOOL_NAV_ITEMS = [
+  { href: "/notebook", label: "Notebook", icon: BookText },
+  { href: "/feed", label: "Research Feed", icon: Rss },
+  { href: "/analytics", label: "My Analytics", icon: BarChart3 },
   { href: "/ai-writer", label: "AI Writer", icon: PenLine },
   { href: "/paraphraser", label: "Paraphraser", icon: Shuffle },
   { href: "/ai-detector", label: "AI Detector", icon: ShieldIcon },
