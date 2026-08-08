@@ -402,3 +402,9 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS institution TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS website TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS twitter TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS orcid TEXT;
+
+-- ─── Fix credits_limit for free users (20 → 10) ──────────────────────────────
+UPDATE user_credits
+SET credits_limit = 10
+WHERE credits_limit = 20
+  AND user_id IN (SELECT id FROM users WHERE plan = 'free');

@@ -71,7 +71,7 @@ function CreditsRing({ used, limit }: { used: number; limit: number }) {
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const [credits, setCredits] = useState<CreditsData>({ creditsUsed: 0, creditsLimit: 20 });
+  const [credits, setCredits] = useState<CreditsData>({ creditsUsed: 0, creditsLimit: 10 });
   const [recentSearches, setRecentSearches] = useState<HistoryRow[]>([]);
   const [savedCount, setSavedCount] = useState(0);
   const [profile, setProfile] = useState<ResearchProfile | null>(null);

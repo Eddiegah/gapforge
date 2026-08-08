@@ -18,10 +18,16 @@ async function ensureUserExists(userId: string, email: string, name: string | nu
 
 export async function GET() {
   const session = await getSession();
-  if (!session?.user?.id) return NextResponse.json({ creditsUsed: 0, creditsLimit: 20 });
+  if (!session?.user?.id) return NextResponse.json({ creditsUsed: 0, creditsLimit: 10 });
 
   try {
     await ensureUserExists(session.user.id, session.user.email ?? "", session.user.name ?? null, session.user.image ?? null);
+
+    // Fix legacy 20-limit rows for free users
+    await sql`
+      UPDATE user_credits SET credits_limit = 10
+      WHERE user_id = ${session.user.id} AND credits_limit = 20
+    `;
 
     await sql`
       UPDATE user_credits 
@@ -46,7 +52,7 @@ export async function GET() {
 
     return NextResponse.json({
       creditsUsed: Number(row?.credits_used ?? 0),
-      creditsLimit: Number(row?.credits_limit ?? 20),
+      creditsLimit: Number(row?.credits_limit ?? 10),
     });
   } catch (err) {
     console.error("[Credits] Error:", err);

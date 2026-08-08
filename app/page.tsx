@@ -50,7 +50,7 @@ const PLANS = [
       "10 Gap AI searches/month",
       "Public weekly Gap Drops",
       "GapSimplify (DOI & arXiv)",
-      "Save up to 20 gaps",
+      "Save up to 10 gaps",
       "Basic library",
     ],
     cta: "Get started free",

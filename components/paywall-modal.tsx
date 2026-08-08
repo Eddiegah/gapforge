@@ -10,7 +10,7 @@ interface PaywallModalProps {
   daysUntilReset: number;
 }
 
-const FREE_FEATURES = ["20 searches/month", "Gap Drops (weekly)", "Saved gaps"];
+const FREE_FEATURES = ["10 searches/month", "Gap Drops (weekly)", "Saved gaps"];
 const PRO_FEATURES = [
   "Unlimited searches",
   "Gap Drops (daily)",
