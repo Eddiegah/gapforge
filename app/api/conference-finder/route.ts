@@ -11,45 +11,50 @@ export async function POST(req: NextRequest) {
   const { topic, paperType } = await req.json();
   if (!topic?.trim()) return NextResponse.json({ error: "Topic required" }, { status: 400 });
 
-  const prompt = `Find the top 10 academic conferences for a ${paperType ?? "full paper"} on this topic: "${topic}"
+  const prompt = `Find the top 10 academic conferences for a ${paperType ?? "full paper"} on: "${topic}"
 
-Return ONLY valid JSON:
+Return ONLY valid JSON — no text before or after:
 {
   "conferences": [
     {
       "id": "conf1",
       "name": "Full conference name",
       "shortName": "ACRONYM",
-      "description": "What this conference covers (1 sentence)",
+      "description": "What this covers",
       "field": "Primary field",
-      "rank": "A* or A or B or C or Workshop",
+      "rank": "A*",
       "website": "https://...",
-      "typicalDeadline": "Month YYYY",
-      "typicalDate": "Month YYYY",
-      "location": "City, Country or Virtual",
+      "typicalDeadline": "October 2025",
+      "typicalDate": "March 2026",
+      "location": "City, Country",
       "acceptanceRate": "20-25%",
-      "submissionTypes": ["Full paper", "Short paper"],
-      "whyFit": "Specific reason this conference fits the given topic (2 sentences)",
+      "submissionTypes": ["Full paper"],
+      "whyFit": "Why this fits",
       "matchScore": 92
     }
   ]
-}
-
-Include a mix of: top-tier (A*), strong (A), accessible (B), and workshop venues.
-Use real conference names, real websites, and realistic deadlines for 2025-2026.
-Sort by matchScore descending.`;
+}`;
 
   const { text } = await llmCall(
-    "You are an expert academic advisor helping researchers find the best conferences for their work.",
+    "You are an expert academic advisor. Return only valid JSON, no other text.",
     prompt, 1600
   );
 
+  let conferences = null;
   try {
-    const match = text.match(/\{[\s\S]+\}/);
-    if (!match) throw new Error("No JSON");
-    const parsed = JSON.parse(match[0]);
-    return NextResponse.json({ conferences: parsed.conferences ?? [] });
-  } catch {
-    return NextResponse.json({ conferences: [] });
+    const m = text.match(/\{[\s\S]*"conferences"[\s\S]*\}/);
+    if (m) {
+      const parsed = JSON.parse(m[0]);
+      if (Array.isArray(parsed.conferences) && parsed.conferences.length > 0) conferences = parsed.conferences;
+    }
+  } catch { /* next */ }
+  if (!conferences) {
+    try { const p = JSON.parse(text.trim()); conferences = p.conferences ?? null; } catch { /* give up */ }
   }
+
+  if (!conferences || conferences.length === 0) {
+    return NextResponse.json({ error: "Failed to find conferences. Please try again." }, { status: 500 });
+  }
+
+  return NextResponse.json({ conferences });
 }

@@ -21,30 +21,31 @@ Description: ${gap.description.slice(0, 400)}
 Supporting literature:
 ${citations || "None cited"}
 
-For each hypothesis:
-- State it as a clear, falsifiable H1 statement
-- Identify the key variables (independent, dependent)
-- Suggest a method to test it (1 sentence)
-- Rate testability: Easy / Moderate / Challenging
-
-Return JSON array:
+Return a JSON array ONLY (no text before or after):
 [{
   "hypothesis": "H1: ...",
   "independentVariable": "string",
-  "dependentVariable": "string", 
+  "dependentVariable": "string",
   "testMethod": "string",
-  "testability": "Easy" | "Moderate" | "Challenging",
-  "rationale": "string (1 sentence grounding this in the cited evidence)"
-}]
-Return ONLY JSON.`,
+  "testability": "Easy",
+  "rationale": "string"
+}]`,
     1200
   );
 
+  // Multi-strategy extraction
+  let hypotheses = null;
   try {
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    const hypotheses = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
-    return NextResponse.json({ hypotheses });
-  } catch {
-    return NextResponse.json({ hypotheses: [] });
+    const m = text.match(/\[[\s\S]*\]/);
+    if (m) hypotheses = JSON.parse(m[0]);
+  } catch { /* next */ }
+  if (!hypotheses) {
+    try { hypotheses = JSON.parse(text.trim()); } catch { /* give up */ }
   }
+
+  if (!Array.isArray(hypotheses) || hypotheses.length === 0) {
+    return NextResponse.json({ error: "Failed to generate hypotheses. Please try again." }, { status: 500 });
+  }
+
+  return NextResponse.json({ hypotheses });
 }

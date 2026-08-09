@@ -50,6 +50,6 @@ Generate all 10. Be creative and specific.`;
     const parsed = JSON.parse(match[0]);
     return NextResponse.json({ questions: parsed.questions ?? [] });
   } catch {
-    return NextResponse.json({ questions: [] });
+    return NextResponse.json({ error: "Failed to generate questions. Please try again." }, { status: 500 });
   }
 }

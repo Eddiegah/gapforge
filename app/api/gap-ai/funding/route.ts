@@ -9,26 +9,36 @@ export async function POST(req: NextRequest) {
   if (!gap?.title) return NextResponse.json({ error: "No gap" }, { status: 400 });
 
   const { text } = await llmCallFast(
-    "You identify real funding opportunities for research gaps. Be specific.",
+    "You identify real funding opportunities for research gaps. Return only valid JSON.",
     `Find 4 real funding opportunities for this research gap.
 
 Gap: ${gap.title}
 Description: ${gap.description.slice(0, 200)}
 
-List real grant programs (NIH, NSF, EU Horizon, Wellcome Trust, etc.) that fund this type of research.
-
-Return JSON array: [{
-  "funder": "string", "program": "string", "amount": "string",
-  "deadline": "string", "url": "string", "fit": "High" | "Medium",
-  "notes": "string (1 sentence)"
-}]
-Return ONLY JSON.`
+Return a JSON array ONLY:
+[{
+  "funder": "string",
+  "program": "string",
+  "amount": "string",
+  "deadline": "string",
+  "url": "string",
+  "fit": "High",
+  "notes": "string"
+}]`
   );
 
+  let opportunities = null;
   try {
-    const match = text.match(/\[[\s\S]*\]/);
-    return NextResponse.json({ opportunities: match ? JSON.parse(match[0]) : [] });
-  } catch {
-    return NextResponse.json({ opportunities: [] });
+    const m = text.match(/\[[\s\S]*\]/);
+    if (m) opportunities = JSON.parse(m[0]);
+  } catch { /* next */ }
+  if (!opportunities) {
+    try { opportunities = JSON.parse(text.trim()); } catch { /* give up */ }
   }
+
+  if (!Array.isArray(opportunities) || opportunities.length === 0) {
+    return NextResponse.json({ error: "Failed to find funding opportunities. Please try again." }, { status: 500 });
+  }
+
+  return NextResponse.json({ opportunities });
 }

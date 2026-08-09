@@ -50,15 +50,22 @@ Return ONLY valid JSON:
 }`;
 
   const { text } = await llmCall(
-    "You are a startup strategy expert who builds compelling, fundable startup ideas from research gaps.",
+    "You are a research strategy expert who builds compelling, fundable startup ideas from research gaps.",
     prompt, 1400
   );
 
-  try {
-    const match = text.match(/\{[\s\S]+\}/);
-    if (!match) throw new Error("No JSON");
-    return NextResponse.json({ startup: JSON.parse(match[0]) });
-  } catch {
-    return NextResponse.json({ error: "Failed to generate" }, { status: 500 });
+  // Robust JSON extraction
+  let startup = null;
+  for (const strategy of [
+    () => { const m = text.match(/\{[\s\S]*"startupName"[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; },
+    () => JSON.parse(text.trim()),
+  ]) {
+    try { startup = strategy(); if (startup?.startupName) break; } catch { /* next */ }
   }
+
+  if (!startup) {
+    return NextResponse.json({ error: "Failed to generate startup idea. Please try again." }, { status: 500 });
+  }
+
+  return NextResponse.json({ startup });
 }
