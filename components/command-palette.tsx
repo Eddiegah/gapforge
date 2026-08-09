@@ -7,11 +7,23 @@ import {
   BookText, Rss, BarChart3, BookmarkCheck, CalendarDays, Keyboard, PenLine, Shuffle,
   ShieldCheck, BookMarked, Grid3X3, LayoutTemplate, Users, Server, MessageSquare, Sparkles,
   Radar, Network, TrendingUp, Bell, Upload, Code2, Clock, UserPlus, HelpCircle, MapPin,
+  Mail, Rocket, RefreshCw, Lightbulb, Star, Swords, Flag,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const COMMANDS = [
+  { id: "paper-summarizer",  label: "Paper Summarizer",      desc: "TL;DR any paper in 5 bullets",         icon: BookOpen,     href: "/paper-summarizer" },
+  { id: "collab-email",      label: "Collaborator Email",    desc: "Draft cold email to a researcher",      icon: Mail,         href: "/collab-email" },
+  { id: "gap-startup",       label: "Gap to Startup",        desc: "Turn gap into startup idea",            icon: Rocket,       href: "/gap-startup" },
+  { id: "gap-freshness",     label: "Gap Freshness",         desc: "Verify gap is still open",              icon: RefreshCw,    href: "/gap-freshness" },
+  { id: "research-ideas",    label: "Research Ideas",        desc: "Generate 8 novel research ideas",       icon: Lightbulb,    href: "/research-ideas" },
+  { id: "gap-battle",        label: "Gap Battle",            desc: "Vote on most important gap",            icon: Swords,       href: "/gap-battle" },
+  { id: "impact-score",      label: "Impact Score",          desc: "Your research impact score",            icon: Star,         href: "/impact-score" },
+  { id: "claim-gap",         label: "Claim a Gap",           desc: "Publicly claim you're working on a gap",icon: Flag,         href: "/claim-gap" },
+  { id: "referral",          label: "Refer & Earn",          desc: "Share GapForge, earn credits",          icon: Users,        href: "/referral" },
+  { id: "grant-tracker",     label: "Grant Tracker",         desc: "20 funding opportunities",              icon: DollarSign,   href: "/grant-tracker" },
+  { id: "research-cv",       label: "Research CV",           desc: "Auto-generate your research CV",        icon: FileText,     href: "/research-cv" },
   { id: "chat",          label: "AI Chat",              desc: "Chat with research AI (memory saved)", icon: MessageSquare, href: "/chat" },
   { id: "demo",          label: "Platform Demo",         desc: "Full feature overview",               icon: Sparkles,      href: "/demo" },
   { id: "gap-radar",      label: "Gap Radar",            desc: "Visual gap landscape map",             icon: Radar,       href: "/gap-radar" },
