@@ -15,41 +15,77 @@ export async function POST(req: NextRequest) {
 ${expertise ? `Researcher background: ${expertise}` : ""}
 
 Requirements:
-- Questions must be specific enough to form a research project
+- Each question must be specific enough to form a research project
 - Ranked by novelty × impact composite score
 - Each must have a clear empirical or computational approach
 - Avoid vague questions — be precise about population, context, mechanism
 
-Return ONLY valid JSON with this structure:
-{
-  "questions": [
-    {
-      "id": "q1",
-      "question": "Specific research question?",
-      "rationale": "Why this is important and unstudied (2 sentences)",
-      "novelty": 85,
-      "feasibility": 70,
-      "impact": 90,
-      "methodology": "Randomized controlled trial",
-      "timeframe": "2-3 years",
-      "funding": "NIH R01"
-    }
-  ]
-}
+Return a JSON object with a "questions" array. Each question object has:
+id, question, rationale (2 sentences), novelty (0-100), feasibility (0-100), impact (0-100), methodology, timeframe, funding
 
-Generate all 10. Be creative and specific.`;
+Example format:
+{"questions":[{"id":"q1","question":"...","rationale":"...","novelty":85,"feasibility":70,"impact":90,"methodology":"RCT","timeframe":"2-3 years","funding":"NIH R01"}]}
+
+Generate all 10 now:`;
 
   const { text } = await llmCall(
-    "You are a research strategy expert who generates novel, specific, fundable research questions.",
-    prompt, 1400
+    "You are a research strategy expert. Output only valid JSON, no markdown formatting, no code blocks.",
+    prompt, 1600
   );
 
+  // Strip markdown code blocks if present
+  const cleaned = text
+    .replace(/```json\s*/gi, "")
+    .replace(/```\s*/gi, "")
+    .trim();
+
+  let questions = null;
+
+  // Strategy 1: find questions array in object
   try {
-    const match = text.match(/\{[\s\S]+\}/);
-    if (!match) throw new Error("No JSON");
-    const parsed = JSON.parse(match[0]);
-    return NextResponse.json({ questions: parsed.questions ?? [] });
-  } catch {
+    const m = cleaned.match(/\{[\s\S]*"questions"[\s\S]*\}/);
+    if (m) {
+      const parsed = JSON.parse(m[0]);
+      if (Array.isArray(parsed.questions) && parsed.questions.length > 0) questions = parsed.questions;
+    }
+  } catch { /* next */ }
+
+  // Strategy 2: direct array
+  if (!questions) {
+    try {
+      const m = cleaned.match(/\[[\s\S]*\]/);
+      if (m) {
+        const arr = JSON.parse(m[0]);
+        if (Array.isArray(arr) && arr.length > 0) questions = arr;
+      }
+    } catch { /* next */ }
+  }
+
+  // Strategy 3: full parse
+  if (!questions) {
+    try {
+      const parsed = JSON.parse(cleaned);
+      questions = parsed.questions ?? (Array.isArray(parsed) ? parsed : null);
+    } catch { /* give up */ }
+  }
+
+  if (!questions || questions.length === 0) {
+    console.error("[Research Questions] Parse failed, raw:", text.slice(0, 300));
     return NextResponse.json({ error: "Failed to generate questions. Please try again." }, { status: 500 });
   }
+
+  // Sanitize fields
+  const sanitized = questions.map((q: Record<string, unknown>, i: number) => ({
+    id: q.id ?? `q${i + 1}`,
+    question: q.question ?? "",
+    rationale: q.rationale ?? "",
+    novelty: Number(q.novelty ?? 75),
+    feasibility: Number(q.feasibility ?? 70),
+    impact: Number(q.impact ?? 75),
+    methodology: q.methodology ?? "Mixed methods",
+    timeframe: q.timeframe ?? "2-3 years",
+    funding: q.funding ?? "Major grant agency",
+  }));
+
+  return NextResponse.json({ questions: sanitized });
 }

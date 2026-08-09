@@ -51,12 +51,18 @@ Generate all 8 ideas. Categories: Experimental, Computational, Clinical, Review/
     prompt, 2000
   );
 
+  // Strip markdown code blocks if present
+  const cleaned = text
+    .replace(/```json\s*/gi, "")
+    .replace(/```\s*/gi, "")
+    .trim();
+
   // Try multiple JSON extraction strategies
   let ideas = null;
 
   // Strategy 1: standard match
   try {
-    const match = text.match(/\{[\s\S]*"ideas"[\s\S]*\}/);
+    const match = cleaned.match(/\{[\s\S]*"ideas"[\s\S]*\}/);
     if (match) {
       const parsed = JSON.parse(match[0]);
       if (Array.isArray(parsed.ideas) && parsed.ideas.length > 0) {
@@ -68,7 +74,7 @@ Generate all 8 ideas. Categories: Experimental, Computational, Clinical, Review/
   // Strategy 2: find JSON array directly
   if (!ideas) {
     try {
-      const arrayMatch = text.match(/\[[\s\S]*\]/);
+      const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
       if (arrayMatch) {
         const arr = JSON.parse(arrayMatch[0]);
         if (Array.isArray(arr) && arr.length > 0) ideas = arr;
@@ -79,7 +85,7 @@ Generate all 8 ideas. Categories: Experimental, Computational, Clinical, Review/
   // Strategy 3: try parsing the whole text
   if (!ideas) {
     try {
-      const parsed = JSON.parse(text.trim());
+      const parsed = JSON.parse(cleaned);
       if (parsed.ideas) ideas = parsed.ideas;
       else if (Array.isArray(parsed)) ideas = parsed;
     } catch { /* give up */ }

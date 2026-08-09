@@ -1,22 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import { llmCall } from "@/lib/llm/client";
 
 export const maxDuration = 45;
+
+// Increase body size limit for PDF uploads
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const form = await req.formData();
-  const url = form.get("url") as string | null;
-  const file = form.get("file") as File | null;
+  let url: string | null = null;
+  let file: File | null = null;
+
+  try {
+    const form = await req.formData();
+    url = form.get("url") as string | null;
+    file = form.get("file") as File | null;
+  } catch {
+    return NextResponse.json({ error: "File too large. Maximum size is 10MB. Try using a URL/DOI instead." }, { status: 413 });
+  }
 
   let paperContext = "";
   let paperMeta = { title: "Unknown paper", authors: [] as string[], year: null as number | null, abstract: "", url: "" };
 
   if (url?.trim()) {
-    // Resolve via Semantic Scholar
     const doi = url.match(/10\.\d{4,}\/\S+/)?.[0];
     const arxivId = url.match(/arxiv\.org\/abs\/([\d.v]+)/i)?.[1];
     const pmid = url.match(/pubmed\.ncbi\.nlm\.nih\.gov\/(\d+)/)?.[1];
@@ -44,14 +56,21 @@ export async function POST(req: NextRequest) {
     }
 
     if (!paperContext) {
-      paperContext = `Paper URL: ${url}\nNote: Abstract not available. Answer based on the URL context and general knowledge about this paper.`;
+      paperContext = `Paper URL: ${url}\nNote: Could not fetch abstract automatically. I will answer based on the URL context.`;
       paperMeta.url = url;
+      // Try to extract arxiv ID from URL for better context
+      const arxivMatch = url.match(/(\d{4}\.\d{4,5})/);
+      if (arxivMatch) paperMeta.title = `arXiv:${arxivMatch[1]}`;
     }
   } else if (file) {
-    // For PDF files, extract text using basic approach
-    // Since we can't run pdfjs server-side easily, use LLM to acknowledge the upload
-    paperContext = `User uploaded a PDF file: ${file.name} (${(file.size / 1024).toFixed(0)}KB).\nAnalyze the filename for clues about the paper topic.`;
-    paperMeta.title = file.name.replace(".pdf", "").replace(/-/g, " ");
+    // Check file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large. Maximum 10MB. Try a URL or DOI instead." }, { status: 413 });
+    }
+    // Use filename as context — we can't parse PDF server-side without pdfjs
+    const cleanName = file.name.replace(".pdf", "").replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
+    paperMeta.title = cleanName;
+    paperContext = `The researcher uploaded a PDF titled "${cleanName}" (${(file.size / 1024).toFixed(0)}KB). I will answer questions about this paper based on general knowledge of the topic suggested by the title.`;
   } else {
     return NextResponse.json({ error: "URL or file required" }, { status: 400 });
   }
