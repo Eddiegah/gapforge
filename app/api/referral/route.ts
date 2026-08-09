@@ -39,7 +39,7 @@ export async function GET() {
       referralLink: `${BASE_URL}/login?ref=${u.referral_code}`,
       referralCount: referred.length,
       bonusCredits: Number(u.referral_bonus_credits ?? 0),
-      referredUsers: referred.map((r: { name: string | null; joined: string }) => ({
+      referredUsers: (referred as { name: string | null; joined: string }[]).map((r) => ({
         name: r.name ?? "Researcher",
         joined: r.joined,
       })),
