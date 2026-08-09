@@ -396,8 +396,12 @@ export default function DashboardPage() {
               {[
                 { href: "/gap-radar", icon: Radar, label: "Gap Radar", desc: "Visual gap map", color: "text-violet-400 bg-violet-400/10" },
                 { href: "/paper-writer", icon: FileText, label: "Paper Writer", desc: "Write full papers", color: "text-blue-400 bg-blue-400/10" },
-                { href: "/citation-graph", icon: Network, label: "Citation Graph", desc: "Map paper networks", color: "text-teal-400 bg-teal-400/10" },
+                { href: "/grant-writer", icon: FileText, label: "Grant Writer", desc: "NIH/NSF/EU grants", color: "text-green-400 bg-green-400/10" },
+                { href: "/peer-review", icon: Network, label: "Peer Review AI", desc: "Simulate review", color: "text-red-400 bg-red-400/10" },
+                { href: "/paper-summarizer", icon: BookOpen, label: "Summarizer", desc: "TL;DR any paper", color: "text-teal-400 bg-teal-400/10" },
+                { href: "/gap-startup", icon: Zap, label: "Gap to Startup", desc: "Startup idea", color: "text-pink-400 bg-pink-400/10" },
                 { href: "/gap-alerts", icon: Bell, label: "Gap Alerts", desc: "Monitor your gaps", color: "text-amber-400 bg-amber-400/10" },
+                { href: "/collab-email", icon: Users2, label: "Collab Email", desc: "Cold email draft", color: "text-cyan-400 bg-cyan-400/10" },
               ].map(({ href, icon: Icon, label, desc, color }) => (
                 <Link key={href} href={href}
                   className="card p-4 flex flex-col items-center gap-2 text-center hover:border-violet-500/30 hover:-translate-y-0.5 transition-all">
