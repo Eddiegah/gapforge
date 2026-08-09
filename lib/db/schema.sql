@@ -408,3 +408,13 @@ UPDATE user_credits
 SET credits_limit = 10
 WHERE credits_limit = 20
   AND user_id IN (SELECT id FROM users WHERE plan = 'free');
+
+-- ─── Gap Battle votes ─────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS gap_battle_votes (
+  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  battle_id  TEXT NOT NULL,
+  direction  TEXT NOT NULL CHECK (direction IN ('A','B')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, battle_id)
+);
+CREATE INDEX IF NOT EXISTS idx_gap_battle_votes ON gap_battle_votes(battle_id);

@@ -16,6 +16,27 @@ function getRatelimit() {
   });
 }
 
+// Cache key for a search query (normalize)
+function cacheKey(query: string) {
+  return `gap_search:${query.toLowerCase().trim().replace(/\s+/g, " ")}`;
+}
+
+async function getCachedResult(query: string) {
+  try {
+    const redis = Redis.fromEnv();
+    const cached = await redis.get<object>(cacheKey(query));
+    return cached ?? null;
+  } catch { return null; }
+}
+
+async function setCachedResult(query: string, result: object) {
+  try {
+    const redis = Redis.fromEnv();
+    // Cache for 6 hours — gaps don't change that fast
+    await redis.setex(cacheKey(query), 21600, result);
+  } catch { /* non-blocking */ }
+}
+
 export async function POST(req: NextRequest) {
   const session = await getSession();
   const identifier = session?.user?.id ?? req.headers.get("x-forwarded-for") ?? "anonymous";
@@ -58,7 +79,7 @@ export async function POST(req: NextRequest) {
         const limit = creditRow.credits_limit as number;
         if (used >= limit) {
           return NextResponse.json(
-            { error: "You've used all 20 free searches this month. Upgrade to Pro for unlimited searches." },
+            { error: "You've used all your free searches this month. Upgrade to Pro for unlimited searches." },
             { status: 403 }
           );
         }
@@ -67,6 +88,22 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Check cache first — huge speed boost for repeat queries
+    const cached = await getCachedResult(query);
+    if (cached) {
+      console.log("[Search] Cache hit for:", query);
+      // Still deduct credit for cached results
+      if (session?.user?.id) {
+        try {
+          await sql`INSERT INTO user_credits (user_id, credits_used) VALUES (${session.user.id}, 1)
+            ON CONFLICT (user_id) DO UPDATE SET credits_used = user_credits.credits_used + 1, updated_at = NOW()`;
+          await sql`INSERT INTO gap_searches (user_id, query, sources_queried, sources_skipped, papers_analyzed, gaps_found, result_json)
+            VALUES (${session.user.id}, ${query}, '{}', '{}', 0, ${(cached as { gaps?: unknown[] }).gaps?.length ?? 0}, ${JSON.stringify(cached)})`;
+        } catch { /* non-blocking */ }
+      }
+      return NextResponse.json({ ...(cached as object), searchId: null, cached: true });
+    }
+
     // Step 1: Fetch papers from sources
     const orchestratorResult = await orchestrateQuery(query);
 
@@ -133,7 +170,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({
+    const finalResult = {
       searchId: null,
       query,
       gaps: gapResult.gaps,
@@ -141,7 +178,12 @@ export async function POST(req: NextRequest) {
       sourcesSkipped: orchestratorResult.sourcesSkipped,
       papersAnalyzed: orchestratorResult.papers.length,
       processingTimeMs: gapResult.processingTimeMs + orchestratorResult.queryTimeMs,
-    });
+    };
+
+    // Cache the result for future identical queries
+    await setCachedResult(query, finalResult);
+
+    return NextResponse.json(finalResult);
 
   } catch (err) {
     console.error("[Gap AI Search] Error:", err);

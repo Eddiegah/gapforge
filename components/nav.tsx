@@ -10,7 +10,7 @@ import {
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
   HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map, Lightbulb,
-  Rocket, DollarSign, RefreshCw,
+  Rocket, DollarSign, RefreshCw, Swords, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -144,6 +144,7 @@ const TOOL_GROUPS = [
       { href: "/timeline",           label: "Research Timeline",   icon: Clock },
       { href: "/gap-alerts",         label: "Gap Alerts",          icon: Bell },
       { href: "/portfolio",          label: "My Portfolio",        icon: UserPlus },
+      { href: "/research-cv",        label: "Research CV",         icon: FileText },
       { href: "/analytics",          label: "My Analytics",        icon: BarChart3 },
     ],
   },
@@ -158,6 +159,8 @@ const TOOL_GROUPS = [
       { href: "/trending",           label: "Trending",            icon: TrendingUp },
       { href: "/leaderboard",        label: "Leaderboard",         icon: Trophy },
       { href: "/challenges",         label: "Challenges",          icon: Trophy },
+      { href: "/gap-battle",         label: "Gap Battle",          icon: Swords },
+      { href: "/impact-score",       label: "Impact Score",        icon: Star },
     ],
   },
   {
