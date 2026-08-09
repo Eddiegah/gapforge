@@ -418,3 +418,18 @@ CREATE TABLE IF NOT EXISTS gap_battle_votes (
   PRIMARY KEY (user_id, battle_id)
 );
 CREATE INDEX IF NOT EXISTS idx_gap_battle_votes ON gap_battle_votes(battle_id);
+
+-- ─── Claimed Gaps ─────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS claimed_gaps (
+  id                  TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id             TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  gap_title           TEXT NOT NULL,
+  gap_description     TEXT,
+  status              TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','completed','abandoned')),
+  expected_completion DATE,
+  update_notes        TEXT,
+  started_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_claimed_gaps_user ON claimed_gaps(user_id);
+CREATE INDEX IF NOT EXISTS idx_claimed_gaps_status ON claimed_gaps(status);

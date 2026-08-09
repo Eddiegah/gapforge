@@ -67,3 +67,51 @@ export async function sendUpgradeNudgeEmail(email: string, name: string, credits
     </div>`,
   });
 }
+
+export async function sendDay3Email(email: string, name: string): Promise<void> {
+  await getResend().emails.send({
+    from: process.env.EMAIL_FROM ?? "noreply@gapforge.app",
+    to: email,
+    subject: "3 GapForge features you probably haven't tried yet",
+    html: `<div style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#0a0a1a;color:#f0eeff;border-radius:12px;">
+      <h1 style="color:#a78bfa;font-size:22px;">Hey ${name ?? "researcher"}, it's been 3 days.</h1>
+      <p style="color:#8b8bb3;line-height:1.6;margin-top:8px;">Here are 3 powerful GapForge features most researchers discover too late:</p>
+      <div style="background:#13132e;border:1px solid #1e1e4a;border-radius:8px;padding:20px;margin:16px 0;">
+        <p style="font-weight:600;color:#a78bfa;">1. Gap Radar — Visual field map</p>
+        <p style="color:#8b8bb3;font-size:14px;">See your entire research field as an interactive bubble map. Spot dense clusters and sparse areas (= gaps) instantly.</p>
+        <a href="${BASE_URL}/gap-radar" style="color:#a78bfa;font-size:13px;">Open Gap Radar →</a>
+      </div>
+      <div style="background:#13132e;border:1px solid #1e1e4a;border-radius:8px;padding:20px;margin:16px 0;">
+        <p style="font-weight:600;color:#a78bfa;">2. Grant Writer</p>
+        <p style="color:#8b8bb3;font-size:14px;">Generate a complete NIH R01, NSF, or EU Horizon grant proposal from any research gap. Section by section, export as Markdown.</p>
+        <a href="${BASE_URL}/grant-writer" style="color:#a78bfa;font-size:13px;">Try Grant Writer →</a>
+      </div>
+      <div style="background:#13132e;border:1px solid #1e1e4a;border-radius:8px;padding:20px;margin:16px 0;">
+        <p style="font-weight:600;color:#a78bfa;">3. Gap to Startup</p>
+        <p style="color:#8b8bb3;font-size:14px;">Turn any research gap into a full startup idea — business model, MVP features, competitors, funding sources, and 90-day plan.</p>
+        <a href="${BASE_URL}/gap-startup" style="color:#a78bfa;font-size:13px;">Generate startup idea →</a>
+      </div>
+      <p style="color:#6b6b8a;font-size:12px;margin-top:32px;">GapForge — Research Intelligence Platform · <a href="${BASE_URL}/settings" style="color:#6b6b8a;">Unsubscribe</a></p>
+    </div>`,
+  });
+}
+
+export async function sendDay7Email(email: string, name: string, searchCount: number): Promise<void> {
+  await getResend().emails.send({
+    from: process.env.EMAIL_FROM ?? "noreply@gapforge.app",
+    to: email,
+    subject: `${name?.split(" ")[0] ?? "Researcher"}, your first week on GapForge`,
+    html: `<div style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#0a0a1a;color:#f0eeff;border-radius:12px;">
+      <h1 style="color:#a78bfa;font-size:22px;">One week in, ${name?.split(" ")[0] ?? "researcher"}.</h1>
+      <p style="color:#8b8bb3;line-height:1.6;margin-top:8px;">You've run <strong style="color:#a78bfa;">${searchCount} Gap AI searches</strong> in your first week. Here's what's possible with more.</p>
+      <div style="background:#13132e;border:2px solid #7c3aed;border-radius:8px;padding:24px;margin:20px 0;">
+        <p style="font-weight:700;color:#a78bfa;font-size:16px;">Upgrade to Pro</p>
+        <p style="color:#8b8bb3;font-size:14px;margin:8px 0;">Unlimited searches + Grant Writer + Peer Review AI + all premium tools.</p>
+        <p style="color:#a78bfa;font-size:22px;font-weight:700;">$20/month</p>
+        <a href="${BASE_URL}/pricing" style="display:inline-block;margin-top:12px;padding:12px 24px;background:#7c3aed;color:white;text-decoration:none;border-radius:8px;font-weight:600;">Upgrade now</a>
+      </div>
+      <p style="color:#8b8bb3;font-size:13px;line-height:1.6;">Not ready? The free plan still gives you 10 Gap AI searches/month, access to all 60+ tools, and a personalized Gap Drop every Friday.</p>
+      <p style="color:#6b6b8a;font-size:12px;margin-top:24px;">GapForge — Research Intelligence Platform · <a href="${BASE_URL}/settings" style="color:#6b6b8a;">Unsubscribe</a></p>
+    </div>`,
+  });
+}

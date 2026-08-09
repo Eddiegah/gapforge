@@ -10,42 +10,42 @@ export async function GET() {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    let [user] = await sql`SELECT referral_code FROM users WHERE id = ${session.user.id}`;
-    if (!user?.referral_code) {
+    // Get or create referral code
+    let [user] = await sql`
+      SELECT id, referral_code, referral_bonus_credits FROM users WHERE id = ${session.user.id}
+    `;
+
+    if (!(user as { referral_code: string | null }).referral_code) {
       const code = randomBytes(4).toString("hex").toUpperCase();
-      [user] = await sql`UPDATE users SET referral_code = ${code} WHERE id = ${session.user.id} RETURNING referral_code`;
+      [user] = await sql`
+        UPDATE users SET referral_code = ${code} WHERE id = ${session.user.id}
+        RETURNING id, referral_code, referral_bonus_credits
+      `;
     }
 
-    const [countRow] = await sql`SELECT COUNT(*) as count FROM users WHERE referred_by = ${session.user.id}`;
+    const u = user as { referral_code: string; referral_bonus_credits: number };
+
+    // Count referrals
+    const referred = await sql`
+      SELECT u.name, u.created_at as joined
+      FROM users u
+      WHERE u.referred_by = ${session.user.id}
+      ORDER BY u.created_at DESC
+      LIMIT 20
+    `;
 
     return NextResponse.json({
-      code: user?.referral_code,
-      referralUrl: `${BASE_URL}/login?ref=${user?.referral_code}`,
-      referralCount: Number((countRow as { count: string })?.count ?? 0),
-      bonusCredits: 5,
+      referralCode: u.referral_code,
+      referralLink: `${BASE_URL}/login?ref=${u.referral_code}`,
+      referralCount: referred.length,
+      bonusCredits: Number(u.referral_bonus_credits ?? 0),
+      referredUsers: referred.map((r: { name: string | null; joined: string }) => ({
+        name: r.name ?? "Researcher",
+        joined: r.joined,
+      })),
     });
-  } catch {
-    return NextResponse.json({ code: null, referralUrl: null, referralCount: 0, bonusCredits: 5 });
-  }
-}
-
-export async function POST(req: NextRequest) {
-  const { code, userId } = await req.json();
-  if (!code || !userId) return NextResponse.json({ ok: false });
-
-  try {
-    const [referrer] = await sql`SELECT id FROM users WHERE referral_code = ${code}`;
-    if (!referrer || referrer.id === userId) return NextResponse.json({ ok: false });
-
-    await sql`UPDATE users SET referred_by = ${referrer.id} WHERE id = ${userId} AND referred_by IS NULL`;
-    await sql`
-      INSERT INTO user_credits (user_id, credits_limit)
-      VALUES (${referrer.id as string}, 25)
-      ON CONFLICT (user_id) DO UPDATE
-      SET credits_limit = user_credits.credits_limit + 5, updated_at = NOW()
-    `;
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ ok: false });
+  } catch (err) {
+    console.error("[Referral]", err);
+    return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
