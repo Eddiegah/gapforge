@@ -46,12 +46,15 @@ Be specific, realistic, and evidence-based.`;
     prompt, 900
   );
 
+  const cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+  let scorecard = null;
   try {
-    const match = text.match(/\{[\s\S]+\}/);
-    if (!match) throw new Error("No JSON");
-    const parsed = JSON.parse(match[0]);
-    return NextResponse.json({ scorecard: parsed });
-  } catch {
-    return NextResponse.json({ error: "Failed to parse scorecard" }, { status: 500 });
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (m) scorecard = JSON.parse(m[0]);
+  } catch { /* next */ }
+  if (!scorecard) {
+    try { scorecard = JSON.parse(cleaned); } catch { /* give up */ }
   }
+  if (!scorecard) return NextResponse.json({ error: "Failed to parse scorecard. Please try again." }, { status: 500 });
+  return NextResponse.json({ scorecard });
 }

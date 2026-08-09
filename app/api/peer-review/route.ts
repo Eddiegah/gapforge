@@ -47,12 +47,15 @@ Be honest and constructive. Use real academic reviewing standards.`;
     prompt, 1500
   );
 
+  const cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+  let review = null;
   try {
-    const match = text.match(/\{[\s\S]+\}/);
-    if (!match) throw new Error("No JSON");
-    const parsed = JSON.parse(match[0]);
-    return NextResponse.json({ review: parsed });
-  } catch {
-    return NextResponse.json({ error: "Failed to parse review" }, { status: 500 });
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (m) review = JSON.parse(m[0]);
+  } catch { /* next */ }
+  if (!review) {
+    try { review = JSON.parse(cleaned); } catch { /* give up */ }
   }
+  if (!review) return NextResponse.json({ error: "Failed to generate review. Please try again." }, { status: 500 });
+  return NextResponse.json({ review });
 }
