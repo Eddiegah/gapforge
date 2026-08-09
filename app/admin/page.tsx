@@ -18,6 +18,9 @@ interface Stats {
   totalSearches: number;
   totalDrops: number;
   totalSimplified: number;
+  totalSavedGaps: number;
+  paidUsers: number;
+  newUsersLast7Days: number;
   recentUsers: {
     id: string;
     name: string | null;
@@ -30,7 +33,10 @@ interface Stats {
     gaps_found: number;
     papers_analyzed: number;
     created_at: string;
+    email?: string;
   }[];
+  planBreakdown: { plan: string; count: number }[];
+  topSearches: { query: string; count: number }[];
 }
 
 type AdminSection = "dashboard" | "users" | "searches" | "settings";
@@ -61,7 +67,7 @@ export default function AdminPage() {
     if (session?.user?.email === ADMIN_EMAIL) {
       fetch("/api/admin/stats")
         .then((r) => r.json())
-        .then((d) => setStats(d))
+        .then((d) => setStats({ ...d.stats, recentUsers: d.recentUsers ?? [], recentSearches: d.recentSearches ?? [], planBreakdown: d.planBreakdown ?? [], topSearches: d.topSearches ?? [] }))
         .finally(() => setLoading(false));
     }
   }, [session]);
@@ -76,9 +82,12 @@ export default function AdminPage() {
 
   const STAT_CARDS = [
     { label: "Total Users", value: stats?.totalUsers ?? 0, icon: Users, color: "text-violet-400" },
+    { label: "Paid Users", value: stats?.paidUsers ?? 0, icon: Users, color: "text-green-400" },
+    { label: "New (7 days)", value: stats?.newUsersLast7Days ?? 0, icon: Users, color: "text-blue-400" },
     { label: "Total Searches", value: stats?.totalSearches ?? 0, icon: Search, color: "text-amber-400" },
     { label: "Drops Generated", value: stats?.totalDrops ?? 0, icon: Zap, color: "text-emerald-400" },
     { label: "Papers Simplified", value: stats?.totalSimplified ?? 0, icon: BookOpen, color: "text-blue-400" },
+    { label: "Saved Gaps", value: stats?.totalSavedGaps ?? 0, icon: BookOpen, color: "text-pink-400" },
   ];
 
   return (
