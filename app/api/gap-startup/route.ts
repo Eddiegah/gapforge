@@ -54,11 +54,12 @@ Return ONLY valid JSON:
     prompt, 1400
   );
 
-  // Robust JSON extraction
+  // Robust JSON extraction with markdown stripping
+  const cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
   let startup = null;
   for (const strategy of [
-    () => { const m = text.match(/\{[\s\S]*"startupName"[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; },
-    () => JSON.parse(text.trim()),
+    () => { const m = cleaned.match(/\{[\s\S]*"startupName"[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; },
+    () => JSON.parse(cleaned),
   ]) {
     try { startup = strategy(); if (startup?.startupName) break; } catch { /* next */ }
   }

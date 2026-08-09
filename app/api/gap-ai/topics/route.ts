@@ -15,7 +15,8 @@ Return ONLY JSON.`
   );
 
   try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     const data = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
     return NextResponse.json({
       subtopics: data.subtopics ?? [],
