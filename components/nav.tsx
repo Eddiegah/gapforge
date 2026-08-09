@@ -10,7 +10,7 @@ import {
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
   HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map, Lightbulb,
-  Rocket, DollarSign, RefreshCw, Swords, Star, Flag,
+  Rocket, DollarSign, RefreshCw, Swords, Star, Flag, Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -160,6 +160,7 @@ const TOOL_GROUPS = [
     items: [
       { href: "/feed",               label: "Research Feed",       icon: Rss },
       { href: "/collab",             label: "Find Collaborators",  icon: UserPlus },
+      { href: "/collab-email",       label: "Collaborator Email",  icon: Mail },
       { href: "/trending",           label: "Trending",            icon: TrendingUp },
       { href: "/leaderboard",        label: "Leaderboard",         icon: Trophy },
       { href: "/challenges",         label: "Challenges",          icon: Trophy },

@@ -91,7 +91,7 @@ export default function PricingPage() {
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
 
-  const handleUpgrade = async (planId: string) => {
+  const handleUpgrade = async (planId: string, method: "paystack" | "stripe" = "paystack") => {
     if (!session) {
       window.location.href = `/login?callbackUrl=${encodeURIComponent("/pricing")}`;
       return;
@@ -99,6 +99,19 @@ export default function PricingPage() {
     setLoadingPlan(planId);
     setError(null);
     try {
+      // Try Stripe first (international), fallback to Paystack
+      if (method === "stripe") {
+        const res = await fetch("/api/payments/stripe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: planId }),
+        });
+        const data = await res.json();
+        if (data.url) { window.location.href = data.url; return; }
+        if (data.redirect) { window.location.href = data.redirect; return; }
+      }
+
+      // Paystack (GHS)
       const res = await fetch("/api/payments/paystack", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -190,7 +203,7 @@ export default function PricingPage() {
         </div>
 
         <p className="text-center text-xs text-[rgb(var(--muted))] mt-8">
-          Payments processed securely via Paystack in GHS — supports Visa, Mastercard, Mobile Money, and bank transfer.
+          Payments processed securely — Paystack (GHS/Africa) or Stripe (USD/International).
           <br />Prices shown in USD for reference. GHS equivalent charged at checkout.
         </p>
       </div>
