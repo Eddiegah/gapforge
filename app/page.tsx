@@ -281,6 +281,22 @@ export default function HomePage() {
               <ArrowRight size={16} />
             </a>
           </motion.div>
+
+          {/* Live stats strip */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-6 mt-8 flex-wrap">
+            {[
+              { value: "250M+", label: "papers indexed" },
+              { value: "10+", label: "live databases" },
+              { value: "6", label: "gap types detected" },
+              { value: "100%", label: "real citations" },
+            ].map(({ value, label }) => (
+              <div key={label} className="text-center">
+                <p className="text-lg font-black text-violet-400">{value}</p>
+                <p className="text-xs text-[rgb(var(--muted))]">{label}</p>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </section>
 

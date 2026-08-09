@@ -17,30 +17,42 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "GapForge — Research Intelligence Platform",
+    default: "GapForge — AI Research Gap Detection Platform",
     template: "%s | GapForge",
   },
   manifest: "/manifest.json",
   description:
-    "Discover genuine research gaps, get weekly intelligence drops, and simplify academic papers with AI-powered source verification.",
-  keywords: ["research gaps", "academic research", "literature review", "research intelligence"],
+    "GapForge scans 250M+ academic papers across 10+ live databases to surface genuine research gaps with real citations. Features: Gap AI, Paper Writer, Grant Writer, Peer Review AI, Literature Map, and 70+ research tools.",
+  keywords: [
+    "research gaps", "academic research", "literature review", "research intelligence",
+    "gap detection", "PhD tools", "research AI", "paper writer", "grant writer",
+    "systematic review", "citation analysis", "research tools"
+  ],
   authors: [{ name: "GapForge" }],
+  creator: "GapForge",
+  publisher: "GapForge",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_APP_URL,
-    title: "GapForge — Research Intelligence Platform",
-    description: "Discover genuine research gaps backed by real academic sources.",
+    title: "GapForge — AI Research Gap Detection Platform",
+    description: "Discover genuine research gaps backed by real academic sources. 250M+ papers, 10+ databases, 70+ research tools.",
     siteName: "GapForge",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "GapForge" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "GapForge — Research Intelligence Platform",
+    title: "GapForge — AI Research Gap Detection",
     description: "Discover genuine research gaps backed by real academic sources.",
+    creator: "@gapforge",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_APP_URL,
   },
 };
 
