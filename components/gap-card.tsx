@@ -389,6 +389,24 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                     className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
                     Notion (.md)
                   </button>
+                  <button onClick={() => {
+                    // Export gap citations to BibTeX and trigger download
+                    if (gap.citations.length === 0) { showToast("No citations to export"); return; }
+                    const items = gap.citations.map(c => ({ title: c.title, authors: c.authors, year: c.year, doi: c.doi, url: c.url }));
+                    const bibtex = items.map((item, i) => {
+                      const key = `ref${i+1}_${(item.authors[0] ?? "anon").split(" ").pop() ?? "anon"}_${item.year ?? "nd"}`;
+                      return `@article{${key},\n  title = {${item.title}},\n  author = {${item.authors.join(" and ")}},\n  year = {${item.year ?? ""}},\n  doi = {${item.doi ?? ""}},\n  url = {${item.url}}\n}`;
+                    }).join("\n\n");
+                    const blob = new Blob([bibtex], { type: "text/plain" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a"); a.href = url; a.download = "citations.bib"; a.click();
+                    URL.revokeObjectURL(url);
+                    showToast("BibTeX downloaded — import into Zotero/Mendeley");
+                    setShowExportMenu(false);
+                  }}
+                    className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">
+                    Zotero / Mendeley (.bib)
+                  </button>
                   {gap.citations.length > 0 && CITATION_FORMATS.map(fmt => (
                     <button key={fmt.value} onClick={() => { exportCitations(gap.citations, fmt.value, gap.title); setShowExportMenu(false); }}
                       className="w-full text-left px-3 py-2 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors">

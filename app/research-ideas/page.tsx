@@ -189,6 +189,10 @@ export default function ResearchIdeasPage() {
                         className="flex items-center gap-1 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors ml-3">
                         <BookOpen size={11} /> Write paper
                       </Link>
+                      <Link href={`/collab-email?topic=${encodeURIComponent(idea.title)}`}
+                        className="flex items-center gap-1 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors ml-3">
+                        <ArrowRight size={11} /> Collab email
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
