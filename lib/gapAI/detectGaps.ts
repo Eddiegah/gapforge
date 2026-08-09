@@ -171,8 +171,26 @@ Return ONLY a JSON array of gap objects. No other text. If you cannot find genui
 
   const { text } = await llmCall(system, prompt, 4096);
 
-  const jsonMatch = text.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) throw new Error("Gap detection returned no parseable JSON");
+  // Strip markdown code blocks if present, then extract JSON array
+  const cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+
+  let rawGapsText: string | null = null;
+  // Try array extraction
+  const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
+  if (arrayMatch) {
+    rawGapsText = arrayMatch[0];
+  } else {
+    // Try object with gaps array
+    const objMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (objMatch) {
+      try {
+        const obj = JSON.parse(objMatch[0]);
+        if (Array.isArray(obj.gaps)) rawGapsText = JSON.stringify(obj.gaps);
+      } catch { /* ignore */ }
+    }
+  }
+
+  if (!rawGapsText) throw new Error("Gap detection returned no parseable JSON");
 
   interface RawGap {
     title?: string;
@@ -192,7 +210,7 @@ Return ONLY a JSON array of gap objects. No other text. If you cannot find genui
     citations?: { paperId: string; relevantQuote?: string }[];
   }
 
-  const rawGaps: RawGap[] = JSON.parse(jsonMatch[0]);
+  const rawGaps: RawGap[] = JSON.parse(rawGapsText);
 
   const gaps: DetectedGap[] = rawGaps
     .filter((g): g is RawGap & { title: string; description: string; category: string } =>
