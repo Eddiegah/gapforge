@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Search, Zap, BookOpen, ArrowRight,
   Clock, Bookmark, TrendingUp, Tag, Flame, Users2, ExternalLink,
-  Radar, Network, FileText, Bell,
+  Radar, Network, FileText, Bell, Mail,
 } from "lucide-react";
 import Link from "next/link";
 import { AppNav } from "@/components/nav";
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                 { href: "/paper-summarizer", icon: BookOpen, label: "Summarizer", desc: "TL;DR any paper", color: "text-teal-400 bg-teal-400/10" },
                 { href: "/gap-startup", icon: Zap, label: "Gap to Startup", desc: "Startup idea", color: "text-pink-400 bg-pink-400/10" },
                 { href: "/gap-alerts", icon: Bell, label: "Gap Alerts", desc: "Monitor your gaps", color: "text-amber-400 bg-amber-400/10" },
-                { href: "/collab-email", icon: Users2, label: "Collab Email", desc: "Cold email draft", color: "text-cyan-400 bg-cyan-400/10" },
+                { href: "/collab-email", icon: Mail, label: "Collab Email", desc: "Cold email draft", color: "text-cyan-400 bg-cyan-400/10" },
               ].map(({ href, icon: Icon, label, desc, color }) => (
                 <Link key={href} href={href}
                   className="card p-4 flex flex-col items-center gap-2 text-center hover:border-violet-500/30 hover:-translate-y-0.5 transition-all">
