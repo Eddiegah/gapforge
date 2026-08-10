@@ -11,47 +11,40 @@ export async function GET() {
   }
 
   try {
-    const [userCount] = await sql`SELECT COUNT(*) as count FROM users`;
-    const [searchCount] = await sql`SELECT COUNT(*) as count FROM gap_searches`;
-    const [dropCount] = await sql`SELECT COUNT(*) as count FROM gap_drops`;
-    const [simplifyCount] = await sql`SELECT COUNT(*) as count FROM simplified_papers`;
-    const [savedCount] = await sql`SELECT COUNT(*) as count FROM saved_gaps`;
-    const [proCount] = await sql`SELECT COUNT(*) as count FROM users WHERE plan != 'free'`;
+    const [[userCount], [searchCount], [dropCount], [simplifyCount], [savedCount], [proCount], [newUsers7d], [newUsers24h]] = await Promise.all([
+      sql`SELECT COUNT(*) as count FROM users`,
+      sql`SELECT COUNT(*) as count FROM gap_searches`,
+      sql`SELECT COUNT(*) as count FROM gap_drops`,
+      sql`SELECT COUNT(*) as count FROM simplified_papers`,
+      sql`SELECT COUNT(*) as count FROM saved_gaps`,
+      sql`SELECT COUNT(*) as count FROM users WHERE plan != 'free'`,
+      sql`SELECT COUNT(*) as count FROM users WHERE created_at > NOW() - interval '7 days'`,
+      sql`SELECT COUNT(*) as count FROM users WHERE created_at > NOW() - interval '24 hours'`,
+    ]);
 
-    // Users joined last 7 days
-    const [newUsers7d] = await sql`SELECT COUNT(*) as count FROM users WHERE created_at > NOW() - interval '7 days'`;
+    const [[activeToday], [activeWeek]] = await Promise.all([
+      sql`SELECT COUNT(DISTINCT user_id) as count FROM gap_searches WHERE created_at > NOW() - interval '24 hours'`,
+      sql`SELECT COUNT(DISTINCT user_id) as count FROM gap_searches WHERE created_at > NOW() - interval '7 days'`,
+    ]);
 
-    // Top search topics
-    const topSearches = await sql`
-      SELECT query, COUNT(*) as count FROM gap_searches
-      GROUP BY query ORDER BY count DESC LIMIT 10
-    `;
-
-    // Recent users
-    const recentUsers = await sql`
-      SELECT id, name, email, plan, created_at
-      FROM users ORDER BY created_at DESC LIMIT 20
-    `;
-
-    // Recent searches
-    const recentSearches = await sql`
-      SELECT gs.query, gs.gaps_found, gs.papers_analyzed, gs.created_at, u.email
-      FROM gap_searches gs
-      LEFT JOIN users u ON u.id = gs.user_id
-      ORDER BY gs.created_at DESC LIMIT 20
-    `;
-
-    // Users by plan
-    const planBreakdown = await sql`
-      SELECT plan, COUNT(*) as count FROM users GROUP BY plan ORDER BY count DESC
-    `;
-
-    // Daily signups last 14 days
-    const dailySignups = await sql`
-      SELECT DATE(created_at) as date, COUNT(*) as count
-      FROM users WHERE created_at > NOW() - interval '14 days'
-      GROUP BY DATE(created_at) ORDER BY date DESC
-    `;
+    const [recentUsers, recentSearches, planBreakdown, dailySignups, dailySearches, topSearches, topFields] = await Promise.all([
+      sql`SELECT u.id, u.name, u.email, u.plan, u.created_at, u.current_streak,
+        (SELECT COUNT(*) FROM gap_searches WHERE user_id = u.id) as search_count
+        FROM users u ORDER BY u.created_at DESC LIMIT 20`,
+      sql`SELECT gs.query, gs.gaps_found, gs.papers_analyzed, gs.created_at, u.email, u.name
+        FROM gap_searches gs LEFT JOIN users u ON u.id = gs.user_id
+        ORDER BY gs.created_at DESC LIMIT 20`,
+      sql`SELECT plan, COUNT(*) as count FROM users GROUP BY plan ORDER BY count DESC`,
+      sql`SELECT DATE(created_at) as date, COUNT(*) as count FROM users
+        WHERE created_at > NOW() - interval '30 days'
+        GROUP BY DATE(created_at) ORDER BY date ASC`,
+      sql`SELECT DATE(created_at) as date, COUNT(*) as count FROM gap_searches
+        WHERE created_at > NOW() - interval '30 days'
+        GROUP BY DATE(created_at) ORDER BY date ASC`,
+      sql`SELECT query, COUNT(*) as count FROM gap_searches GROUP BY query ORDER BY count DESC LIMIT 15`,
+      sql`SELECT gap_json->>'category' as category, COUNT(*) as count FROM saved_gaps
+        WHERE gap_json->>'category' IS NOT NULL GROUP BY category ORDER BY count DESC LIMIT 8`,
+    ]);
 
     return NextResponse.json({
       stats: {
@@ -62,12 +55,17 @@ export async function GET() {
         totalSavedGaps: Number(savedCount?.count ?? 0),
         paidUsers: Number(proCount?.count ?? 0),
         newUsersLast7Days: Number(newUsers7d?.count ?? 0),
+        newUsersLast24h: Number(newUsers24h?.count ?? 0),
+        activeUsersToday: Number(activeToday?.count ?? 0),
+        activeUsersThisWeek: Number(activeWeek?.count ?? 0),
       },
-      topSearches,
       recentUsers,
       recentSearches,
       planBreakdown,
       dailySignups,
+      dailySearches,
+      topSearches,
+      topFields,
     });
   } catch (err) {
     console.error("[Admin Stats]", err);
