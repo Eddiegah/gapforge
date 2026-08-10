@@ -10,7 +10,7 @@ import {
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
   HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map, Lightbulb,
-  Rocket, DollarSign, RefreshCw, Swords, Star, Flag, Mail, Target,
+  Rocket, DollarSign, RefreshCw, Swords, Star, Flag, Mail, Target, Twitter, FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -113,6 +113,11 @@ const TOOL_GROUPS = [
       { href: "/paper-summarizer",   label: "Paper Summarizer",    icon: BookOpen },
       { href: "/gap-startup",        label: "Gap to Startup",      icon: Rocket },
       { href: "/gap-freshness",      label: "Gap Freshness",       icon: RefreshCw },
+      { href: "/gap-tweet",          label: "Gap to Tweet",        icon: Twitter },
+      { href: "/journal-finder",     label: "Journal Finder",      icon: BookMarked },
+      { href: "/cover-letter",       label: "Cover Letter",        icon: Mail },
+      { href: "/citation-checker",   label: "Citation Verifier",   icon: ShieldCheck },
+      { href: "/hypothesis-designer",label: "Hypothesis Designer", icon: FlaskConical },
       { href: "/citation-graph",     label: "Citation Graph",      icon: Network },
       { href: "/paper-gap",          label: "Paper Gap Detector",  icon: Upload },
       { href: "/related-papers",     label: "Related Papers",      icon: BookOpen },
@@ -185,6 +190,11 @@ const TOOL_GROUPS = [
       { href: "/vocab-builder",      label: "Vocab Builder",       icon: BookText },
       { href: "/research-planner",   label: "Research Planner",    icon: Target },
       { href: "/search-history",     label: "Search History",      icon: Clock },
+      { href: "/journal-finder",     label: "Journal Finder",      icon: BookMarked },
+      { href: "/cover-letter",       label: "Cover Letter",        icon: Mail },
+      { href: "/citation-checker",   label: "Citation Verifier",   icon: ShieldCheck },
+      { href: "/hypothesis-designer",label: "Hypothesis Designer", icon: FlaskConical },
+      { href: "/gap-tweet",          label: "Gap to Tweet",        icon: Twitter },
       { href: "/agents",             label: "Agent Gallery",       icon: Zap },
       { href: "/templates",          label: "Templates",           icon: LayoutTemplate },
       { href: "/directories",        label: "Directories",         icon: Grid3X3 },
