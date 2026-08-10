@@ -131,6 +131,8 @@ const TOOL_GROUPS = [
       { href: "/citation-booster",   label: "Citation Booster",    icon: BookMarked },
       { href: "/systematic-review",  label: "Systematic Review",   icon: Library },
       { href: "/compare",            label: "Compare Gaps",        icon: BarChart2 },
+      { href: "/paper-compare",      label: "Paper Comparator",    icon: BarChart2 },
+      { href: "/gap-freshness",      label: "Gap Freshness",       icon: RefreshCw },
     ],
   },
   {
