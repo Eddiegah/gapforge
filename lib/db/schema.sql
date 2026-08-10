@@ -433,3 +433,19 @@ CREATE TABLE IF NOT EXISTS claimed_gaps (
 );
 CREATE INDEX IF NOT EXISTS idx_claimed_gaps_user ON claimed_gaps(user_id);
 CREATE INDEX IF NOT EXISTS idx_claimed_gaps_status ON claimed_gaps(status);
+
+-- ─── Research Goals / Planner ─────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS research_goals (
+  id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  description TEXT,
+  category    TEXT NOT NULL DEFAULT 'other' CHECK (category IN ('gap','paper','grant','collaboration','other')),
+  status      TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','completed','paused')),
+  progress    INTEGER NOT NULL DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
+  deadline    DATE,
+  milestones  JSONB NOT NULL DEFAULT '[]',
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_goals_user ON research_goals(user_id);
