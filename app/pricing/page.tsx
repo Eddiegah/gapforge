@@ -91,7 +91,7 @@ export default function PricingPage() {
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
 
-  const handleUpgrade = async (planId: string, method: "paystack" | "stripe" = "paystack") => {
+  const handleUpgrade = async (planId: string, method: "paystack" | "flutterwave" = "paystack") => {
     if (!session) {
       window.location.href = `/login?callbackUrl=${encodeURIComponent("/pricing")}`;
       return;
@@ -99,20 +99,8 @@ export default function PricingPage() {
     setLoadingPlan(planId);
     setError(null);
     try {
-      // Try Stripe first (international), fallback to Paystack
-      if (method === "stripe") {
-        const res = await fetch("/api/payments/stripe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan: planId }),
-        });
-        const data = await res.json();
-        if (data.url) { window.location.href = data.url; return; }
-        if (data.redirect) { window.location.href = data.redirect; return; }
-      }
-
-      // Paystack (GHS)
-      const res = await fetch("/api/payments/paystack", {
+      const endpoint = method === "flutterwave" ? "/api/payments/flutterwave" : "/api/payments/paystack";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId }),
@@ -122,7 +110,7 @@ export default function PricingPage() {
       if (data.authorizationUrl) {
         window.location.href = data.authorizationUrl;
       } else {
-        throw new Error("No payment URL returned. Check your Paystack keys.");
+        throw new Error("No payment URL returned.");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment initialization failed. Please try again.");
