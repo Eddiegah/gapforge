@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Zap, ArrowRight, Share2, Check } from "lucide-react";
 import Link from "next/link";
-import { PublicNav } from "@/components/nav";
+import { PublicNav, AppNav, Nav } from "@/components/nav";
 import { useRouter } from "next/navigation";
 
 export default function DailyChallengePageClient() {
@@ -33,7 +33,7 @@ export default function DailyChallengePageClient() {
 
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
-      <PublicNav />
+      <Nav />
       <div className="max-w-2xl mx-auto px-4 pt-24 pb-24 md:pb-10 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-full px-4 py-1.5 text-xs text-violet-400 font-medium mb-6">

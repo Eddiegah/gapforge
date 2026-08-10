@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, TrendingUp, Users, Search, Loader, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { PublicNav } from "@/components/nav";
+import { PublicNav, Nav } from "@/components/nav";
 import { cn } from "@/lib/utils";
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
 
@@ -29,7 +29,7 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
-      <PublicNav />
+      <Nav />
       <div className="max-w-4xl mx-auto px-4 pt-24 pb-24 md:pb-10">
         {/* Header */}
         <div className="text-center mb-10">
