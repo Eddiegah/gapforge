@@ -10,7 +10,7 @@ import {
   BookText, BarChart3, Rss, BookmarkCheck, CalendarDays, Trophy, Keyboard, MessageSquare,
   Radar, Network, TrendingUp, Bell, FileText, Upload, Code2, Clock, UserPlus,
   HelpCircle, MapPin, Building2, ScrollText, ShieldCheck, ChevronDown, Map, Lightbulb,
-  Rocket, DollarSign, RefreshCw, Swords, Star, Flag, Mail, Target, Twitter, FlaskConical,
+  Rocket, DollarSign, RefreshCw, Swords, Star, Flag, Mail, Target, Twitter, FlaskConical, Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -109,6 +109,7 @@ const TOOL_GROUPS = [
       { href: "/gap-radar",          label: "Gap Radar",           icon: Radar },
       { href: "/literature-map",     label: "Literature Map",      icon: Map },
       { href: "/niche-map",          label: "Niche Map",           icon: Map },
+      { href: "/multilingual-search",label: "Multilingual Search", icon: Globe },
       { href: "/research-ideas",     label: "Research Idea Gen",   icon: Lightbulb },
       { href: "/paper-summarizer",   label: "Paper Summarizer",    icon: BookOpen },
       { href: "/gap-startup",        label: "Gap to Startup",      icon: Rocket },
