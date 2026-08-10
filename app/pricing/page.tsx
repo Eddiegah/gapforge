@@ -187,25 +187,16 @@ export default function PricingPage() {
                   {plan.cta}
                 </a>
               ) : (
-                <div className="space-y-2">
-                  <button
-                    onClick={() => plan.planId && handleUpgrade(plan.planId, "paystack")}
-                    disabled={loadingPlan === plan.planId}
-                    className={cn("w-full text-center py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60",
-                      plan.highlight ? "bg-violet-600 text-white hover:bg-violet-700" : "border border-[rgb(var(--border))] text-[rgb(var(--fg))] hover:border-violet-500/50"
-                    )}
-                  >
-                    {loadingPlan === plan.planId ? <Loader size={14} className="animate-spin" /> : null}
-                    {loadingPlan === plan.planId ? "Redirecting..." : `Pay in GHS (Africa)`}
-                  </button>
-                  <button
-                    onClick={() => plan.planId && handleUpgrade(plan.planId, "stripe")}
-                    disabled={loadingPlan === plan.planId}
-                    className="w-full text-center py-2 rounded-lg text-xs font-medium text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] border border-[rgb(var(--border))] hover:border-violet-500/30 transition-colors"
-                  >
-                    Pay in USD (International)
-                  </button>
-                </div>
+                <button
+                  onClick={() => plan.planId && handleUpgrade(plan.planId, "paystack")}
+                  disabled={loadingPlan === plan.planId}
+                  className={cn("w-full text-center py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60",
+                    plan.highlight ? "bg-violet-600 text-white hover:bg-violet-700" : "border border-[rgb(var(--border))] text-[rgb(var(--fg))] hover:border-violet-500/50"
+                  )}
+                >
+                  {loadingPlan === plan.planId ? <Loader size={14} className="animate-spin" /> : null}
+                  {loadingPlan === plan.planId ? "Redirecting..." : plan.cta}
+                </button>
               )}
             </div>
           ))}
