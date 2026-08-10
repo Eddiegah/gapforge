@@ -107,6 +107,7 @@ const TOOL_GROUPS = [
       { href: "/gap-scorecard",     label: "Gap Score Card",      icon: BarChart3 },
       { href: "/gap-radar",          label: "Gap Radar",           icon: Radar },
       { href: "/literature-map",     label: "Literature Map",      icon: Map },
+      { href: "/niche-map",          label: "Niche Map",           icon: Map },
       { href: "/research-ideas",     label: "Research Idea Gen",   icon: Lightbulb },
       { href: "/paper-summarizer",   label: "Paper Summarizer",    icon: BookOpen },
       { href: "/gap-startup",        label: "Gap to Startup",      icon: Rocket },
