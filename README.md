@@ -1,255 +1,258 @@
-# GapForge — AI Research Gap Detection Platform
+<div align="center">
 
-> **Find genuine research gaps before anyone else. 250M+ papers. 10+ live databases. 95+ research tools.**
+<!-- Logo SVG rendered inline -->
+<svg width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gf-bg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="10" fill="url(#gf-bg)"/>
+  <circle cx="17" cy="17" r="7.5" stroke="white" stroke-width="2.5" fill="none" stroke-opacity="0.95"/>
+  <path d="M22.5 11.5 L24.5 9.5" stroke="#6d28d9" stroke-width="3" stroke-linecap="round"/>
+  <line x1="22.5" y1="22.5" x2="29" y2="29" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-opacity="0.95"/>
+  <path d="M26 10 L23.5 15 L26.5 15 L24 20" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.9" fill="none"/>
+</svg>
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-gapforge--self.vercel.app-7c3aed?style=for-the-badge)](https://gapforge-self.vercel.app)
-[![Tech Stack](https://img.shields.io/badge/Stack-Next.js%2016%20%7C%20GPT--4o%20%7C%20Neon-0f0f23?style=for-the-badge)](https://gapforge-self.vercel.app)
-[![Payments](https://img.shields.io/badge/Payments-Paystack%20%7C%20Flutterwave%20GHS-059669?style=for-the-badge)](https://paystack.com)
+# GapForge
+
+### *Find what nobody has studied. Before anyone else does.*
+
+<br/>
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-gapforge--self.vercel.app-7c3aed?style=for-the-badge&logoColor=white)](https://gapforge-self.vercel.app)
+[![GitHub Stars](https://img.shields.io/github/stars/Eddiegah/gapforge?style=for-the-badge&color=7c3aed)](https://github.com/Eddiegah/gapforge)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+
+[![Azure OpenAI](https://img.shields.io/badge/Azure_OpenAI-GPT--4o-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
+[![Microsoft for Startups](https://img.shields.io/badge/Microsoft_for_Startups-Approved_$1K-0078D4?style=for-the-badge&logo=microsoft&logoColor=white)](https://www.microsoft.com/en-us/startups)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](./LICENSE)
+
+<br/>
+
+> **GapForge scans 250,000,000+ academic papers across 10+ live databases simultaneously**  
+> **and tells you exactly what hasn't been studied yet — with real citations to prove it.**
+
+<br/>
 
 ---
 
-## What is GapForge?
+</div>
 
-GapForge is a full-stack research intelligence platform that scans millions of live academic papers across 10+ databases simultaneously and surfaces **genuine, evidence-backed research gaps** with real citations — not hallucinated references.
+## The Problem
 
-Built for PhD students, faculty, independent researchers, and institutions who need to know **what hasn't been studied yet** before they invest years of work.
+Researchers spend **6–18 months** doing manual literature reviews before they even know if their idea is worth pursuing. They miss gaps hidden across databases they never checked, in languages they don't read, at intersections of fields they never thought to combine.
 
----
-
-## The Problem It Solves
-
-Most researchers spend 6–18 months doing manual literature reviews before identifying a viable research direction. They miss gaps hidden in non-English literature, multi-database intersections, and cross-disciplinary zones. GapForge reduces this to minutes.
+**GapForge solves this in minutes.**
 
 ---
 
-## Core Features
+## What It Does
 
-### Gap AI (The Core Engine)
-- Queries **Semantic Scholar, arXiv, PubMed, OpenAlex, Crossref, CORE, bioRxiv, DOAJ, NASA ADS** in parallel
-- Azure OpenAI GPT-4o detects 6 gap types: Contradictions, Missing Mechanistic Links, Method Transfers, Population Blind Spots, Dataset Opportunities, Translational Bottlenecks
-- Every gap ranked by relevance, confidence, novelty, and feasibility — all backed by real papers
-- Fallback chain: Azure OpenAI → Groq → Gemini → OpenAI → Claude (zero downtime)
+<table>
+<tr>
+<td width="50%">
 
-### Research Writing Suite
-| Tool | What it does |
+### 🔍 Gap AI — The Core Engine
+Enter any research topic. GapForge queries **9 live academic databases** in parallel, then uses **Azure GPT-4o** to synthesize genuine research gaps — ranked by confidence, novelty, and feasibility, each backed by real verifiable citations.
+
+**No hallucinated references. Ever.**
+
+</td>
+<td width="50%">
+
+### 📬 Gap Drops
+Every Friday at 9am, researchers receive a personalized weekly intelligence digest — gaps, startup opportunities, emerging trends, funding prospects, and cross-disciplinary opportunities — scoped to their exact research niche.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### ✍️ Research Writing Suite
+Generate complete grant proposals (NIH R01, NSF, EU Horizon), full research papers section by section, peer review simulations, policy briefs, abstracts, and systematic reviews — all from a single gap.
+
+</td>
+<td width="50%">
+
+### 📖 GapSimplify
+Paste any DOI, arXiv ID, or upload a PDF. Get section-by-section plain-language summaries, evidence-rated claims, an interactive glossary, and the gaps that paper opens — in one click.
+
+</td>
+</tr>
+</table>
+
+---
+
+## Feature Scope
+
+<div align="center">
+
+| Category | Tools |
 |---|---|
-| Paper Writer | Full IMRaD research paper, section by section |
-| Grant Writer | NIH R01, NSF, EU Horizon, Wellcome Trust formats |
-| Abstract Writer | 4 styles, APA/IEEE/narrative |
-| Peer Review AI | Simulated review with scores, verdict, revision suggestions |
-| Policy Brief | 8-section policy document for government/NGOs |
-| AI Writer | Full papers by section with tone control |
-| Writing Assistant | Improve, formalize, shorten, expand any text |
-| Paraphraser | 6 tone modes while preserving academic meaning |
+| **Gap Discovery** | Gap AI, Gap Radar, Gap Freshness, Gap Score Card, Niche Map, Literature Map, Multilingual Search (6 languages) |
+| **Research Writing** | Paper Writer, Grant Writer, Abstract Writer, AI Writer, Policy Brief, Cover Letter, Paraphraser, Writing Assistant |
+| **Analysis** | GapSimplify, PDF Chat, Peer Review AI, Citation Verifier, Citation Booster, AI Detector, Paper Comparator, Systematic Review |
+| **Ideation** | Hypothesis Designer, Research Ideas, Research Questions, Conference Finder, Journal Finder, Gap to Startup, Gap to Tweet |
+| **Personal Tools** | Notebook, AI Chat, Research Planner, Calendar, Timeline, Gap Alerts, Portfolio, Research CV, Analytics, Impact Score |
+| **Community** | Feed, Leaderboard, Gap Battle, Challenges, Collab Matchmaking, Claim a Gap, Gap of the Day |
 
-### Analysis Tools
-- **GapSimplify** — DOI/arXiv/PDF → plain language + evidence-rated claims + interactive glossary
-- **PDF Chat** — conversational Q&A on any paper
-- **Paper Comparator** — side-by-side comparison with contradiction detection
-- **AI Detector** — checks if academic text was written by AI
-- **Citation Verifier** — checks if your references actually exist
-- **Citation Booster** — finds best papers to support your claims
-- **Systematic Review** — PRISMA-style review from live literature
+**95+ tools. 93 pages. 126 API routes. All production-ready.**
 
-### Discovery Tools
-- **Gap Radar** — SVG bubble visualization of gap landscape
-- **Niche Map** — interactive research field relationship map
-- **Literature Map** — citation network visualization
-- **Citation Graph** — interactive citation relationship explorer
-- **Gap Freshness** — checks if a gap is still unstudied (real-time)
-- **Gap Score Card** — pursue/skip verdict with full metrics
-- **Hypothesis Designer** — complete experimental design from a gap
-- **Research Ideas** — 8 novel, fundable research project ideas
-- **Multilingual Search** — 6 languages (French, Spanish, Portuguese, Arabic, Chinese, German)
+</div>
 
-### Personal Research Tools
-- **Notebook** — rich text notes linked to gaps and papers
-- **AI Chat** — persistent research-focused AI assistant with memory
-- **Research Planner** — goal tracking with milestones and deadlines
-- **Research Calendar** — deadline and milestone management
-- **Research Timeline** — document your research journey
-- **Gap Alerts** — weekly email when new papers address your saved gaps
-- **Analytics** — complete activity dashboard
+---
 
-### Community
-- **Feed** — gap activity from researchers you follow
-- **Leaderboard** — top gap hunters and hottest niches
-- **Gap Battle** — vote on which gap deserves more attention
-- **Challenges** — weekly and monthly themed gap-finding challenges
-- **Claim a Gap** — publicly declare you're working on a gap
-- **Collaboration Matchmaking** — find researchers with complementary expertise
+## How the Gap Engine Works
+
+```
+User query
+    ↓
+Query expansion → 4 targeted sub-queries
+    ↓
+Parallel fetch → Semantic Scholar + arXiv + PubMed + OpenAlex
+                + Crossref + bioRxiv + CORE + DOAJ + NASA ADS
+    ↓
+Deduplication + relevance scoring
+    ↓
+Azure GPT-4o gap synthesis
+    ↓
+6-category classification:
+  Contradiction · Missing Mechanistic Link · Unexplored Method Transfer
+  Population Blind Spot · Dataset Opportunity · Translational Bottleneck
+    ↓
+Scoring: confidence % · novelty % · feasibility % · difficulty rating
+    ↓
+Real citations attached from retrieved papers
+    ↓
+Result delivered to user
+```
 
 ---
 
 ## Tech Stack
 
+<div align="center">
+
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 16 (App Router, Server Components) |
-| Language | TypeScript (strict) |
-| Database | Neon Postgres (serverless) |
-| Cache / Rate Limits | Upstash Redis |
-| Auth | NextAuth v4 (Google + GitHub OAuth) |
-| Primary LLM | Azure OpenAI GPT-4o (Microsoft for Startups — $1,000 credits) |
-| LLM Fallbacks | Groq (Llama 3.1) → Gemini 1.5 Flash → OpenAI → Claude |
-| Email | Resend |
-| Payments | Paystack + Flutterwave (GHS — Ghana Cedis) |
-| Deployment | Vercel (Edge + Serverless Functions) |
-| Cron Jobs | Vercel Cron (5 scheduled jobs) |
-| Styling | Tailwind CSS + custom design system |
-| Animations | Framer Motion |
+| **Framework** | Next.js 16 — App Router, Server Components, Edge Functions |
+| **Language** | TypeScript (strict mode, zero `any`) |
+| **Database** | Neon Postgres (serverless, connection pooling) |
+| **Cache / Rate Limiting** | Upstash Redis |
+| **Auth** | NextAuth v4 — Google + GitHub OAuth |
+| **Primary LLM** | Azure OpenAI GPT-4o *(Microsoft for Startups — $1,000 credits)* |
+| **LLM Fallback Chain** | Groq Llama 3.1 70B → Gemini 1.5 Flash → OpenAI → Claude Haiku |
+| **Email** | Resend |
+| **Payments** | Paystack + Flutterwave *(GHS — Ghana Cedis, mobile money)* |
+| **Deployment** | Vercel *(serverless + edge + 5 cron jobs)* |
+| **Animations** | Framer Motion |
+| **Styling** | Tailwind CSS + custom dark/light design system |
+
+</div>
 
 ---
 
-## Academic Sources Integrated
+## Academic Sources
+
+<div align="center">
 
 ```
-Semantic Scholar   arXiv         PubMed        OpenAlex
-Crossref           CORE          bioRxiv       DOAJ
-NASA ADS           (+more via orchestrator)
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   Semantic Scholar   ·   arXiv   ·   PubMed   ·   OpenAlex    │
+│                                                                 │
+│      Crossref   ·   CORE   ·   bioRxiv   ·   DOAJ            │
+│                                                                 │
+│                      NASA ADS                                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-Each source is health-checked before every query. Only healthy sources are queried. Source status shown in real time to users.
+Every source is health-checked before each query. Only live sources are queried.  
+Source status shown in real time. Zero silent failures.
+
+</div>
 
 ---
 
-## Architecture Highlights
+## LLM Reliability Chain
 
-### LLM Reliability Chain
 ```
-Azure OpenAI GPT-4o (primary — no quota limits)
-    ↓ if unavailable
-Groq Llama 3.1 70B (fast free fallback)
-    ↓ if quota hit
-Gemini 1.5 Flash (multiple model fallbacks)
-    ↓ if unavailable
-OpenAI GPT-4o-mini
-    ↓ last resort
-Claude Haiku
-```
-
-### Gap Detection Pipeline
-```
-User query → Query expansion (4 sub-queries)
-    → Parallel source fetching (10+ databases)
-    → Paper deduplication + relevance scoring
-    → GPT-4o gap synthesis
-    → 6-category classification
-    → Scoring (confidence, novelty, feasibility)
-    → Real citation attachment
-    → Result returned to user
+Azure OpenAI GPT-4o     ← Primary (no daily quota, $1K credits)
+        ↓ fail
+Groq Llama 3.1 70B      ← Fast free fallback
+        ↓ fail
+Gemini 1.5 Flash        ← Multi-model quota failover
+        ↓ fail
+OpenAI GPT-4o-mini      ← Paid fallback
+        ↓ fail
+Claude Haiku            ← Last resort
 ```
 
-### Security
-- Security headers on all responses (X-Frame-Options, HSTS, CSP)
-- Upstash Redis rate limiting (10 searches/hour per user)
-- Input sanitization + prompt injection stripping
-- Bot blocking (sqlmap, nikto, nessus)
-- 1MB payload limit on all routes (except uploads)
-- HMAC webhook signature verification (Paystack)
+Zero downtime. Users never see a dead AI.
 
 ---
 
-## Database Schema
+## Automated Intelligence (Cron Jobs)
 
-Full normalized PostgreSQL schema with:
-- Users, accounts, sessions (NextAuth)
-- Research profiles, keywords, disciplines
-- Gap searches, saved gaps, gap votes
-- Gap drops (weekly digests), gap alerts
-- Simplified papers, literature reviews
-- Workspaces, workspace members, items, comments
-- Notebook entries, research issues, goals
-- Research calendar, timeline
-- AI conversations, messages
-- User badges, follows, referrals
-- Claimed gaps, read-later queue
-- API keys (hashed)
-
----
-
-## Automated Cron Jobs
-
-| Schedule | Job | What it does |
+| Every | Job | What happens |
 |---|---|---|
-| Every Friday 9am UTC | Gap Drops | Generates personalized weekly digests for all users |
-| Every Monday 8am UTC | Gap Alerts | Scans literature for new papers matching saved gaps |
-| Every Monday 7am UTC | Weekly Digest | Sends email recap to active users |
-| Every Tuesday 10am UTC | Streak Nudge | Motivates users approaching streak breaks |
-| Every Monday 8am UTC | Personal Digest | Personalized stats + feature spotlight email |
+| Friday 9am UTC | **Gap Drops** | Personalized weekly digests generated for all users |
+| Monday 8am UTC | **Gap Alerts** | Literature re-scanned for new papers matching saved gaps |
+| Monday 7am UTC | **Weekly Digest** | Email recap sent to active researchers |
+| Tuesday 10am UTC | **Streak Nudge** | Researchers approaching streak breaks get motivated |
+| Monday 8am UTC | **Personal Digest** | Stats + feature spotlight delivered to inboxes |
 
 ---
 
-## Pricing (Ghana Cedis)
+## Pricing
 
-| Plan | Price | Searches |
+Built for the Ghanaian research community — Paystack and Flutterwave, Ghana Cedis.
+
+| Plan | Price | Searches/month |
 |---|---|---|
-| Free | GHS 0 | 10/month |
-| Starter | GHS 118/month | 50/month |
-| Pro | GHS 236/month | 500/month |
-| Team | GHS 472/month | Unlimited |
-
-Payments via Paystack and Flutterwave (cards, mobile money, bank transfer).
+| Free | GHS 0 | 10 |
+| Starter | GHS 118 | 50 |
+| Pro | GHS 236 | 500 |
+| Team | GHS 472 | Unlimited |
 
 ---
 
-## Getting Started
-
-### Prerequisites
-- Node.js 18+
-- Neon Postgres database
-- Upstash Redis instance
-- Azure OpenAI (or at least one LLM API key)
-
-### Setup
+## Quick Start
 
 ```bash
 git clone https://github.com/Eddiegah/gapforge
 cd gapforge
 npm install
 cp .env.example .env.local
-# Fill in your environment variables
+# Add your API keys (see .env.example)
 npm run dev
 ```
 
-### Environment Variables
-
-See `.env.example` for the full list. Required:
-
-```env
-AUTH_SECRET=                    # NextAuth secret
-GOOGLE_CLIENT_ID=               # Google OAuth
-GOOGLE_CLIENT_SECRET=           
-DATABASE_URL=                   # Neon Postgres
-UPSTASH_REDIS_REST_URL=         # Upstash Redis
-UPSTASH_REDIS_REST_TOKEN=       
-AZURE_OPENAI_API_KEY=           # Primary LLM
-AZURE_OPENAI_ENDPOINT=          
-RESEND_API_KEY=                 # Email
-PAYSTACK_SECRET_KEY=            # Payments
-NEXT_PUBLIC_APP_URL=            # Your domain
-CRON_SECRET=                    # Cron security
-```
-
-### Database Setup
-
+Then run the database schema:
 ```bash
-# Run the full schema against your Neon database
 psql $DATABASE_URL < lib/db/schema.sql
 ```
 
----
-
-## API (Institutional Access)
-
-GapForge exposes a REST API for institutional and Pro+ users:
-
+### Minimum required env vars:
+```env
+AUTH_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+DATABASE_URL=                 # Neon Postgres
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+AZURE_OPENAI_API_KEY=         # Or any one LLM key
+AZURE_OPENAI_ENDPOINT=
+RESEND_API_KEY=
+PAYSTACK_SECRET_KEY=
+NEXT_PUBLIC_APP_URL=
+CRON_SECRET=
 ```
-POST /api/v1/gaps      — Search for research gaps
-POST /api/v1/simplify  — Simplify a paper by DOI/URL
-```
-
-Full documentation at `/docs`.
 
 ---
 
@@ -258,35 +261,38 @@ Full documentation at `/docs`.
 ```
 gapforge/
 ├── app/
-│   ├── api/          # 126 API route handlers
-│   ├── gap-ai/       # Core gap search interface
-│   ├── paper-writer/ # Full paper generation
-│   ├── grant-writer/ # Grant proposal generation
-│   └── ...           # 90+ feature pages
-├── components/       # Shared UI components
+│   ├── api/              # 126 API route handlers
+│   ├── gap-ai/           # Core gap search interface
+│   ├── paper-writer/     # Full research paper generation
+│   ├── grant-writer/     # NIH/NSF/EU grant proposals
+│   └── ...               # 90+ more feature pages
+├── components/           # Reusable UI components
 ├── lib/
-│   ├── gapAI/        # Gap detection engine
-│   ├── gapSimplify/  # Paper simplification
-│   ├── sources/      # 9 academic source adapters
-│   ├── llm/          # Multi-provider LLM client
-│   ├── email/        # Email templates
-│   ├── citations/    # Citation export (APA, BibTeX, RIS...)
-│   └── security/     # Rate limiting, sanitization
-└── lib/db/schema.sql # Full database schema
+│   ├── gapAI/            # Gap detection engine
+│   ├── gapSimplify/      # Paper simplification pipeline
+│   ├── sources/          # 9 academic database adapters
+│   ├── llm/              # Multi-provider LLM client
+│   ├── email/            # Transactional email templates
+│   ├── citations/        # Citation export (APA, BibTeX, RIS, MLA)
+│   ├── security/         # Rate limiting, input sanitization
+│   └── export/           # PDF, Markdown, text export
+└── lib/db/schema.sql     # Full normalized PostgreSQL schema
 ```
 
 ---
 
-## Acknowledgments
+<div align="center">
 
-Built with Microsoft for Startups Azure credits ($1,000). Academic data from Semantic Scholar, OpenAlex, arXiv, PubMed, and other open academic APIs.
+## Built in Ghana. For researchers everywhere.
 
----
+*Solo full-stack build — architecture, design, backend, frontend, payments, security, email automation, and deployment by one person.*
 
-## License
+<br/>
 
-MIT — see [LICENSE](LICENSE) for details.
+[![Live Demo](https://img.shields.io/badge/Try_GapForge-gapforge--self.vercel.app-7c3aed?style=for-the-badge)](https://gapforge-self.vercel.app)
 
----
+<br/>
 
-*GapForge — Built in Ghana. For researchers everywhere.*
+*MIT License · © 2024 Edmund Gah*
+
+</div>
