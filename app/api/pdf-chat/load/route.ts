@@ -3,13 +3,6 @@ import { getSession } from "@/lib/session";
 
 export const maxDuration = 45;
 
-// Increase body size limit for PDF uploads
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
