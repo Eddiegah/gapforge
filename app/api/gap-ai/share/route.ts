@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   if (rows.length === 0) return NextResponse.json({ error: "Gap not found" }, { status: 404 });
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
   return NextResponse.json({
     shareUrl: `${baseUrl}/gap/${gapId}`,
     gap: rows[0].gap_json,

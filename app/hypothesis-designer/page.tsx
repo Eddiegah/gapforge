@@ -5,8 +5,9 @@ import { AppNav } from "@/components/nav";
 import { motion } from "framer-motion";
 import {
   FlaskConical, Loader2, Copy, Check, Download,
-  ChevronDown, ChevronUp, Sparkles, ArrowRight,
+  ChevronDown, ChevronUp, Sparkles, ArrowRight, FileText,
 } from "lucide-react";
+import { exportToPdf } from "@/lib/export/pdf";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -134,6 +135,16 @@ export default function HypothesisDesignerPage() {
                 <div className="flex gap-2">
                   <button onClick={copyAll} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
                     {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />} Copy
+                  </button>
+                  <button
+                    onClick={() => exportToPdf({
+                      title: `Experimental Design`,
+                      content: `## Research Gap\n${gap}\n\n## H1 (Research Hypothesis)\n${design.hypothesis}\n\n## H0 (Null Hypothesis)\n${design.nullHypothesis}\n\n## Independent Variable\n${design.independentVariable}\n\n## Dependent Variable\n${design.dependentVariable}\n\n## Study Design\n${design.studyDesign}\n\nParticipants: ${design.participants}\nSample Size: ${design.sampleSize}\nPower Calculation: ${design.powerCalculation}\n\n## Statistical Tests\n${design.statisticalTests.join(", ")}\n\n## Expected Outcome\n${design.expectedOutcome}\n\n## Timeline\n${design.timeline.map(t => `${t.duration} — ${t.phase}: ${t.activities}`).join("\n")}\n\n## Ethics\n${design.ethicsConsiderations.map(e => `- ${e}`).join("\n")}\n\n## Limitations\n${design.limitations.map(l => `- ${l}`).join("\n")}`,
+                      filename: "hypothesis-design",
+                      subtitle: `${field || "Research"} · ${approach}`,
+                    })}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-red-400 hover:text-red-300 transition-colors">
+                    <FileText size={12} /> Export PDF
                   </button>
                   <button onClick={() => setDesign(null)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
                     New design

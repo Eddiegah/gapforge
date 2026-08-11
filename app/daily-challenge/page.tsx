@@ -19,7 +19,7 @@ export default function DailyChallengePageClient() {
   }, []);
 
   const share = () => {
-    const text = `Today's GapForge challenge: Find a research gap in "${challenge?.topic}" 🔬\n\ngapforge-self.vercel.app/daily-challenge`;
+    const text = `Today's GapForge challenge: Find a research gap in "${challenge?.topic}" 🔬\n\ngapforge.app/daily-challenge`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

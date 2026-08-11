@@ -21,7 +21,7 @@ export function middleware(req: NextRequest) {
   // Block requests with suspiciously large bodies on sensitive routes
   const contentLength = req.headers.get("content-length");
   if (contentLength && parseInt(contentLength) > 1024 * 1024) { // 1MB limit
-    if (pathname.startsWith("/api/") && !pathname.includes("simplify/upload") && !pathname.includes("pdf-chat")) {
+    if (pathname.startsWith("/api/") && !pathname.includes("simplify/upload") && !pathname.includes("pdf-chat") && !pathname.includes("paper-gap/upload")) {
       return new NextResponse("Payload too large", { status: 413 });
     }
   }

@@ -5,7 +5,7 @@ import { AppNav } from "@/components/nav";
 import { motion } from "framer-motion";
 import {
   Users, Copy, Check, Gift, Zap, ArrowRight, Share2,
-  Link2, Twitter, Mail, Loader2,
+  Link2, Globe, Mail, Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -124,7 +124,7 @@ export default function ReferralPage() {
                 <div className="grid grid-cols-3 gap-2">
                   <button onClick={shareOnTwitter}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-medium hover:bg-sky-500/20 transition-colors">
-                    <Twitter size={13} /> Twitter
+                    <Globe size={13} /> Twitter
                   </button>
                   <button onClick={shareViaEmail}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[rgb(var(--card))] border border-[rgb(var(--border))] text-[rgb(var(--muted))] text-xs font-medium hover:text-[rgb(var(--fg))] transition-colors">

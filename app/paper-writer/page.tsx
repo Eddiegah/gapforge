@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { AppNav } from "@/components/nav";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MarkdownContent } from "@/components/markdown-content";
+import { exportToPdf } from "@/lib/export/pdf";
 
 interface Section {
   id: string;
@@ -116,6 +117,17 @@ export default function PaperWriterPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportAsPdf = () => {
+    const done = sections.filter(s => s.content);
+    if (!done.length) return;
+    exportToPdf({
+      title: topic,
+      subtitle: field ? `Field: ${field}` : undefined,
+      content: done.map(s => `## ${s.title}\n\n${s.content}`).join("\n\n---\n\n"),
+      filename: topic.slice(0, 40),
+    });
+  };
+
   const doneCount = sections.filter(s => s.done).length;
   const progress = Math.round((doneCount / sections.length) * 100);
 
@@ -135,10 +147,16 @@ export default function PaperWriterPage() {
               </p>
             </div>
             {step === "writing" && doneCount > 0 && (
-              <button onClick={exportAll}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgb(var(--border))] text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
-                <Download size={14} /> Export Markdown
-              </button>
+              <div className="flex gap-2">
+                <button onClick={exportAsPdf}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgb(var(--border))] text-sm text-red-400 hover:text-red-300 transition-colors">
+                  <Download size={14} /> Export PDF
+                </button>
+                <button onClick={exportAll}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[rgb(var(--border))] text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
+                  <Download size={14} /> Export Markdown
+                </button>
+              </div>
             )}
           </div>
 

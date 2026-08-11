@@ -3,7 +3,7 @@ import { getSession } from "@/lib/session";
 import { sql } from "@/lib/db/client";
 import { randomBytes } from "crypto";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 export async function GET() {
   const session = await getSession();

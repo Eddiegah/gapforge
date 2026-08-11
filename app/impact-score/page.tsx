@@ -48,7 +48,7 @@ export default function ImpactScorePage() {
   const share = () => {
     if (!data) return;
     const rank = getRank(data.score);
-    navigator.clipboard.writeText(`My GapForge Research Impact Score: ${data.score} — ${rank.label}\nTop ${100 - data.percentile}% of researchers\ngapforge-self.vercel.app`).catch(() => {});
+    navigator.clipboard.writeText(`My GapForge Research Impact Score: ${data.score} — ${rank.label}\nTop ${100 - data.percentile}% of researchers\ngapforge.app`).catch(() => {});
     setCopied(true); setTimeout(() => setCopied(false), 2000);
   };
 

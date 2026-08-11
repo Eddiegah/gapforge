@@ -4,7 +4,7 @@ import { sql } from "@/lib/db/client";
 import { createHmac } from "crypto";
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY!;
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 const PLANS: Record<string, { name: string; plan: string; amountUSD: number; creditsLimit: number; amountGHS: number }> = {
   starter: { name: "GapForge Starter", plan: "starter", amountUSD: 10, amountGHS: 11800, creditsLimit: 50 },

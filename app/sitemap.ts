@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [

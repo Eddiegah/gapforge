@@ -9,7 +9,7 @@ export function exportToObsidian(
 ): void {
   const years = gap.citations.map(c => c.year).filter(Boolean) as number[];
   const ageStr = years.length ? `${new Date().getFullYear() - Math.min(...years)} years` : "unknown";
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://gapforge-self.vercel.app";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://gapforge.app";
 
   // Notion uses plain headers without the YAML frontmatter Obsidian prefers.
   // Obsidian gets a tags frontmatter block for its graph view.

@@ -6,8 +6,9 @@ import { motion } from "framer-motion";
 import {
   BarChart3, Loader2, Download, Share2, Copy, Check,
   Zap, TrendingUp, Shield, DollarSign, Users, AlertCircle,
-  CheckCircle, ArrowRight, Sparkles,
+  CheckCircle, ArrowRight, Sparkles, FileText,
 } from "lucide-react";
+import { exportToPdf } from "@/lib/export/pdf";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -87,7 +88,7 @@ export default function GapScoreCardPage() {
 
   const copyShare = () => {
     if (!card) return;
-    const text = `GapForge Score Card: "${card.gapTitle}"\n\nVerdict: ${card.verdict}\nOverall Score: ${card.overallScore}/100\n\nConfidence: ${card.confidence}% | Novelty: ${card.novelty}% | Feasibility: ${card.feasibility}%\n\nGenerated at gapforge-self.vercel.app`;
+    const text = `GapForge Score Card: "${card.gapTitle}"\n\nVerdict: ${card.verdict}\nOverall Score: ${card.overallScore}/100\n\nConfidence: ${card.confidence}% | Novelty: ${card.novelty}% | Feasibility: ${card.feasibility}%\n\nGenerated at gapforge.app`;
     navigator.clipboard.writeText(text).catch(() => {});
     setCopied(true); setTimeout(() => setCopied(false), 2000);
   };
@@ -134,6 +135,15 @@ export default function GapScoreCardPage() {
                 <div className="flex gap-2">
                   <button onClick={copyShare} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
                     {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />} {copied ? "Copied!" : "Share"}
+                  </button>
+                  <button
+                    onClick={() => exportToPdf({
+                      title: `Gap Score Card — ${card.gapTitle}`,
+                      content: `Verdict: ${card.verdict}\nOverall Score: ${card.overallScore}/100\nField: ${card.field}\n\n## Score Breakdown\n\nConfidence: ${card.confidence}%\nNovelty: ${card.novelty}%\nFeasibility: ${card.feasibility}%\nFunding Potential: ${card.fundingPotential}%\nImpact Score: ${card.impactScore}%\nTime to Publish: ${card.timeToPublish}\nEstimated Cost: ${card.estimatedCost}\n\n## Risks\n${card.risks.map(r => `- ${r}`).join("\n")}\n\n## Opportunities\n${card.opportunities.map(o => `- ${o}`).join("\n")}\n\n## Recommended Action\n${card.recommendedAction}`,
+                      filename: "gap-scorecard",
+                    })}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[rgb(var(--border))] text-xs text-red-400 hover:text-red-300 transition-colors">
+                    <FileText size={12} /> Export PDF
                   </button>
                   <Link href={`/gap-ai?q=${encodeURIComponent(card.gapTitle)}`}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium transition-colors">

@@ -5,8 +5,9 @@ import { AppNav } from "@/components/nav";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ScrollText, Loader2, Download, Copy, Check,
-  ChevronDown, ChevronUp, CheckCircle2, Sparkles, RefreshCw,
+  ChevronDown, ChevronUp, CheckCircle2, Sparkles, RefreshCw, FileText,
 } from "lucide-react";
+import { exportToPdf } from "@/lib/export/pdf";
 import { cn } from "@/lib/utils";
 import { MarkdownContent } from "@/components/markdown-content";
 
@@ -113,10 +114,22 @@ export default function GrantWriterPage() {
               </p>
             </div>
             {step === "writing" && doneCount > 0 && (
-              <button onClick={exportAll}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[rgb(var(--border))] text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
-                <Download size={14} /> Export (.md)
-              </button>
+              <div className="flex gap-2">
+                <button onClick={exportAll}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[rgb(var(--border))] text-sm text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
+                  <Download size={14} /> Export (.md)
+                </button>
+                <button
+                  onClick={() => exportToPdf({
+                    title: `Grant Proposal — ${topic}`,
+                    content: `${selectedFormat.label} Format\n\n` + sections.filter(s => s.content).map(s => `## ${s.title}\n\n${s.content}`).join("\n\n---\n\n"),
+                    filename: `grant-proposal-${format}`,
+                    subtitle: `${selectedFormat.label} · ${pi ? `PI: ${pi}` : ""}${institution ? ` · ${institution}` : ""}`,
+                  })}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[rgb(var(--border))] text-sm text-red-400 hover:text-red-300 transition-colors">
+                  <FileText size={14} /> Export PDF
+                </button>
+              </div>
             )}
           </div>
 

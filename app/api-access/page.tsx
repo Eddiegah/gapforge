@@ -201,7 +201,7 @@ export default function ApiAccessPage() {
               <BookOpen size={15} className="text-violet-400" /> API Reference
             </h2>
             <div className="p-3 rounded-xl bg-[rgb(var(--bg))] border border-[rgb(var(--border))] font-mono text-xs text-[rgb(var(--muted))]">
-              Base URL: <span className="text-violet-400">https://gapforge-self.vercel.app/api/v1</span>
+              Base URL: <span className="text-violet-400">https://gapforge.app/api/v1</span>
               <br />
               Auth: <span className="text-violet-400">Authorization: Bearer YOUR_API_KEY</span>
             </div>
@@ -212,7 +212,7 @@ export default function ApiAccessPage() {
                     <span className={cn("text-xs font-bold px-2 py-0.5 rounded border", METHOD_COLORS[ep.method] ?? "text-violet-400 bg-violet-400/10")}>{ep.method}</span>
                     <code className="text-xs text-[rgb(var(--fg))] font-mono">{ep.path}</code>
                     <span className="text-xs text-[rgb(var(--muted))] flex-1">{ep.desc}</span>
-                    <button onClick={() => copy(`curl -X ${ep.method} https://gapforge-self.vercel.app${ep.path} \\\n  -H "Authorization: Bearer YOUR_KEY" \\\n  -H "Content-Type: application/json"${ep.body ? ` \\\n  -d '${ep.body}'` : ""}`, `ep-${i}`)}
+                    <button onClick={() => copy(`curl -X ${ep.method} https://gapforge.app${ep.path} \\\n  -H "Authorization: Bearer YOUR_KEY" \\\n  -H "Content-Type: application/json"${ep.body ? ` \\\n  -d '${ep.body}'` : ""}`, `ep-${i}`)}
                       className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-violet-400 transition-colors">
                       {copied === `ep-${i}` ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                     </button>

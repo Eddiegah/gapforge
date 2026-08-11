@@ -43,7 +43,7 @@ function LoginForm() {
   const handleOAuth = async (provider: "github" | "google") => {
     setLoading(true);
     const resolvedCallback = callbackUrl.startsWith("/")
-      ? "https://gapforge-self.vercel.app" + callbackUrl
+      ? "https://gapforge.app" + callbackUrl
       : callbackUrl;
     await signIn(provider, { callbackUrl: resolvedCallback });
   };

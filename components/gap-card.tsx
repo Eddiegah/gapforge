@@ -16,6 +16,7 @@ import { exportCitations, type CitationFormat } from "@/lib/citations/export";
 import { exportToObsidian } from "@/lib/citations/obsidian-export";
 import { MarkdownContent } from "@/components/markdown-content";
 import { useToast } from "@/components/toast";
+import { exportToPdf } from "@/lib/export/pdf";
 
 const CATEGORY_CONFIG: Record<GapCategory, { label: string; color: string; icon: React.ElementType }> = {
   contradiction: { label: "Contradiction", color: "text-red-400 bg-red-400/10 border-red-400/20", icon: AlertCircle },
@@ -256,7 +257,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                     <button onClick={copyLink} className="w-full text-left px-3 py-2.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors flex items-center gap-2"><Globe size={12} /> Copy link</button>
                     <button onClick={copyText} className="w-full text-left px-3 py-2.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors flex items-center gap-2"><Copy size={12} /> Copy text</button>
                     <button onClick={() => {
-                      const text = encodeURIComponent(`Research gap: ${gap.title}\n\n${gap.description.slice(0, 200)}...\n\nFound via GapForge: ${typeof window !== "undefined" ? window.location.origin : "https://gapforge-self.vercel.app"}/gap-ai`);
+                      const text = encodeURIComponent(`Research gap: ${gap.title}\n\n${gap.description.slice(0, 200)}...\n\nFound via GapForge: ${typeof window !== "undefined" ? window.location.origin : "https://gapforge.app"}/gap-ai`);
                       window.open(`https://wa.me/?text=${text}`, "_blank");
                       setShowShareMenu(false);
                     }} className="w-full text-left px-3 py-2.5 text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))] transition-colors flex items-center gap-2">
@@ -471,6 +472,13 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                 <div className="flex items-center gap-2"><FileText size={16} className="text-violet-400" /><h2 className="font-semibold text-[rgb(var(--fg))]">Research Proposal Draft</h2></div>
                 <div className="flex items-center gap-2">
                   {proposal && <button onClick={copyProposal} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg border border-[rgb(var(--border))] text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">{copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}{copied ? "Copied" : "Copy"}</button>}
+                  <button onClick={() => {
+                    if (proposal) {
+                      exportToPdf({ title: `Research Proposal: ${gap.title}`, content: proposal, filename: "research-proposal" });
+                    }
+                  }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg border border-red-400/30 text-red-400 hover:text-red-300 transition-colors">
+                    <FileText size={12} /> PDF
+                  </button>
                   <button onClick={() => setShowProposal(false)} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"><X size={16} /></button>
                 </div>
               </div>

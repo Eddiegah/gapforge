@@ -2,7 +2,7 @@ import { PublicNav } from "@/components/nav";
 import Link from "next/link";
 import { Key, Zap } from "lucide-react";
 
-const BASE = "https://gapforge-self.vercel.app";
+const BASE = "https://gapforge.app";
 
 export default function DocsPage() {
   return (

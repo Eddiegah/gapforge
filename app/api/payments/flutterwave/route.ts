@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const price = FLW_PRICES[planId];
   const txRef = `gapforge-${planId}-${session.user.id}-${Date.now()}`;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
   try {
     const res = await fetch("https://api.flutterwave.com/v3/payments", {

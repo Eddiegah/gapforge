@@ -77,7 +77,7 @@ export default async function SharedGapPage({ params }: Props) {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm transition-colors">
             Start searching for free
           </Link>
-          <p className="text-xs text-[rgb(var(--muted))] mt-3">20 free searches/month. No credit card.</p>
+          <p className="text-xs text-[rgb(var(--muted))] mt-3">10 free searches/month. No credit card.</p>
         </div>
       </div>
     </div>

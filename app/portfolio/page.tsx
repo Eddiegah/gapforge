@@ -5,7 +5,7 @@ import { AppNav } from "@/components/nav";
 import { motion } from "framer-motion";
 import {
   User, Edit2, Save, X, ExternalLink, Share2, Copy, Check,
-  Globe, Twitter, BookOpen, Zap, Trophy, Flame, Clock,
+  Globe, BookOpen, Zap, Trophy, Flame, Clock,
   Star, Link2, Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -174,7 +174,7 @@ export default function PortfolioPage() {
                     </a>
                   )}
                   {portfolio?.twitter && (
-                    <span className="flex items-center gap-1"><Twitter size={11} /> @{portfolio.twitter.replace("@", "")}</span>
+                    <span className="flex items-center gap-1"><Globe size={11} /> @{portfolio.twitter.replace("@", "")}</span>
                   )}
                   {portfolio?.orcid && (
                     <a href={`https://orcid.org/${portfolio.orcid}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-violet-400 transition-colors">

@@ -10,7 +10,7 @@ const PLANS = [
   {
     id: "free",
     name: "Free",
-    price: "$0",
+    price: "GHS 0",
     period: "/month",
     description: "For curious researchers just getting started.",
     features: [
@@ -28,7 +28,7 @@ const PLANS = [
   {
     id: "starter",
     name: "Starter",
-    price: "$10",
+    price: "GHS 118",
     period: "/month",
     description: "For individual researchers who want more.",
     features: [
@@ -47,7 +47,7 @@ const PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: "$20",
+    price: "GHS 236",
     period: "/month",
     description: "For active researchers who need intelligence every week.",
     features: [
@@ -67,7 +67,7 @@ const PLANS = [
   {
     id: "team",
     name: "Team",
-    price: "$40",
+    price: "GHS 472",
     period: "/month",
     description: "For research groups collaborating on shared intelligence.",
     features: [
@@ -128,7 +128,7 @@ export default function PricingPage() {
             <Zap size={12} /> Simple, honest pricing
           </div>
           <h1 className="text-4xl font-bold text-[rgb(var(--fg))] mb-3">Research intelligence for every stage</h1>
-          <p className="text-[rgb(var(--muted))] max-w-lg mx-auto">Payments processed securely via Paystack — supports cards, mobile money, and bank transfer in Ghana and globally.</p>
+          <p className="text-[rgb(var(--muted))] max-w-lg mx-auto">Payments processed securely via Paystack — supports cards, mobile money, and bank transfer in Ghana.</p>
         </div>
 
         {error && (
@@ -191,8 +191,8 @@ export default function PricingPage() {
         </div>
 
         <p className="text-center text-xs text-[rgb(var(--muted))] mt-8">
-          Payments processed securely — Paystack (GHS/Africa) or Stripe (USD/International).
-          <br />Prices shown in USD for reference. GHS equivalent charged at checkout.
+          Prices in Ghana Cedis (GHS). Payments processed securely via Paystack — supports GHS, cards, and mobile money.
+          <br />Cancel anytime. No hidden fees.
         </p>
       </div>
     </div>

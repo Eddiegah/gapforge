@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 function getResend() { return new Resend(process.env.RESEND_API_KEY); }
 
@@ -54,7 +54,7 @@ export async function sendUpgradeNudgeEmail(email: string, name: string, credits
       <h1 style="color:#a78bfa;font-size:22px;">${creditsUsed} searches in. Nice work, ${name ?? "researcher"}.</h1>
       <p style="color:#8b8bb3;line-height:1.6;margin-top:12px;">Pro removes the monthly limit entirely, plus unlocks the literature review compiler, citation export, and priority processing.</p>
       <div style="background:#13132e;border:2px solid #7c3aed;border-radius:8px;padding:20px;margin:24px 0;">
-        <p style="font-weight:700;color:#a78bfa;font-size:18px;">Pro — $19/month</p>
+        <p style="font-weight:700;color:#a78bfa;font-size:18px;">Pro — GHS 236/month</p>
         <ul style="color:#8b8bb3;line-height:2;margin:8px 0;padding-left:20px;">
           <li>Unlimited Gap AI searches</li>
           <li>Literature review compiler</li>
@@ -115,3 +115,4 @@ export async function sendDay7Email(email: string, name: string, searchCount: nu
     </div>`,
   });
 }
+

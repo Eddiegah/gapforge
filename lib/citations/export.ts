@@ -118,7 +118,7 @@ export function exportToObsidian(gap: import("@/lib/gapAI/detectGaps").DetectedG
     `## Metadata`,
     `- Source: GapForge`,
     `- Date: ${new Date().toISOString().split('T')[0]}`,
-    savedId ? `- URL: ${typeof window !== 'undefined' ? window.location.origin : 'https://gapforge-self.vercel.app'}/gap/${savedId}` : '',
+    savedId ? `- URL: ${typeof window !== 'undefined' ? window.location.origin : 'https://gapforge.app'}/gap/${savedId}` : '',
     `- Tags: #research-gap #${gap.category} #${gap.difficulty ?? 'unrated'}`,
   ].filter(l => l !== '').join('\n');
 

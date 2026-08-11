@@ -4,7 +4,7 @@ import { Resend } from "resend";
 
 export const maxDuration = 300;
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -79,3 +79,4 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ sent, total: users.length });
 }
+

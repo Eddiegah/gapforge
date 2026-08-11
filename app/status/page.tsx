@@ -1,7 +1,7 @@
 import { PublicNav } from "@/components/nav";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 
-const BASE = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 async function getStatus() {
   try {

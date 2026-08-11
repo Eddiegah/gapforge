@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/db/client";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 
     if (userId && planId) {
       const planMap: Record<string, string> = { starter: "starter", pro: "pro", team: "team" };
-      const creditMap: Record<string, number> = { starter: 50, pro: 200, team: 500 };
+      const creditMap: Record<string, number> = { starter: 50, pro: 500, team: 9999 };
       const plan = planMap[planId] ?? "starter";
       const credits = creditMap[planId] ?? 50;
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AppNav } from "@/components/nav";
 import { Loader2, FileText, Copy, Check, Download, RefreshCw, Sparkles } from "lucide-react";
+import { exportToPdf } from "@/lib/export/pdf";
 import { cn } from "@/lib/utils";
 import { MarkdownContent } from "@/components/markdown-content";
 
@@ -145,6 +146,13 @@ export default function AbstractWriterPage() {
                       </button>
                       <button onClick={download} className="p-1.5 rounded-lg text-[rgb(var(--muted))] hover:text-violet-400 transition-colors">
                         <Download size={14} />
+                      </button>
+                      <button onClick={() => {
+                        if (abstract) {
+                          exportToPdf({ title: title || "Abstract", content: abstract, filename: "abstract" });
+                        }
+                      }} className="p-1.5 rounded-lg text-red-400 hover:text-red-300 transition-colors" title="Export PDF">
+                        <FileText size={14} />
                       </button>
                     </div>
                   </div>

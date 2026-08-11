@@ -35,7 +35,7 @@ const FAQS = [
   },
   {
     q: "Is there a free plan?",
-    a: "Yes. The free plan gives you 10 Gap AI searches per month, access to public Gap Drops, and GapSimplify via DOI/arXiv links. Starter ($10), Pro ($20), and Team ($40) plans unlock more searches, personalized drops, PDF upload, workspaces, and API access.",
+    a: "Yes. The free plan gives you 10 Gap AI searches per month, access to public Gap Drops, and GapSimplify via DOI/arXiv links. Starter (GHS118), Pro (GHS236), and Team (GHS472) plans unlock more searches, personalized drops, PDF upload, workspaces, and API access.",
   },
 ];
 
@@ -50,7 +50,7 @@ const PLANS = [
       "10 Gap AI searches/month",
       "Public weekly Gap Drops",
       "GapSimplify (DOI & arXiv)",
-      "Save up to 10 gaps",
+      "Save up to 20 gaps",
       "Basic library",
     ],
     cta: "Get started free",
@@ -729,3 +729,5 @@ export default function HomePage() {
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+

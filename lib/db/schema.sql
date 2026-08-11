@@ -447,5 +447,9 @@ CREATE TABLE IF NOT EXISTS research_goals (
   milestones  JSONB NOT NULL DEFAULT '[]',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- ─── Goals index ──────────────────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_goals_user ON research_goals(user_id);
+
+-- ─── Add missing columns ─────────────────────────────────────────────────────
+ALTER TABLE saved_gaps ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE research_timeline ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();

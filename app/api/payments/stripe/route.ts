@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const price = STRIPE_PRICES[plan as keyof typeof STRIPE_PRICES];
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge-self.vercel.app";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gapforge.app";
 
     // Create Stripe checkout session via API
     const stripeRes = await fetch("https://api.stripe.com/v1/checkout/sessions", {
