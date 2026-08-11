@@ -293,6 +293,6 @@ gapforge/
 
 <br/>
 
-*MIT License · © 2024 Edmund Gah*
+*MIT License · © 2026 Edmund Gah*
 
 </div>
