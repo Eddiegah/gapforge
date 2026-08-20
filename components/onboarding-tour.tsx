@@ -19,7 +19,7 @@ const STEPS = [
   },
   {
     title: "Your Credits",
-    description: "You have 20 free searches per month. Each search scans multiple academic sources and runs AI analysis. Upgrade anytime for unlimited access.",
+    description: "You have 10 free searches per month. Each search scans multiple academic sources and runs AI analysis. Upgrade anytime for unlimited access.",
   },
 ];
 

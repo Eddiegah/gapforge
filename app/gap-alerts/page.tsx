@@ -249,6 +249,13 @@ export default function GapAlertsPage() {
 
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <Link
+                        href={`/gap-alerts/results?id=${alert.id}`}
+                        className="p-2 rounded-lg text-[rgb(var(--muted))] hover:text-violet-400 hover:bg-violet-400/10 transition-colors"
+                        title="View results"
+                      >
+                        <Zap size={13} />
+                      </Link>
+                      <Link
                         href={`/gap-ai?q=${encodeURIComponent(alert.gap_query)}`}
                         className="p-2 rounded-lg text-[rgb(var(--muted))] hover:text-violet-400 hover:bg-violet-400/10 transition-colors"
                         title="Search now"

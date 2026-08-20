@@ -22,9 +22,9 @@ import { useTheme } from "@/components/theme-provider";
 export function PublicNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const links = [
+    { label: "Try it free", href: "/try" },
     { label: "Demo", href: "/demo" },
     { label: "How it works", href: "/#how-it-works" },
-    { label: "Features", href: "/#features" },
     { label: "Pricing", href: "/#pricing" },
   ];
   return (
