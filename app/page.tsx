@@ -43,7 +43,7 @@ const FAQS = [
 const PLANS = [
   {
     name: "Free",
-    price: "$0",
+    price: "GHS 0",
     period: "/month",
     description: "For curious researchers just getting started.",
     features: [
@@ -58,7 +58,7 @@ const PLANS = [
   },
   {
     name: "Starter",
-    price: "$10",
+    price: "GHS 118",
     period: "/month",
     description: "For individual researchers who want more.",
     features: [
@@ -74,7 +74,7 @@ const PLANS = [
   },
   {
     name: "Pro",
-    price: "$20",
+    price: "GHS 236",
     period: "/month",
     description: "For active researchers who need intelligence every week.",
     features: [
@@ -90,7 +90,7 @@ const PLANS = [
   },
   {
     name: "Team",
-    price: "$40",
+    price: "GHS 472",
     period: "/month",
     description: "For research groups collaborating on shared intelligence.",
     features: [
@@ -267,19 +267,19 @@ export default function HomePage() {
             className="flex flex-col sm:flex-row gap-3 justify-center"
           >
             <Link
-              href="/login"
+              href="/try"
               className="flex items-center gap-2 justify-center bg-violet-600 hover:bg-violet-700 text-white font-medium py-3 px-7 rounded-xl transition-colors text-base"
             >
               <Search size={17} />
-              Get started free
+              Try it free — no signup
             </Link>
-            <a
-              href="#how-it-works"
+            <Link
+              href="/login"
               className="flex items-center gap-2 justify-center border border-[rgb(var(--border))] text-[rgb(var(--fg))] font-medium py-3 px-7 rounded-xl hover:bg-[rgb(var(--card))] transition-colors text-base"
             >
-              How it works
+              Create account
               <ArrowRight size={16} />
-            </a>
+            </Link>
           </motion.div>
 
           {/* Live stats strip */}

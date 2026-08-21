@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Bookmark, BookOpen, FileText, Plus, Loader, Download, Search, SlidersHorizontal } from "lucide-react";
+import { Bookmark, BookOpen, FileText, Plus, Loader, Download, Search, SlidersHorizontal, BookMarked } from "lucide-react";
 import { AppNav } from "@/components/nav";
 import { GapCard } from "@/components/gap-card";
 import { cn } from "@/lib/utils";
 import { formatRelativeDate } from "@/lib/utils";
 import type { DetectedGap } from "@/lib/gapAI/detectGaps";
+import { ZoteroExportModal } from "@/components/zotero-export-modal";
 
 type Tab = "gaps" | "papers" | "reviews";
 
@@ -28,6 +29,7 @@ export default function LibraryPage() {
   const [reviews, setReviews] = useState<{ id: string; title: string; item_ids: string[]; last_compiled: string | null; created_at: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [showNewReview, setShowNewReview] = useState(false);
+  const [showZotero, setShowZotero] = useState(false);
   const [reviewTitle, setReviewTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -90,15 +92,35 @@ export default function LibraryPage() {
       <div className="max-w-4xl mx-auto px-4 pt-6 pb-24 md:pb-10">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-[rgb(var(--foreground))]">Library</h1>
-          {tab === "reviews" && (
-            <button
-              onClick={() => setShowNewReview(true)}
-              className="btn-primary flex items-center gap-2 text-sm"
-            >
-              <Plus size={14} /> New review
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {tab === "gaps" && gaps.length > 0 && (
+              <button onClick={() => setShowZotero(true)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[rgb(var(--border))] text-xs text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors">
+                <BookMarked size={13} /> Export to Zotero
+              </button>
+            )}
+            {tab === "reviews" && (
+              <button onClick={() => setShowNewReview(true)}
+                className="btn-primary flex items-center gap-2 text-sm">
+                <Plus size={14} /> New review
+              </button>
+            )}
+          </div>
         </div>
+
+        <ZoteroExportModal
+          open={showZotero}
+          onClose={() => setShowZotero(false)}
+          label="your saved gaps"
+          items={gaps.map(g => ({
+            title: g.gap_json.title,
+            authors: g.gap_json.citations.flatMap(c => c.authors).slice(0, 3),
+            year: g.gap_json.citations[0]?.year ?? null,
+            doi: g.gap_json.citations[0]?.doi ?? null,
+            url: g.gap_json.citations[0]?.url ?? "",
+            abstract: g.gap_json.description,
+          }))}
+        />
 
         {/* Tabs */}
         <div className="flex gap-1 p-1 card rounded-xl mb-6 w-fit">
