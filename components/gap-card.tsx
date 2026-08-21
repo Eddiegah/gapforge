@@ -8,7 +8,7 @@ import {
   FileText, Sparkles, Download, ChevronDown,
   X, Loader, Copy, Check, Globe, Layers, MessageSquare, Send,
   FlaskConical, ShieldCheck, ScrollText, Clock,
-  FileOutput, DollarSign,
+  FileOutput, DollarSign, BookMarked,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DetectedGap, GapCategory } from "@/lib/gapAI/detectGaps";
@@ -17,6 +17,7 @@ import { exportToObsidian } from "@/lib/citations/obsidian-export";
 import { MarkdownContent } from "@/components/markdown-content";
 import { useToast } from "@/components/toast";
 import { exportToPdf } from "@/lib/export/pdf";
+import { ZoteroExportModal } from "@/components/zotero-export-modal";
 
 const CATEGORY_CONFIG: Record<GapCategory, { label: string; color: string; icon: React.ElementType }> = {
   contradiction: { label: "Contradiction", color: "text-red-400 bg-red-400/10 border-red-400/20", icon: AlertCircle },
@@ -156,6 +157,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   const [selectedAudience, setSelectedAudience] = useState("general");
   const [copied, setCopied] = useState(false);
   const [tracked, setTracked] = useState(false);
+  const [showZotero, setShowZotero] = useState(false);
 
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [chatInput, setChatInput] = useState("");
@@ -224,6 +226,7 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
   };
 
   return (
+    <>
     <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
       className="card hover:border-violet-500/30 transition-colors duration-200">
       <div className="p-5 space-y-4">
@@ -422,6 +425,10 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
                       {fmt.label}
                     </button>
                   ))}
+                  <button onClick={() => { setShowZotero(true); setShowExportMenu(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-green-400 hover:bg-green-400/10 transition-colors flex items-center gap-2">
+                    <BookMarked size={11} /> Export to Zotero
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -793,5 +800,20 @@ export function GapCard({ gap, index, onSave, onShare, saved = false, savedId }:
         )}
       </AnimatePresence>
     </motion.div>
+
+    <ZoteroExportModal
+      open={showZotero}
+      onClose={() => setShowZotero(false)}
+      label={`"${gap.title.slice(0, 40)}..."`}
+      items={gap.citations.map(c => ({
+        title: c.title,
+        authors: c.authors,
+        year: c.year,
+        doi: c.doi,
+        url: c.url,
+        abstract: c.relevantQuote ?? null,
+      }))}
+    />
+    </>
   );
 }

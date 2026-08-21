@@ -7,6 +7,7 @@ import {
   FileText, Download, Share2, Copy, Check, Loader2,
   Zap, BookOpen, Trophy, Flame, Star, Clock, User, Building2,
 } from "lucide-react";
+import { exportToPdf } from "@/lib/export/pdf";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 
@@ -126,7 +127,18 @@ ${cvData.badges.length > 0 ? `## Achievements\n${cvData.badges.map(b => `- ${BAD
                   {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />} Copy
                 </button>
                 <button onClick={exportMarkdown} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors">
-                  <Download size={14} /> Export CV
+                  <Download size={14} /> Export CV (.md)
+                </button>
+                <button onClick={() => {
+                  if (!cvData) return;
+                  exportToPdf({
+                    title: `${cvData.name} — Research CV`,
+                    subtitle: cvData.institution ? cvData.institution : undefined,
+                    content: `## ${cvData.name}\n${cvData.institution ? `**${cvData.institution}**\n` : ""}${cvData.careerStage ? `*${cvData.careerStage.replace("-", " ")}*\n` : ""}\n${cvData.bio || ""}\n\n## Research Areas\n${cvData.researchAreas.join(", ")}\n\n## GapForge Activity\n- Gaps found: ${cvData.stats.gapsFound}\n- Searches run: ${cvData.stats.searchesRun}\n- Current streak: ${cvData.stats.streak} days\n\n${cvData.recentGaps.length > 0 ? `## Recently Discovered Gaps\n${cvData.recentGaps.map((g, i) => `${i + 1}. ${g.title} *(${g.category.replace(/-/g, " ")})*`).join("\n")}` : ""}\n\n${cvData.badges.length > 0 ? `## Achievements\n${cvData.badges.map(b => `- ${BADGE_LABELS[b.badge_type] ?? b.badge_type}`).join("\n")}` : ""}`,
+                    filename: `${cvData.name.replace(/\s/g, "-")}-research-cv`,
+                  });
+                }} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-400/30 text-red-400 hover:text-red-300 text-sm font-medium transition-colors">
+                  <FileText size={14} /> Export PDF
                 </button>
               </div>
             )}
