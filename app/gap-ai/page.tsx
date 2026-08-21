@@ -50,6 +50,7 @@ interface SearchResult {
   sourcesSkipped: string[];
   papersAnalyzed: number;
   processingTimeMs: number;
+  cached?: boolean;
 }
 
 interface LivePaper {
@@ -587,6 +588,7 @@ export default function GapAIPage() {
                           <CheckCircle2 size={15} className="text-emerald-500 flex-shrink-0" />
                           <span className="text-sm text-emerald-400 font-medium flex-1">
                             {result.gaps.length} gap{result.gaps.length !== 1 ? "s" : ""} found from {result.papersAnalyzed} papers
+                            {result.cached && <span className="ml-2 text-xs text-emerald-400/60 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full">cached result</span>}
                           </span>
                           <button
                             onClick={async () => {

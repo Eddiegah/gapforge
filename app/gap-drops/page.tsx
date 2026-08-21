@@ -195,15 +195,18 @@ export default function GapDropsPage() {
           </div>
         ) : drops.length === 0 ? (
           <div className="card p-12 text-center">
-            <Zap size={32} className="text-coral mx-auto mb-4" />
-            <h2 className="font-semibold text-[rgb(var(--foreground))] mb-2">No drops yet</h2>
-            <p className="text-sm text-[rgb(var(--muted))] mb-6 max-w-sm mx-auto">
-              Complete your research profile to receive weekly drops, or generate one now to see how it works.
+            <Zap size={32} className="text-violet-400 mx-auto mb-4" />
+            <h2 className="font-semibold text-[rgb(var(--foreground))] mb-2">No Gap Drops yet</h2>
+            <p className="text-sm text-[rgb(var(--muted))] mb-2 max-w-sm mx-auto">
+              Gap Drops are personalized weekly research digests — gaps, funding opportunities, and emerging trends scoped to your niche.
+            </p>
+            <p className="text-xs text-[rgb(var(--muted))] mb-6 max-w-xs mx-auto">
+              Set up your research profile so we know your field, then generate your first drop now.
             </p>
             <div className="flex gap-3 justify-center">
-              <a href="/onboarding" className="btn-primary text-sm">Set up profile</a>
+              <a href="/onboarding" className="btn-primary text-sm">Set up profile first</a>
               <button onClick={generateDrop} disabled={generating} className="btn-secondary text-sm">
-                Generate a drop now
+                Generate now anyway
               </button>
             </div>
           </div>
